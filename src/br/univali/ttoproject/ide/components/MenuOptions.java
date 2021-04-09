@@ -7,13 +7,17 @@ public enum MenuOptions {
     SAVE_AS(3),
     SETTINGS(4),
     EXIT(5),
-    CUT(6),
-    COPY(7),
-    PASTE(8),
-    COMPILE(9),
-    RUN(10),
-    HELP(11),
-    ABOUT(12);
+    UNDO(6),
+    REDO(7),
+    CUT(8),
+    COPY(9),
+    PASTE(10),
+    TOOL_BAR(11),
+    STATUS_BAR(12),
+    COMPILE(13),
+    RUN(14),
+    HELP(15),
+    ABOUT(16);
 
     private int id;
 

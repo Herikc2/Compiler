@@ -10,55 +10,70 @@ public class ToolBar extends JToolBar {
 
     public ToolBar(Supplier<?>[] methods){
 
-        var btnNew = new JButton("");
-        btnNew.addActionListener(e -> methods[MenuOptions.NEW.getId()].get());
-        btnNew.setIcon(new ImageIcon(App.class.getResource("/img/New File.png")));
-        add(btnNew);
+        JButton btn;
 
-        var btnOpen = new JButton("");
-        btnOpen.addActionListener(e -> methods[MenuOptions.OPEN.getId()].get());
-        btnOpen.setIcon(new ImageIcon(App.class.getResource("/img/Open Project.png")));
-        add(btnOpen);
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.NEW.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/New File.png")));
+        add(btn);
 
-        var btnSave = new JButton("");
-        btnSave.addActionListener(e -> methods[MenuOptions.SAVE.getId()].get());
-        btnSave.setIcon(new ImageIcon(App.class.getResource("/img/Save File.png")));
-        add(btnSave);
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.OPEN.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/Open Project.png")));
+        add(btn);
 
-        var separator1 = new JSeparator();
-        separator1.setMaximumSize(new Dimension(4, 32767));
-        separator1.setOrientation(SwingConstants.VERTICAL);
-        add(separator1);
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.SAVE.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/Save File.png")));
+        add(btn);
 
-        var btnCut = new JButton("");
-        btnCut.addActionListener(e -> methods[MenuOptions.CUT.getId()].get());
-        btnCut.setIcon(new ImageIcon(App.class.getResource("/img/Cut.PNG")));
-        add(btnCut);
+        add(defaultSeparator());
 
-        var btnCopy = new JButton("");
-        btnCopy.addActionListener(e -> methods[MenuOptions.COPY.getId()].get());
-        btnCopy.setIcon(new ImageIcon(App.class.getResource("/img/Copy.PNG")));
-        add(btnCopy);
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.UNDO.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/Undo.PNG")));
+        add(btn);
 
-        var btnPaste = new JButton("");
-        btnPaste.addActionListener(e -> methods[MenuOptions.PASTE.getId()].get());
-        btnPaste.setIcon(new ImageIcon(App.class.getResource("/img/Paste.png")));
-        add(btnPaste);
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.REDO.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/Redo.PNG")));
+        add(btn);
 
-        var separator2 = new JSeparator();
-        separator2.setOrientation(SwingConstants.VERTICAL);
-        separator2.setMaximumSize(new Dimension(4, 32767));
-        add(separator2);
+        add(defaultSeparator());
 
-        var btnBuild = new JButton("");
-        btnBuild.addActionListener(e -> methods[MenuOptions.COMPILE.getId()].get());
-        btnBuild.setIcon(new ImageIcon(App.class.getResource("/img/Cog.png")));
-        add(btnBuild);
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.CUT.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/Cut.PNG")));
+        add(btn);
 
-        var btnRun = new JButton("");
-        btnRun.addActionListener(e -> methods[MenuOptions.RUN.getId()].get());
-        btnRun.setIcon(new ImageIcon(App.class.getResource("/img/Run .PNG")));
-        add(btnRun);
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.COPY.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/Copy.PNG")));
+        add(btn);
+
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.PASTE.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/Paste.png")));
+        add(btn);
+
+        add(defaultSeparator());
+
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.COMPILE.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/Cog.png")));
+        add(btn);
+
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.RUN.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/Run .PNG")));
+        add(btn);
+    }
+
+    private JSeparator defaultSeparator(){
+        var sep = new JSeparator();
+        sep.setOrientation(SwingConstants.VERTICAL);
+        sep.setMaximumSize(new Dimension(4, 16));
+        return sep;
     }
 
 }

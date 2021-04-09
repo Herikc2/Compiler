@@ -21,8 +21,10 @@ public class App extends JFrame {
 
     private JPanel panelMain;
 
-    private final JTextArea taEdit;
+    private final CodeEditor codeEditor;
     private final Console console;
+    private final ToolBar toolBar;
+    private final StatusBar statusBar;
     private final JLabel lblLnCol;
     private final JLabel lblTabSize;
 
@@ -56,10 +58,10 @@ public class App extends JFrame {
     }
 
     public App() {
-        // Inicialização
+        // Inicialização de objetos ------------------------------------------------------------------------------------
         file = new FileTTO();
 
-        // Interface
+        // Interface ---------------------------------------------------------------------------------------------------
         setTitle("Compiler");
         setIconImage(Toolkit.getDefaultToolkit().getImage(App.class.getResource("/img/icon.png")));
         setContentPane(panelMain);
@@ -74,56 +76,47 @@ public class App extends JFrame {
             }
         });
 
-        // Adding components
+        // Adding components -------------------------------------------------------------------------------------------
 
         // menu methods
-        Supplier<?>[] menuMethods = {
-                this::mNew, this::mOpen, this::mSave, this::mSaveAs, this::mSettings, this::mExit, this::mCut,
-                this::mCopy, this::mPaste, this::mCompile, this::mRun, this::mAbout, this::mHelp};
+        Supplier<?>[] menuMethods = {this::mNew, this::mOpen, this::mSave, this::mSaveAs, this::mSettings, this::mExit,
+                this::mUndo, this::mRedo, this::mCut, this::mCopy, this::mPaste, this::mToolBar, this::mStatusBar,
+                this::mCompile, this::mRun, this::mAbout, this::mHelp};
 
         // menu bar
         setJMenuBar(new MenuBar(menuMethods));
+
         // tool bar
-        add(new ToolBar(menuMethods), BorderLayout.NORTH);
+        toolBar = new ToolBar(menuMethods);
+        add(toolBar, BorderLayout.NORTH);
+
         // status bar
-        var statusBar = new StatusBar();
+        statusBar = new StatusBar();
         lblLnCol = new JLabel("Ln 1, Col 1");
         lblTabSize = new JLabel(SettingsForm.TAB_SIZE + " spaces");
         statusBar.add(lblLnCol);
         statusBar.add(lblTabSize);
         panelMain.add(statusBar, BorderLayout.SOUTH);
+
         // split pane (up: editor down: console)
         var splitPane = new JSplitPane();
         splitPane.setResizeWeight(0.8);
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         panelMain.add(splitPane, BorderLayout.CENTER);
+
         // console
         console = new Console(this::getUserInput);
         var scpConsole = new JScrollPane(console);
         splitPane.setRightComponent(scpConsole);
+
         // editor
-        taEdit = new JTextArea();
-        taEdit.setTabSize(4);
-        // verifica se é windows ou linux para setar a fonte
-        if (System.getProperty("os.name").substring(0, 3).equalsIgnoreCase("win")) {
-            taEdit.setFont(new Font("Consolas", Font.PLAIN, 14));
-        } else {
-            taEdit.setFont(new Font("FreeMono", Font.PLAIN, 15));
-        }
-        taEdit.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                updateFileEdit();
-            }
-        });
-        taEdit.addCaretListener(e -> updateLCLabel());
-
-        var scpEdit = new JScrollPane(taEdit);
+        codeEditor = new CodeEditor(o -> updateLCLabel(), o -> updateFileEdit());
+        var scpEdit = new JScrollPane(codeEditor);
         splitPane.setLeftComponent(scpEdit);
-
-        var tln = new TextLineNumber(taEdit);
+        // editor line number
+        var tln = new TextLineNumber(codeEditor);
         scpEdit.setRowHeaderView(tln);
-        scpEdit.setViewportView(taEdit);
+        scpEdit.setViewportView(codeEditor);
 
         updateSettings();
 
@@ -140,7 +133,7 @@ public class App extends JFrame {
 
         // reinicializa as variaveis de arquivo
         file = new FileTTO();
-        taEdit.setText("");
+        codeEditor.setText("");
         resetControlVars();
         newFile = true;
         setTitle("Compiler");
@@ -159,7 +152,7 @@ public class App extends JFrame {
         file = new FileTTO(fullPath);
         resetControlVars();
         setTitle("Compiler - " + file.getName());
-        taEdit.setText(file.load());
+        codeEditor.setText(file.load());
 
         return true;
     }
@@ -172,7 +165,7 @@ public class App extends JFrame {
             // senão se o arquivo tiver alterações, ele é salvo
             resetFileVars();
             setTitle(getTitle().substring(0, getTitle().length() - 2));
-            file.save(taEdit.getText());
+            file.save(codeEditor.getText());
         }
         return true;
     }
@@ -186,7 +179,7 @@ public class App extends JFrame {
             file = new FileTTO(fullPath);
             resetFileVars();
             setTitle("Compiler - " + file.getName());
-            file.save(taEdit.getText());
+            file.save(codeEditor.getText());
         }
         return true;
     }
@@ -207,27 +200,51 @@ public class App extends JFrame {
         return true;
     }
 
+    public boolean mUndo() {
+        codeEditor.undo();
+
+        return true;
+    }
+
+    public boolean mRedo() {
+        codeEditor.redo();
+
+        return true;
+    }
+
     public boolean mCut() {
-        taEdit.cut();
+        codeEditor.cut();
 
         return true;
     }
 
     public boolean mCopy() {
-        taEdit.copy();
+        codeEditor.copy();
 
         return true;
     }
 
     public boolean mPaste() {
-        taEdit.paste();
+        codeEditor.paste();
+
+        return true;
+    }
+
+    public boolean mToolBar() {
+        toolBar.setVisible(!toolBar.isVisible());
+
+        return true;
+    }
+
+    public boolean mStatusBar() {
+        statusBar.setVisible(!statusBar.isVisible());
 
         return true;
     }
 
     public boolean mCompile() {
         // verifica se o arquivo é vazio
-        if (taEdit.getText().isEmpty()) {
+        if (codeEditor.getText().isEmpty()) {
             JOptionPane.showMessageDialog(
                     null,
                     "Your file is empty.",
@@ -239,7 +256,7 @@ public class App extends JFrame {
         if (!mSave()) return false;
 
         compiled = true;
-        console.setText(new Compiler().build(new StringReader(taEdit.getText())));
+        console.setText(new Compiler().build(new StringReader(codeEditor.getText())));
 
         return true;
     }
@@ -282,19 +299,19 @@ public class App extends JFrame {
     //------------------------------------------------------------------------------------------------------------------
 
     private void updateLCLabel() {
-        int caretPos = taEdit.getCaretPosition();
+        int caretPos = codeEditor.getCaretPosition();
         long rows;
         long cols;
 
         // calcula o número de linhas
         // conta-se os caracteres '\n' até a posição atual do caret
-        rows = taEdit.getText().substring(0, caretPos).chars().filter(ch -> ch == '\n').count() + 1;
+        rows = codeEditor.getText().substring(0, caretPos).chars().filter(ch -> ch == '\n').count() + 1;
 
         // calcula a coluna
         int offset = 0;
         try {
             // pega o começo da linha atual
-            offset = Utilities.getRowStart(taEdit, caretPos);
+            offset = Utilities.getRowStart(codeEditor, caretPos);
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
@@ -324,7 +341,7 @@ public class App extends JFrame {
 
     public void updateSettings() {
         // Atualiza as novas configurações definidas no form Settings
-        taEdit.setTabSize(SettingsForm.TAB_SIZE);
+        codeEditor.setTabSize(SettingsForm.TAB_SIZE);
         lblTabSize.setText(SettingsForm.TAB_SIZE + " spaces");
     }
 
