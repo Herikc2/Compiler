@@ -11,9 +11,10 @@ public class StatusBar extends JPanel {
 
     @Override
     public Component add(Component comp) {
+        // como os componentes da status bar são dinâmicos, eles são adicionados fora da classe
         JSeparator separator = new JSeparator();
         separator.setPreferredSize(new Dimension(5, 14));
-        separator.setMaximumSize(new Dimension(5, 32767));
+        separator.setMaximumSize(new Dimension(5, 14));
         separator.setOrientation(SwingConstants.VERTICAL);
         super.add(separator);
         return super.add(comp);

@@ -10,7 +10,7 @@ import java.awt.*;
 public class SettingsForm extends JFrame {
 
     private JPanel panelMain;
-    private JList listOptionsMenu;
+    private JList<String> listOptionsMenu;
     private JTable tableKeyValueOptions;
     private JButton btnOk;
 
@@ -29,7 +29,7 @@ public class SettingsForm extends JFrame {
         setAlwaysOnTop(true);
         add(panelMain);
 
-        var listModel = new DefaultListModel<>();
+        var listModel = new DefaultListModel<String>();
         listModel.addElement("Editor");
         listOptionsMenu.setModel(listModel);
         listOptionsMenu.setSelectedIndex(0);

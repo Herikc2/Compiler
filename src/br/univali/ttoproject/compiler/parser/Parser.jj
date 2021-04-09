@@ -89,14 +89,14 @@ TOKEN :
 /* IDENTIFIERS */
 TOKEN :
 {
-    <IDENTIFIER: ("_"|<LETTER>) ("_"|<LETTER>|<UNSIGNED>)+>
+    <IDENTIFIER: ("_"|<LETTER>)("_"|<LETTER>|<UNSIGNED>)+>
 }
 
 /* CONSTS */
 TOKEN :
 {
-    <CHAR_CONST : "\"" ((~["\"","\\","\n","\r"]) |("\\" (["n","t","v","b","r","f","a","\\","?","'","\""])))* "\"">
-|   <NATURAL_CONST: <UNSIGNED>|<SIGNED>>
+    <CHAR_CONST : "\""((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\"">
+|   <NATURAL_CONST: <SIGNED>|<UNSIGNED>>
 |   <REAL_CONST: <REAL_SIGNED>|<REAL_UNSIGNED>>
 |   <BOOLEAN_CONST: "true"|"false">
 }
@@ -104,8 +104,8 @@ TOKEN :
 TOKEN :
 {
     <LETTER: ["a"-"z","A"-"Z"]>
-|   <UNSIGNED: (["0" - "9"])+>
-|   <SIGNED: ("-"|"+") (["0" - "9"])+>
+|   <UNSIGNED: (["0"-"9"])+>
+|   <SIGNED: ("-"|"+")(["0"-"9"])+>
 |   <REAL_UNSIGNED: <UNSIGNED>"."<UNSIGNED>>
 |   <REAL_SIGNED: <SIGNED>"."<UNSIGNED>>
 }

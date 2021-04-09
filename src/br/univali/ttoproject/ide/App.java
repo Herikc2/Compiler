@@ -14,6 +14,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class App extends JFrame {
 
@@ -32,6 +34,7 @@ public class App extends JFrame {
     private boolean compiled = false;
     private boolean running = false;
 
+
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -39,10 +42,10 @@ public class App extends JFrame {
                 InstantiationException |
                 IllegalAccessException |
                 UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        /* Create and display the form */
+        // Inicializa a aplicação
         EventQueue.invokeLater(() -> {
             try {
                 new App();
@@ -101,6 +104,7 @@ public class App extends JFrame {
         // editor
         taEdit = new JTextArea();
         taEdit.setTabSize(4);
+        // verifica se é windows ou linux para setar a fonte
         if (System.getProperty("os.name").substring(0, 3).equalsIgnoreCase("win")) {
             taEdit.setFont(new Font("Consolas", Font.PLAIN, 14));
         } else {
@@ -126,13 +130,15 @@ public class App extends JFrame {
         setVisible(true);
     }
 
-    /*******************************************************************************************************************
-     * Actions
-     ******************************************************************************************************************/
+    // -----------------------------------------------------------------------------------------------------------------
+    // Actions
+    // -----------------------------------------------------------------------------------------------------------------
 
     public boolean mNew() {
+        // verifica se existe arquivo a ser salvo, se tiver isso é tratado
         if (cancelSaveFileOp()) return false;
 
+        // reinicializa as variaveis de arquivo
         file = new FileTTO();
         taEdit.setText("");
         resetControlVars();
@@ -145,9 +151,11 @@ public class App extends JFrame {
     public boolean mOpen() {
         if (cancelSaveFileOp()) return false;
 
+        // pega o caminho do arquivo a ser aberto
         var fullPath = getFilePath(false);
         if (fullPath.equals("")) return false;
 
+        // abre o arquivo
         file = new FileTTO(fullPath);
         resetControlVars();
         setTitle("Compiler - " + file.getName());
@@ -158,8 +166,10 @@ public class App extends JFrame {
 
     public boolean mSave() {
         if (newFile) {
+            // se for arquivo novo salva como
             return mSaveAs();
         } else if (!savedFile) {
+            // senão se o arquivo tiver alterações, ele é salvo
             resetFileVars();
             setTitle(getTitle().substring(0, getTitle().length() - 2));
             file.save(taEdit.getText());
@@ -168,6 +178,7 @@ public class App extends JFrame {
     }
 
     public boolean mSaveAs() {
+        // se o arquivo possui alterações ele é salvo
         if (!savedFile) {
             var fullPath = getFilePath(true);
             if (fullPath.equals("")) return false;
@@ -215,6 +226,7 @@ public class App extends JFrame {
     }
 
     public boolean mCompile() {
+        // verifica se o arquivo é vazio
         if (taEdit.getText().isEmpty()) {
             JOptionPane.showMessageDialog(
                     null,
@@ -223,7 +235,7 @@ public class App extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
+        // salva o arquivo antes de compilar
         if (!mSave()) return false;
 
         compiled = true;
@@ -233,6 +245,7 @@ public class App extends JFrame {
     }
 
     public boolean mRun() {
+        // verifica se existe algo compilado
         if (!compiled) {
             JOptionPane.showMessageDialog(
                     null,
@@ -264,43 +277,53 @@ public class App extends JFrame {
         return true;
     }
 
-    /*******************************************************************************************************************
-     * UI controls
-     ******************************************************************************************************************/
+    //------------------------------------------------------------------------------------------------------------------
+    // UI controls
+    //------------------------------------------------------------------------------------------------------------------
+
     private void updateLCLabel() {
         int caretPos = taEdit.getCaretPosition();
         long rows;
         long cols;
 
+        // calcula o número de linhas
+        // conta-se os caracteres '\n' até a posição atual do caret
         rows = taEdit.getText().substring(0, caretPos).chars().filter(ch -> ch == '\n').count() + 1;
 
+        // calcula a coluna
         int offset = 0;
         try {
+            // pega o começo da linha atual
             offset = Utilities.getRowStart(taEdit, caretPos);
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
+        // subtrai da posição atual do caret sobrando apena a coluna atual
         cols = caretPos - offset + 1;
 
         lblLnCol.setText("Ln " + rows + ", Col " + cols);
     }
 
     private void updateFileEdit() {
+        // função chamada sempre que algo é alterado no editor de texto
+        // se o arquivo não tiver alterações, uma flag (*) é adicionada ao título
         if (savedFile) {
             setTitle(getTitle() + "*");
+            savedFile = !savedFile;
         }
-        savedFile = false;
     }
 
-    /*******************************************************************************************************************
-     * Auxiliary functions
-     ******************************************************************************************************************/
+    //------------------------------------------------------------------------------------------------------------------
+    // Auxiliary functions
+    //------------------------------------------------------------------------------------------------------------------
 
     public void getUserInput(String entry) {
+        // Recebe o input do usuario retornado do console
         Debug.print(entry);
     }
 
     public void updateSettings() {
+        // Atualiza as novas configurações definidas no form Settings
         taEdit.setTabSize(SettingsForm.TAB_SIZE);
         lblTabSize.setText(SettingsForm.TAB_SIZE + " spaces");
     }
@@ -317,6 +340,7 @@ public class App extends JFrame {
     }
 
     public boolean verifySaveFile() {
+        // verifica se o usuario deseja salvar o arquivo
         int result = JOptionPane.showConfirmDialog(
                 null,
                 "Would you like to save the file?",
@@ -329,6 +353,8 @@ public class App extends JFrame {
     }
 
     public boolean cancelSaveFileOp() {
+        // chama a função verifySaveFile
+        // mas verifica se a operação de salvamento foi cancelada (nega o retorno)
         if (!savedFile) {
             return !verifySaveFile();
         }
@@ -338,6 +364,7 @@ public class App extends JFrame {
     public String getFilePath(boolean save) {
         var fullPath = "";
         var optionString = save ? "save" : "open";
+        // configura o file chooser
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a file to " + optionString);
         fileChooser.setFileFilter(new FileNameExtensionFilter("2021.1 Files", "tto", "2021.1"));
@@ -348,6 +375,7 @@ public class App extends JFrame {
         int userSelection;
         boolean existisVerDone = false;
 
+        // loop para verificação se de fato foi selecionado um caminho
         do {
             if (save) {
                 userSelection = fileChooser.showSaveDialog(null);
@@ -357,6 +385,8 @@ public class App extends JFrame {
 
             if (userSelection == JFileChooser.APPROVE_OPTION) {
                 File fileToSave = fileChooser.getSelectedFile();
+                // se for salvar, será verificado se o arquivo existe, caso exista será perguntado que o arquivo deve
+                // ser sobrescrito, se a opção for diferente de APPROVE_OPTION uma string vazia é retornada
                 if (save) {
                     if (fileToSave.exists()) {
                         int result = JOptionPane.showConfirmDialog(
@@ -379,6 +409,7 @@ public class App extends JFrame {
             }
         } while (!existisVerDone);
 
+        // adiciona a extenção caso não tenha
         if (fullPath.length() >= 4 && !fullPath.endsWith(".tto")) {
             fullPath += ".tto";
         } else if (fullPath.length() < 4) {

@@ -7,14 +7,14 @@ import java.util.function.Consumer;
 
 public class Console extends JTextArea {
 
-    private final Consumer<String> method;
+    private final Consumer<String> returnFunction;
 
     private boolean allowConsoleInput = false;
-    private int allowedCaretPosition;
-    private int initialCaretPosition;
+    private int finalAllowedArea;
+    private int initialAllowedArea;
 
-    public Console(Consumer<String> method) {
-        this.method = method;
+    public Console(Consumer<String> returnFunction) {
+        this.returnFunction = returnFunction;
         setTabSize(4);
         setFocusTraversalKeysEnabled(false);
         addKeyListener(new KeyAdapter() {
@@ -22,7 +22,6 @@ public class Console extends JTextArea {
             public void keyTyped(KeyEvent e) {
                 handleKeyTyped(e);
             }
-
             @Override
             public void keyPressed(KeyEvent e) {
                 handleKeyPressed(e);
@@ -41,9 +40,10 @@ public class Console extends JTextArea {
 
     public void initDataEntry(String content) {
         addContent(content);
+        requestFocusInWindow();
         allowConsoleInput = true;
-        allowedCaretPosition = getCaretPosition();
-        initialCaretPosition = allowedCaretPosition;
+        finalAllowedArea = getCaretPosition();
+        initialAllowedArea = finalAllowedArea;
     }
 
     private void stopDataEntry() {
@@ -51,15 +51,16 @@ public class Console extends JTextArea {
     }
 
     private void handleKeyTyped(KeyEvent e) {
+        // caso o console esteja recebendo dados
         if (allowConsoleInput) {
-            requestFocusInWindow();
-
             var curCaretPosition = getCaretPosition();
-
-            if (curCaretPosition < initialCaretPosition || curCaretPosition > allowedCaretPosition) {
-                setCaretPosition(allowedCaretPosition);
+            // antes do input do teclado, é verificado se a posição do caret está fora da área perminida
+            if (curCaretPosition < initialAllowedArea || curCaretPosition > finalAllowedArea) {
+                // se não tiver, o caret é posicionado ao final da área permitida
+                setCaretPosition(finalAllowedArea);
             }
-            allowedCaretPosition++;
+            // aumenta o compimento da área permitida em um caracter
+            finalAllowedArea++;
         } else {
             e.consume();
         }
@@ -70,21 +71,29 @@ public class Console extends JTextArea {
         var curCaretPosition = getCaretPosition();
 
         if (keyChar == KeyEvent.VK_BACK_SPACE) {
-            if (!allowConsoleInput){
+            // manipula backspace
+            if (!allowConsoleInput) {
+                // se o console tiver desabilitado o caractere apenas é consumido
                 e.consume();
-            } else if (curCaretPosition > initialCaretPosition) {
-                allowedCaretPosition--;
+            } else if (curCaretPosition > initialAllowedArea) {
+                // se for acima da posição inicial da área permite que o caractere seja apagado e diminui o comprimento
+                // da área permitida
+                finalAllowedArea--;
             } else {
+                // qualquer outro caso consome o caracter
                 e.consume();
             }
         } else if (keyChar == KeyEvent.VK_ENTER) {
+            // o enter sempre será consumido
             e.consume();
-            if (allowConsoleInput){
+            // caso o enter seja pressionado enquanto o console está ativo, o dado é enviado para a função de retorno
+            if (allowConsoleInput) {
                 stopDataEntry();
-                method.accept(getText().substring(initialCaretPosition));
+                returnFunction.accept(getText().substring(initialAllowedArea));
                 setCaretPosition(getText().length());
             }
         } else if (keyChar == KeyEvent.VK_TAB) {
+            // tab será sempre consumido
             e.consume();
         }
     }
