@@ -25,6 +25,9 @@ public class App extends JFrame {
     private final Console console;
     private final ToolBar toolBar;
     private final StatusBar statusBar;
+    private final JSplitPane splitPane;
+    private final JScrollPane scpConsole;
+    private final JScrollPane scpCodeEditor;
     private final JLabel lblLnCol;
     private final JLabel lblTabSize;
 
@@ -81,7 +84,7 @@ public class App extends JFrame {
         // menu methods
         Supplier<?>[] menuMethods = {this::mNew, this::mOpen, this::mSave, this::mSaveAs, this::mSettings, this::mExit,
                 this::mUndo, this::mRedo, this::mCut, this::mCopy, this::mPaste, this::mToolBar, this::mStatusBar,
-                this::mCompile, this::mRun, this::mAbout, this::mHelp};
+                this::mConsole, this::mCompile, this::mRun, this::mAbout, this::mHelp};
 
         // menu bar
         setJMenuBar(new MenuBar(menuMethods));
@@ -99,24 +102,24 @@ public class App extends JFrame {
         panelMain.add(statusBar, BorderLayout.SOUTH);
 
         // split pane (up: editor down: console)
-        var splitPane = new JSplitPane();
+        splitPane = new JSplitPane();
         splitPane.setResizeWeight(0.8);
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         panelMain.add(splitPane, BorderLayout.CENTER);
 
         // console
         console = new Console(this::getUserInput);
-        var scpConsole = new JScrollPane(console);
+        scpConsole = new JScrollPane(console);
         splitPane.setRightComponent(scpConsole);
 
         // editor
         codeEditor = new CodeEditor(o -> updateLCLabel(), o -> updateFileEdit());
-        var scpEdit = new JScrollPane(codeEditor);
-        splitPane.setLeftComponent(scpEdit);
+        scpCodeEditor = new JScrollPane(codeEditor);
+        splitPane.setLeftComponent(scpCodeEditor);
         // editor line number
         var tln = new TextLineNumber(codeEditor);
-        scpEdit.setRowHeaderView(tln);
-        scpEdit.setViewportView(codeEditor);
+        scpCodeEditor.setRowHeaderView(tln);
+        scpCodeEditor.setViewportView(codeEditor);
 
         updateSettings();
 
@@ -238,6 +241,25 @@ public class App extends JFrame {
 
     public boolean mStatusBar() {
         statusBar.setVisible(!statusBar.isVisible());
+
+        return true;
+    }
+
+    public boolean mConsole() {
+        scpConsole.setVisible(!scpConsole.isVisible());
+
+        if (!scpConsole.isVisible()) {
+            panelMain.remove(splitPane);
+            splitPane.setVisible(false);
+            panelMain.add(scpCodeEditor, BorderLayout.CENTER);
+        } else {
+            panelMain.remove(scpCodeEditor);
+            panelMain.add(splitPane, BorderLayout.CENTER);
+            splitPane.setRightComponent(scpConsole);
+            splitPane.setLeftComponent(scpCodeEditor);
+            splitPane.setVisible(true);
+        }
+        panelMain.updateUI();
 
         return true;
     }

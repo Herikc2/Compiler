@@ -89,6 +89,11 @@ public class MenuBar extends JMenuBar {
         checkBoxMenuItem.addActionListener(e -> methods[MenuOptions.STATUS_BAR.getId()].get());
         menu.add(checkBoxMenuItem);
 
+        checkBoxMenuItem = new JCheckBoxMenuItem("Console");
+        checkBoxMenuItem.setState(true);
+        checkBoxMenuItem.addActionListener(e -> methods[MenuOptions.CONSOLE.getId()].get());
+        menu.add(checkBoxMenuItem);
+
         menu = new JMenu("Build");
         add(menu);
 
