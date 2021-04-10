@@ -1,6 +1,7 @@
 package br.univali.ttoproject.ide.components;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.function.Consumer;
@@ -16,6 +17,11 @@ public class Console extends JTextArea {
     public Console(Consumer<String> returnFunction) {
         this.returnFunction = returnFunction;
         setTabSize(4);
+        if (System.getProperty("os.name").substring(0, 3).equalsIgnoreCase("win")) {
+            setFont(new Font("Consolas", Font.PLAIN, 13));
+        } else {
+            setFont(new Font("FreeMono", Font.PLAIN, 14));
+        }
         setFocusTraversalKeysEnabled(false);
         addKeyListener(new KeyAdapter() {
             @Override
