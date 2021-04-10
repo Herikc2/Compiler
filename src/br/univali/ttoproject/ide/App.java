@@ -84,7 +84,7 @@ public class App extends JFrame {
         // menu methods
         Supplier<?>[] menuMethods = {this::mNew, this::mOpen, this::mSave, this::mSaveAs, this::mSettings, this::mExit,
                 this::mUndo, this::mRedo, this::mCut, this::mCopy, this::mPaste, this::mToolBar, this::mStatusBar,
-                this::mConsole, this::mCompile, this::mRun, this::mAbout, this::mHelp};
+                this::mConsole, this::mCompileRun, this::mCompile, this::mRun, this::mStop, this::mAbout, this::mHelp};
 
         // menu bar
         setJMenuBar(new MenuBar(menuMethods));
@@ -257,11 +257,17 @@ public class App extends JFrame {
             panelMain.add(splitPane, BorderLayout.CENTER);
             splitPane.setRightComponent(scpConsole);
             splitPane.setLeftComponent(scpCodeEditor);
+            splitPane.setResizeWeight(0.8);
+            splitPane.setDividerLocation(0.8);
             splitPane.setVisible(true);
         }
         panelMain.updateUI();
 
         return true;
+    }
+
+    public boolean mCompileRun(){
+        return mCompile() && mRun();
     }
 
     public boolean mCompile() {
@@ -296,6 +302,14 @@ public class App extends JFrame {
         running = true;
 
         //console.initDataEntry("Digite: ");
+
+        return true;
+    }
+
+    public boolean mStop() {
+        if (running) {
+            resetBuildVars();
+        }
 
         return true;
     }
@@ -369,6 +383,10 @@ public class App extends JFrame {
 
     public void resetControlVars() {
         resetFileVars();
+        resetBuildVars();
+    }
+
+    public void resetBuildVars() {
         compiled = false;
         running = false;
     }

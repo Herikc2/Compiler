@@ -27,7 +27,7 @@ public class ToolBar extends JToolBar {
         btn.setIcon(new ImageIcon(App.class.getResource("/img/Save File.png")));
         add(btn);
 
-        add(defaultSeparator());
+        addSeparator();
 
         btn = new JButton("");
         btn.addActionListener(e -> methods[MenuOptions.UNDO.getId()].get());
@@ -39,7 +39,7 @@ public class ToolBar extends JToolBar {
         btn.setIcon(new ImageIcon(App.class.getResource("/img/Redo.PNG")));
         add(btn);
 
-        add(defaultSeparator());
+        addSeparator();
 
         btn = new JButton("");
         btn.addActionListener(e -> methods[MenuOptions.CUT.getId()].get());
@@ -56,7 +56,12 @@ public class ToolBar extends JToolBar {
         btn.setIcon(new ImageIcon(App.class.getResource("/img/Paste.png")));
         add(btn);
 
-        add(defaultSeparator());
+        addSeparator();
+
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.COMPILE_RUN.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/CR.png")));
+        add(btn);
 
         btn = new JButton("");
         btn.addActionListener(e -> methods[MenuOptions.COMPILE.getId()].get());
@@ -65,15 +70,13 @@ public class ToolBar extends JToolBar {
 
         btn = new JButton("");
         btn.addActionListener(e -> methods[MenuOptions.RUN.getId()].get());
-        btn.setIcon(new ImageIcon(App.class.getResource("/img/Run .PNG")));
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/Run.PNG")));
         add(btn);
-    }
 
-    private JSeparator defaultSeparator(){
-        var sep = new JSeparator();
-        sep.setOrientation(SwingConstants.VERTICAL);
-        sep.setMaximumSize(new Dimension(4, 16));
-        return sep;
+        btn = new JButton("");
+        btn.addActionListener(e -> methods[MenuOptions.STOP.getId()].get());
+        btn.setIcon(new ImageIcon(App.class.getResource("/img/Stop.PNG")));
+        add(btn);
     }
 
 }
