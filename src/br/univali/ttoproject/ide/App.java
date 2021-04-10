@@ -4,6 +4,7 @@ import br.univali.ttoproject.compiler.Compiler;
 import br.univali.ttoproject.ide.components.*;
 import br.univali.ttoproject.ide.components.Console;
 import br.univali.ttoproject.ide.components.MenuBar;
+import br.univali.ttoproject.ide.components.Settings.SettingsForm;
 import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.*;

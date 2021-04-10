@@ -1,5 +1,7 @@
 package br.univali.ttoproject.ide.components;
 
+import br.univali.ttoproject.ide.components.Settings.SettingsForm;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
