@@ -6,8 +6,8 @@ public class EditorSettings {
 
     private JPanel panelMain;
     private JTextField tfTabSize;
-    private JComboBox cbLineEnding;
-    private JComboBox cbEncoding;
+    private JComboBox<String> cbLineEnding;
+    private JComboBox<String> cbEncoding;
 
     public EditorSettings() {
         tfTabSize.setText("4");
@@ -25,11 +25,11 @@ public class EditorSettings {
         return tfTabSize;
     }
 
-    public JComboBox getCbLineEnding() {
+    public JComboBox<String> getCbLineEnding() {
         return cbLineEnding;
     }
 
-    public JComboBox getCbEncoding() {
+    public JComboBox<String> getCbEncoding() {
         return cbEncoding;
     }
 

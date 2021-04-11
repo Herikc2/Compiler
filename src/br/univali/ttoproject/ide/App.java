@@ -421,7 +421,7 @@ public class App extends JFrame {
     public boolean verifySaveFile() {
         // verifica se o usuario deseja salvar o arquivo
         int result = JOptionPane.showConfirmDialog(
-                null,
+                this,
                 "Would you like to save the file?",
                 "Save",
                 JOptionPane.YES_NO_CANCEL_OPTION);
@@ -457,9 +457,9 @@ public class App extends JFrame {
         // loop para verificação se de fato foi selecionado um caminho
         do {
             if (save) {
-                userSelection = fileChooser.showSaveDialog(null);
+                userSelection = fileChooser.showSaveDialog(this);
             } else {
-                userSelection = fileChooser.showOpenDialog(null);
+                userSelection = fileChooser.showOpenDialog(this);
             }
 
             if (userSelection == JFileChooser.APPROVE_OPTION) {
@@ -469,7 +469,7 @@ public class App extends JFrame {
                 if (save) {
                     if (fileToSave.exists()) {
                         int result = JOptionPane.showConfirmDialog(
-                                null,
+                                this,
                                 "A file with that name already exists. Would you like to overwrite?",
                                 "Overwrite",
                                 JOptionPane.YES_NO_OPTION);
