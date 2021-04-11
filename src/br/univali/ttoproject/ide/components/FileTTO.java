@@ -7,7 +7,7 @@ import javax.swing.filechooser.FileSystemView;
 public class FileTTO extends File {
 
     private static final String DEFAULT_PATH =
-            FileSystemView.getFileSystemView().getDefaultDirectory().getPath() +"\\" + "untitled.tto";
+            FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "\\" + "untitled.tto";
 
     public FileTTO() {
         super(DEFAULT_PATH);

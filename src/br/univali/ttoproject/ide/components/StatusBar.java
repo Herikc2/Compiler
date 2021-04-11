@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class StatusBar extends JPanel {
-    public StatusBar(){
+    public StatusBar() {
         setMinimumSize(new Dimension(10, 16));
         setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
     }

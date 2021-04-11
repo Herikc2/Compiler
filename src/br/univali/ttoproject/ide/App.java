@@ -73,8 +73,8 @@ public class App extends JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(App.class.getResource("/img/icon.png")));
         setContentPane(panelMain);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        setBounds(0, 0, 1280, 720);
-        setMinimumSize(new Dimension(400, 225));
+        setBounds(0, 0, 992, 558);
+        setMinimumSize(new Dimension(800, 450));
         setLocationRelativeTo(null);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -82,13 +82,14 @@ public class App extends JFrame {
                 mExit();
             }
         });
+        setVisible(true);
 
         // Adding components -------------------------------------------------------------------------------------------
 
         // menu methods
         Supplier<?>[] menuMethods = {this::mNew, this::mOpen, this::mSave, this::mSaveAs, this::mSettings, this::mExit,
                 this::mUndo, this::mRedo, this::mCut, this::mCopy, this::mPaste, this::mToolBar, this::mStatusBar,
-                this::mConsole, this::mCompileRun, this::mCompile, this::mRun, this::mStop, this::mAbout, this::mHelp};
+                this::mConsole, this::mCompileRun, this::mCompile, this::mRun, this::mStop, this::mHelp, this::mAbout};
 
         // menu bar
         setJMenuBar(new MenuBar(menuMethods));
@@ -131,7 +132,7 @@ public class App extends JFrame {
 
         updateSettings();
 
-        setVisible(true);
+        codeEditor.requestFocus();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -163,6 +164,7 @@ public class App extends JFrame {
         file = new FileTTO(fullPath);
         resetControlVars();
         setTitle("Compiler - " + file.getName());
+
         codeEditor.setText(file.load());
 
         return true;
@@ -196,7 +198,7 @@ public class App extends JFrame {
     }
 
     public boolean mSettings() {
-        new SettingsForm(o -> updateSettings());
+        new SettingsForm(this, o -> updateSettings());
 
         return true;
     }
@@ -274,7 +276,7 @@ public class App extends JFrame {
         return true;
     }
 
-    public boolean mCompileRun(){
+    public boolean mCompileRun() {
         return mCompile() && mRun();
     }
 
@@ -282,7 +284,7 @@ public class App extends JFrame {
         // verifica se o arquivo é vazio
         if (codeEditor.getText().isEmpty()) {
             JOptionPane.showMessageDialog(
-                    null,
+                    this,
                     "Your file is empty.",
                     "Warning",
                     JOptionPane.ERROR_MESSAGE);
@@ -301,7 +303,7 @@ public class App extends JFrame {
         // verifica se existe algo compilado
         if (!compiled) {
             JOptionPane.showMessageDialog(
-                    null,
+                    this,
                     "Please, compile your file before running.",
                     "Warning",
                     JOptionPane.ERROR_MESSAGE);
@@ -324,7 +326,7 @@ public class App extends JFrame {
 
     public boolean mAbout() {
         JOptionPane.showMessageDialog(
-                null,
+                this,
                 "Authors: Carlos E. B. Machado, Herikc Brecher and Bruno F. Francisco.",
                 "About",
                 JOptionPane.INFORMATION_MESSAGE);
@@ -333,7 +335,7 @@ public class App extends JFrame {
     }
 
     public boolean mHelp() {
-        new HelpForm();
+        new HelpForm(this);
 
         return true;
     }
@@ -377,6 +379,14 @@ public class App extends JFrame {
     //------------------------------------------------------------------------------------------------------------------
     // Auxiliary functions
     //------------------------------------------------------------------------------------------------------------------
+
+    public void replaceCurrentLE() {
+        if (Settings.LINE_ENDING == Settings.LNE_CRLF) {
+            codeEditor.setText(codeEditor.getText().replace(Settings.LF, Settings.CRLF));
+        } else {
+            codeEditor.setText(codeEditor.getText().replace(Settings.CRLF, Settings.LF));
+        }
+    }
 
     public void getUserInput(String entry) {
         // Recebe o input do usuario retornado do console

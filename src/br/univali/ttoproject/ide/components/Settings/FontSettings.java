@@ -9,7 +9,7 @@ public class FontSettings {
     private JPanel panelMain;
     private JFontChooser fontChooser;
 
-    public FontSettings(){
+    public FontSettings() {
         fontChooser = new JFontChooser();
         panelMain.add(fontChooser, BorderLayout.CENTER);
     }

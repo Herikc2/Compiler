@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public class ToolBar extends JToolBar {
 
-    public ToolBar(Supplier<?>[] methods){
+    public ToolBar(Supplier<?>[] methods) {
 
         JButton btn;
 

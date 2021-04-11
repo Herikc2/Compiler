@@ -4,19 +4,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.function.Consumer;
 
-public class SettingsForm extends JFrame {
+public class SettingsForm extends JDialog {
 
-    private Consumer<Object> update;
+    private final Consumer<Object> update;
 
     private JPanel panelMain;
     private JButton btnSave;
     private JTabbedPane tabbedPane;
 
-    private EditorSettings editorSettings;
-    private AppearanceSettings appearanceSettings;
-    private FontSettings fontSettings;
+    private final EditorSettings editorSettings;
+    private final AppearanceSettings appearanceSettings;
+    private final FontSettings fontSettings;
 
-    public SettingsForm(Consumer<Object> update) {
+    public SettingsForm(JFrame parent, Consumer<Object> update) {
+        super(parent, false);
         // vars and instantiating objects
         this.update = update;
         editorSettings = new EditorSettings();
@@ -29,10 +30,9 @@ public class SettingsForm extends JFrame {
         setTitle("Settings");
         setIconImage(Toolkit.getDefaultToolkit().getImage(SettingsForm.class.getResource("/img/icon.png")));
         setVisible(true);
-        setBounds(0, 0, 800, 450);
+        setBounds(0, 0, 500, 350);
         setLocationRelativeTo(null);
         getContentPane().setLayout(new BorderLayout());
-        setAlwaysOnTop(true);
         add(panelMain, BorderLayout.CENTER);
 
         tabbedPane.add("Editor", editorSettings.getPanelMain());
@@ -45,6 +45,7 @@ public class SettingsForm extends JFrame {
         btnSave.addActionListener(e -> {
             update();
         });
+        getRootPane().setDefaultButton(btnSave);
     }
 
     private void update() {

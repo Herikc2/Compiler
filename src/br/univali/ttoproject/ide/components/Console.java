@@ -28,6 +28,7 @@ public class Console extends JTextArea {
             public void keyTyped(KeyEvent e) {
                 handleKeyTyped(e);
             }
+
             @Override
             public void keyPressed(KeyEvent e) {
                 handleKeyPressed(e);

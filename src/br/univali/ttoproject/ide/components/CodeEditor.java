@@ -13,7 +13,7 @@ public class CodeEditor extends JTextArea {
     private Stack<String> undoStates;
     private Stack<String> redoStates;
 
-    public CodeEditor(Consumer<Object> lcListener, Consumer<Object> changesListener){
+    public CodeEditor(Consumer<Object> lcListener, Consumer<Object> changesListener) {
         setTabSize(4);
         // verifica se é windows ou linux para setar a fonte
         setFont(Settings.FONT);
@@ -26,11 +26,11 @@ public class CodeEditor extends JTextArea {
         addCaretListener(e -> lcListener.accept(null));
     }
 
-    public void undo(){
+    public void undo() {
 
     }
 
-    public void redo(){
+    public void redo() {
 
     }
 

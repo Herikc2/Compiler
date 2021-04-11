@@ -8,7 +8,7 @@ public class AppearanceSettings {
     private JCheckBox ckbConsole;
     private JCheckBox ckbStatusBar;
 
-    public AppearanceSettings(){
+    public AppearanceSettings() {
 
     }
 

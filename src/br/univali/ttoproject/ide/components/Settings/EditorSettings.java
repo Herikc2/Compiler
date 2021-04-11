@@ -9,7 +9,7 @@ public class EditorSettings {
     private JComboBox cbLineEnding;
     private JComboBox cbEncoding;
 
-    public EditorSettings(){
+    public EditorSettings() {
         tfTabSize.setText("4");
         cbLineEnding.addItem("CRLF");
         cbLineEnding.addItem("LF");
