@@ -4,6 +4,7 @@ import br.univali.ttoproject.compiler.Compiler;
 import br.univali.ttoproject.ide.components.*;
 import br.univali.ttoproject.ide.components.Console;
 import br.univali.ttoproject.ide.components.MenuBar;
+import br.univali.ttoproject.ide.components.Settings.Settings;
 import br.univali.ttoproject.ide.components.Settings.SettingsForm;
 import br.univali.ttoproject.ide.util.Debug;
 
@@ -31,6 +32,8 @@ public class App extends JFrame {
     private final JScrollPane scpCodeEditor;
     private final JLabel lblLnCol;
     private final JLabel lblTabSize;
+    private final JLabel lblEncoding;
+    private final JLabel lblLineEnding;
 
     private FileTTO file;
 
@@ -70,7 +73,7 @@ public class App extends JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(App.class.getResource("/img/icon.png")));
         setContentPane(panelMain);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        setBounds(0, 0, 800, 450);
+        setBounds(0, 0, 1280, 720);
         setMinimumSize(new Dimension(400, 225));
         setLocationRelativeTo(null);
         addWindowListener(new WindowAdapter() {
@@ -97,9 +100,13 @@ public class App extends JFrame {
         // status bar
         statusBar = new StatusBar();
         lblLnCol = new JLabel("Ln 1, Col 1");
-        lblTabSize = new JLabel(SettingsForm.TAB_SIZE + " spaces");
+        lblTabSize = new JLabel(Settings.TAB_SIZE + " spaces");
+        lblEncoding = new JLabel(Settings.stringEncoding());
+        lblLineEnding = new JLabel(Settings.stringLineEnding());
         statusBar.add(lblLnCol);
         statusBar.add(lblTabSize);
+        statusBar.add(lblEncoding);
+        statusBar.add(lblLineEnding);
         panelMain.add(statusBar, BorderLayout.SOUTH);
 
         // split pane (up: editor down: console)
@@ -189,7 +196,7 @@ public class App extends JFrame {
     }
 
     public boolean mSettings() {
-        new SettingsForm(this);
+        new SettingsForm(o -> updateSettings());
 
         return true;
     }
@@ -378,8 +385,12 @@ public class App extends JFrame {
 
     public void updateSettings() {
         // Atualiza as novas configurações definidas no form Settings
-        codeEditor.setTabSize(SettingsForm.TAB_SIZE);
-        lblTabSize.setText(SettingsForm.TAB_SIZE + " spaces");
+        codeEditor.setFont(Settings.FONT);
+        codeEditor.setTabSize(Settings.TAB_SIZE);
+        lblTabSize.setText(Settings.TAB_SIZE + " spaces");
+        lblEncoding.setText(Settings.stringEncoding());
+        lblLineEnding.setText(Settings.stringLineEnding());
+
     }
 
     public void resetControlVars() {

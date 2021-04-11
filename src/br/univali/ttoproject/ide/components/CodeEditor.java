@@ -1,7 +1,8 @@
 package br.univali.ttoproject.ide.components;
 
+import br.univali.ttoproject.ide.components.Settings.Settings;
+
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Stack;
@@ -15,11 +16,7 @@ public class CodeEditor extends JTextArea {
     public CodeEditor(Consumer<Object> lcListener, Consumer<Object> changesListener){
         setTabSize(4);
         // verifica se é windows ou linux para setar a fonte
-        if (System.getProperty("os.name").substring(0, 3).equalsIgnoreCase("win")) {
-            setFont(new Font("Consolas", Font.PLAIN, 14));
-        } else {
-            setFont(new Font("FreeMono", Font.PLAIN, 15));
-        }
+        setFont(Settings.FONT);
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
