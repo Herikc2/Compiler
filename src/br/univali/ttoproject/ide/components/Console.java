@@ -4,18 +4,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.function.Consumer;
 
 public class Console extends JTextArea {
-
-    private final Consumer<String> returnFunction;
 
     private boolean allowConsoleInput = false;
     private int finalAllowedArea;
     private int initialAllowedArea;
 
-    public Console(Consumer<String> returnFunction) {
-        this.returnFunction = returnFunction;
+    private volatile boolean inputReady = false;
+    private String input = "";
+
+    public Console() {
         setTabSize(4);
         if (System.getProperty("os.name").substring(0, 3).equalsIgnoreCase("win")) {
             setFont(new Font("Consolas", Font.PLAIN, 13));
@@ -38,6 +37,7 @@ public class Console extends JTextArea {
 
     public void addContent(String content) {
         setText(getText() + content);
+        setCaretPosition(getText().length());
     }
 
     public void reset() {
@@ -45,12 +45,13 @@ public class Console extends JTextArea {
         allowConsoleInput = false;
     }
 
-    public void initDataEntry(String content) {
-        addContent(content);
+    public void initDataEntry() {
         requestFocusInWindow();
         allowConsoleInput = true;
-        finalAllowedArea = getCaretPosition();
-        initialAllowedArea = finalAllowedArea;
+        initialAllowedArea = getText().length();
+        finalAllowedArea = initialAllowedArea;
+        inputReady = false;
+        input = "";
     }
 
     private void stopDataEntry() {
@@ -96,7 +97,8 @@ public class Console extends JTextArea {
             // caso o enter seja pressionado enquanto o console está ativo, o dado é enviado para a função de retorno
             if (allowConsoleInput) {
                 stopDataEntry();
-                returnFunction.accept(getText().substring(initialAllowedArea));
+                input = getText().substring(initialAllowedArea);
+                inputReady = true;
                 setCaretPosition(getText().length());
             }
         } else if (keyChar == KeyEvent.VK_TAB) {
@@ -105,4 +107,11 @@ public class Console extends JTextArea {
         }
     }
 
+    public boolean isInputReady() {
+        return inputReady;
+    }
+
+    public String getInput() {
+        return input;
+    }
 }

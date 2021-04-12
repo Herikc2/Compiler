@@ -1,20 +1,18 @@
 package br.univali.ttoproject.ide;
 
-import br.univali.ttoproject.compiler.Compiler;
-import br.univali.ttoproject.ide.components.*;
-import br.univali.ttoproject.ide.components.Console;
 import br.univali.ttoproject.ide.components.MenuBar;
+import br.univali.ttoproject.ide.components.*;
 import br.univali.ttoproject.ide.components.Settings.Settings;
 import br.univali.ttoproject.ide.components.Settings.SettingsForm;
-import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -117,7 +115,7 @@ public class App extends JFrame {
         panelMain.add(splitPane, BorderLayout.CENTER);
 
         // console
-        console = new Console(this::getUserInput);
+        console = new Console();
         scpConsole = new JScrollPane(console);
         splitPane.setRightComponent(scpConsole);
 
@@ -294,7 +292,7 @@ public class App extends JFrame {
         if (!mSave()) return false;
 
         compiled = true;
-        console.setText(new Compiler().build(new StringReader(codeEditor.getText())));
+        //console.setText(new Compiler().build(new StringReader(codeEditor.getText())));
 
         return true;
     }
@@ -312,6 +310,7 @@ public class App extends JFrame {
         running = true;
 
         //console.initDataEntry("Digite: ");
+        new TestProgram(console).run();
 
         return true;
     }
@@ -379,19 +378,6 @@ public class App extends JFrame {
     //------------------------------------------------------------------------------------------------------------------
     // Auxiliary functions
     //------------------------------------------------------------------------------------------------------------------
-
-    public void replaceCurrentLE() {
-        if (Settings.LINE_ENDING == Settings.LNE_CRLF) {
-            codeEditor.setText(codeEditor.getText().replace(Settings.LF, Settings.CRLF));
-        } else {
-            codeEditor.setText(codeEditor.getText().replace(Settings.CRLF, Settings.LF));
-        }
-    }
-
-    public void getUserInput(String entry) {
-        // Recebe o input do usuario retornado do console
-        Debug.print(entry);
-    }
 
     public void updateSettings() {
         // Atualiza as novas configurações definidas no form Settings
