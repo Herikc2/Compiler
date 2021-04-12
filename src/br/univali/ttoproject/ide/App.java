@@ -1,5 +1,6 @@
 package br.univali.ttoproject.ide;
 
+import br.univali.ttoproject.compiler.Program;
 import br.univali.ttoproject.ide.components.MenuBar;
 import br.univali.ttoproject.ide.components.*;
 import br.univali.ttoproject.ide.components.Settings.Settings;
@@ -34,6 +35,8 @@ public class App extends JFrame {
     private final JLabel lblLineEnding;
 
     private FileTTO file;
+
+    private Program program;
 
     private boolean newFile = true;
     private boolean savedFile = true;
@@ -285,7 +288,7 @@ public class App extends JFrame {
                     this,
                     "Your file is empty.",
                     "Warning",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.WARNING_MESSAGE);
             return false;
         }
         // salva o arquivo antes de compilar
@@ -304,13 +307,18 @@ public class App extends JFrame {
                     this,
                     "Please, compile your file before running.",
                     "Warning",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.WARNING_MESSAGE);
             return false;
         }
         running = true;
 
-        //console.initDataEntry("Digite: ");
-        new TestProgram(console).run();
+        program = new TestProgram(console);
+        new Thread(() -> {
+            program.run();
+            //noinspection StatementWithEmptyBody
+            while (!program.isFinished());
+            console.addContent("\nProcess finished");
+        }).start();
 
         return true;
     }

@@ -1,20 +1,23 @@
 package br.univali.ttoproject.ide;
 
+import br.univali.ttoproject.compiler.Program;
 import br.univali.ttoproject.ide.components.Console;
 
-public class TestProgram {
-
-    public Console console;
+public class TestProgram extends Program {
 
     public TestProgram(Console console) {
-        this.console = console;
+        super(console);
     }
 
+    @Override
     public void run() {
         new Thread(() -> {
             funcPut("Type your name: ");
             var name = funcGet();
             funcPut("Hello " + name + ".");
+
+            // last command
+            finished = true;
         }).start();
     }
 
@@ -24,6 +27,7 @@ public class TestProgram {
 
     public String funcGet() {
         console.initDataEntry();
+        //noinspection StatementWithEmptyBody
         while (!console.isInputReady()) ;
         var input = console.getInput();
         console.addContent("\n");
