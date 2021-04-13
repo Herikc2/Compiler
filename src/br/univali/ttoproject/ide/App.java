@@ -3,8 +3,9 @@ package br.univali.ttoproject.ide;
 import br.univali.ttoproject.compiler.Program;
 import br.univali.ttoproject.ide.components.MenuBar;
 import br.univali.ttoproject.ide.components.*;
-import br.univali.ttoproject.ide.components.Settings.Settings;
+import br.univali.ttoproject.ide.components.Settings.SettingConstants;
 import br.univali.ttoproject.ide.components.Settings.SettingsForm;
+import br.univali.ttoproject.ide.components.editor.CodeEditor;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -102,9 +103,9 @@ public class App extends JFrame {
         // status bar
         statusBar = new StatusBar();
         lblLnCol = new JLabel("Ln 1, Col 1");
-        lblTabSize = new JLabel(Settings.TAB_SIZE + " spaces");
-        lblEncoding = new JLabel(Settings.stringEncoding());
-        lblLineEnding = new JLabel(Settings.stringLineEnding());
+        lblTabSize = new JLabel(SettingConstants.TAB_SIZE + " spaces");
+        lblEncoding = new JLabel(SettingConstants.stringEncoding());
+        lblLineEnding = new JLabel(SettingConstants.stringLineEnding());
         statusBar.add(lblLnCol);
         statusBar.add(lblTabSize);
         statusBar.add(lblEncoding);
@@ -178,7 +179,7 @@ public class App extends JFrame {
         } else if (!savedFile) {
             // senão se o arquivo tiver alterações, ele é salvo
             resetFileVars();
-            setTitle(getTitle().substring(0, getTitle().length() - 2));
+            setTitle(getTitle().substring(0, getTitle().length() - 1));
             file.save(codeEditor.getText());
         }
         return true;
@@ -389,11 +390,11 @@ public class App extends JFrame {
 
     public void updateSettings() {
         // Atualiza as novas configurações definidas no form Settings
-        codeEditor.setFont(Settings.FONT);
-        codeEditor.setTabSize(Settings.TAB_SIZE);
-        lblTabSize.setText(Settings.TAB_SIZE + " spaces");
-        lblEncoding.setText(Settings.stringEncoding());
-        lblLineEnding.setText(Settings.stringLineEnding());
+        codeEditor.setFont(SettingConstants.FONT);
+        codeEditor.setTabSize(SettingConstants.TAB_SIZE);
+        lblTabSize.setText(SettingConstants.TAB_SIZE + " spaces");
+        lblEncoding.setText(SettingConstants.stringEncoding());
+        lblLineEnding.setText(SettingConstants.stringLineEnding());
 
     }
 

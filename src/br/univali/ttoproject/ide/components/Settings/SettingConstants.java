@@ -2,7 +2,7 @@ package br.univali.ttoproject.ide.components.Settings;
 
 import java.awt.*;
 
-public class Settings {
+public class SettingConstants {
 
     public static final String CRLF = "\r\n";
     public static final String LF = "\n";

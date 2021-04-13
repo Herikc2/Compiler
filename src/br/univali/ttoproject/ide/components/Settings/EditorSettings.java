@@ -14,7 +14,7 @@ public class EditorSettings {
         cbLineEnding.addItem("CRLF");
         cbLineEnding.addItem("LF");
         cbEncoding.addItem("UTF-8");
-        cbLineEnding.setSelectedIndex(Settings.LINE_ENDING);
+        cbLineEnding.setSelectedIndex(SettingConstants.LINE_ENDING);
     }
 
     public JPanel getPanelMain() {

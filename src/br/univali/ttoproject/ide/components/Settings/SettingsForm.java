@@ -39,7 +39,7 @@ public class SettingsForm extends JDialog {
         tabbedPane.add("Appearance", appearanceSettings.getPanelMain());
         tabbedPane.add("Font", fontSettings.getPanelMain());
 
-        fontSettings.getFontChooser().setSelectedFont(Settings.FONT);
+        fontSettings.getFontChooser().setSelectedFont(SettingConstants.FONT);
 
         // btn save listener
         btnSave.addActionListener(e -> {
@@ -49,13 +49,13 @@ public class SettingsForm extends JDialog {
     }
 
     private void update() {
-        Settings.TAB_SIZE = Integer.parseInt(editorSettings.getTfTabSize().getText());
-        Settings.LINE_ENDING = editorSettings.getCbLineEnding().getSelectedIndex();
-        Settings.ENCODING = editorSettings.getCbEncoding().getSelectedIndex();
-        Settings.FONT = fontSettings.getFontChooser().getSelectedFont();
-        Settings.SHOW_TOOL_BAR = appearanceSettings.getCkbToolBar().isSelected();
-        Settings.SHOW_STATUS_BAR = appearanceSettings.getCkbStatusBar().isSelected();
-        Settings.SHOW_CONSOLE = appearanceSettings.getCkbConsole().isSelected();
+        SettingConstants.TAB_SIZE = Integer.parseInt(editorSettings.getTfTabSize().getText());
+        SettingConstants.LINE_ENDING = editorSettings.getCbLineEnding().getSelectedIndex();
+        SettingConstants.ENCODING = editorSettings.getCbEncoding().getSelectedIndex();
+        SettingConstants.FONT = fontSettings.getFontChooser().getSelectedFont();
+        SettingConstants.SHOW_TOOL_BAR = appearanceSettings.getCkbToolBar().isSelected();
+        SettingConstants.SHOW_STATUS_BAR = appearanceSettings.getCkbStatusBar().isSelected();
+        SettingConstants.SHOW_CONSOLE = appearanceSettings.getCkbConsole().isSelected();
 
         update.accept(null);
         setVisible(false);

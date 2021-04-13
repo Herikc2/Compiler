@@ -3,6 +3,8 @@ package br.univali.ttoproject.ide;
 import br.univali.ttoproject.compiler.Program;
 import br.univali.ttoproject.ide.components.Console;
 
+import javax.swing.*;
+
 public class TestProgram extends Program {
 
     public TestProgram(Console console) {
