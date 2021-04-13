@@ -1,9 +1,11 @@
 package br.univali.ttoproject.ide.components.editor;
 
-import br.univali.ttoproject.ide.components.Settings.SettingConstants;
+import br.univali.ttoproject.ide.components.Settings.Settings;
 
 import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -24,7 +26,8 @@ public class CodeEditor extends JTextPane {
         undoStates = new Stack<>();
         redoStates = new Stack<>();
         setTabSize(4);
-        setFont(SettingConstants.FONT);
+
+        setFont(Settings.FONT);
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -42,18 +45,18 @@ public class CodeEditor extends JTextPane {
         var text = getText();
         var length = text.length();
         var word = "";
-        changeColor(Color.BLACK, 0, length);
         for(int i = 0; i < length; ++i){
             char c = text.charAt(i);
             if (Token.isSkip(c)) {
                 if(Token.isReserved(word)){
-                    changeColor(Color.BLUE, i - word.length(), i);
-                    word = "";
+                    changeColor(Settings.COLOR_RESERVED, i - word.length(), i - (i - word.length()));
                 }
+                word = "";
             } else if (i == length - 1) {
                 word += c;
+                ++i;
                 if(Token.isReserved(word)){
-                    changeColor(Color.BLUE, i - word.length(), i + 2);
+                    changeColor(Settings.COLOR_RESERVED, i - word.length(), i - (i - word.length()));
                 }
             } else {
                 word += c;
@@ -62,12 +65,12 @@ public class CodeEditor extends JTextPane {
     }
 
     public void changeColor(Color c, int beginIndex, int length) {
-        SimpleAttributeSet sas = new SimpleAttributeSet();
+        var sas = new SimpleAttributeSet();
         StyleConstants.setForeground(sas, c);
-        StyledDocument doc = (StyledDocument)getDocument();
+        var doc = (StyledDocument)getDocument();
         doc.setCharacterAttributes(beginIndex, length, sas, false);
         sas = new SimpleAttributeSet();
-        StyleConstants.setForeground(sas, Color.BLACK);
+        StyleConstants.setForeground(sas, Settings.COLOR_DEFAULT);
         setCharacterAttributes(sas, false);
     }
 

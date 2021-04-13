@@ -2,7 +2,7 @@ package br.univali.ttoproject.ide.components.Settings;
 
 import java.awt.*;
 
-public class SettingConstants {
+public class Settings {
 
     public static final String CRLF = "\r\n";
     public static final String LF = "\n";
@@ -22,6 +22,12 @@ public class SettingConstants {
     public static boolean SHOW_STATUS_BAR = true;
     public static boolean SHOW_CONSOLE = true;
 
+    public static Color COLOR_RESERVED;
+    public static Color COLOR_SPECIAL;
+    public static Color COLOR_NUMBER;
+    public static Color COLOR_STRING;
+    public static Color COLOR_DEFAULT;
+
     static {
         SO_NAME = System.getProperty("os.name");
         SO_SHORT_NAME = System.getProperty("os.name").substring(0, 3).toLowerCase();
@@ -29,12 +35,18 @@ public class SettingConstants {
         // TODO: If exists "$user/.2021.1/config: load configs"
         // else:
         if (SO_SHORT_NAME.equals("win")) {
-            FONT = new Font("Consolas", Font.PLAIN, 15);
+            FONT = new Font("Consolas", Font.PLAIN, 16);
             LINE_ENDING = LNE_CRLF;
         } else {
-            FONT = new Font("FreeMono", Font.PLAIN, 16);
+            FONT = new Font("FreeMono", Font.PLAIN, 17);
             LINE_ENDING = LNE_LF;
         }
+
+        COLOR_RESERVED = Color.BLUE;
+        COLOR_SPECIAL = Color.DARK_GRAY;
+        COLOR_NUMBER = Color.GREEN;
+        COLOR_STRING = Color.ORANGE;
+        COLOR_DEFAULT = Color.BLACK;
     }
 
     public static void save() {
