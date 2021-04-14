@@ -10,7 +10,7 @@ public class EditorSettings {
     private JComboBox<String> cbEncoding;
 
     public EditorSettings() {
-        tfTabSize.setText("4");
+        tfTabSize.setText(Integer.toString(Settings.TAB_SIZE));
         cbLineEnding.addItem("CRLF");
         cbLineEnding.addItem("LF");
         cbEncoding.addItem("UTF-8");

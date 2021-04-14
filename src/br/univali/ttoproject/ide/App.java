@@ -396,7 +396,6 @@ public class App extends JFrame {
         lblTabSize.setText(Settings.TAB_SIZE + " spaces");
         lblEncoding.setText(Settings.stringEncoding());
         lblLineEnding.setText(Settings.stringLineEnding());
-
     }
 
     public void resetControlVars() {

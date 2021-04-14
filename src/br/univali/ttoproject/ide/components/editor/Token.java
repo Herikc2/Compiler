@@ -1,7 +1,7 @@
 package br.univali.ttoproject.ide.components.editor;
 
 public class Token {
-    private static String[] reserved = {
+    private static final String[] reserved = {
             "program",
             "define",
             "not",
@@ -24,7 +24,7 @@ public class Token {
             "do"
     };
 
-    private static char[] startSymbols = {
+    private static final char[] symbols = {
             '{',
             '}',
             '(',
@@ -37,7 +37,6 @@ public class Token {
             '/',
             '%',
             '=',
-            '>',
             '<',
             '>',
             '&',
@@ -45,27 +44,25 @@ public class Token {
             '!'
     };
 
-    private static String[] specBegin = {
+    private static final String[] specBegin = {
             ":-",
             "/*",
             "\""
     };
 
-    private static String[] specEnd = {
-            "\n",
-            "*/",
-            "\""
-    };
-
     public static boolean isSkip(char c){
-        return c == ' ' || c == '\n' || c == '\r' || c == '\t' || isStarSymbol(c);
+        return c == ' ' || c == '\n' || c == '\r' || c == '\t' || isSymbol(c);
     }
 
-    private static boolean isStarSymbol(char c){
-        for (var token : startSymbols){
+    public static boolean isSymbol(char c){
+        for (var token : symbols){
             if (c == token) return true;
         }
         return false;
+    }
+
+    public static boolean isNumber(char c){
+        return Character.isDigit(c);
     }
 
     public static boolean isReserved(String word){
@@ -80,13 +77,6 @@ public class Token {
             if (word.equalsIgnoreCase(token)) return true;
         }
         return false;
-    }
-
-    public static int getSpecEndIndex(String word){
-        for (var i = 0; i < specBegin.length; i++){
-            if (word.equalsIgnoreCase(specBegin[i])) return i;
-        }
-        return -1;
     }
 
 }

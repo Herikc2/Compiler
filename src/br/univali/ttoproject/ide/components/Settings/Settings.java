@@ -23,6 +23,7 @@ public class Settings {
     public static boolean SHOW_CONSOLE = true;
 
     public static Color COLOR_RESERVED;
+    public static Color COLOR_COMMENTS;
     public static Color COLOR_SPECIAL;
     public static Color COLOR_NUMBER;
     public static Color COLOR_STRING;
@@ -47,6 +48,7 @@ public class Settings {
         COLOR_NUMBER = Color.GREEN;
         COLOR_STRING = Color.ORANGE;
         COLOR_DEFAULT = Color.BLACK;
+        COLOR_COMMENTS = Color.LIGHT_GRAY;
     }
 
     public static void save() {
