@@ -13,6 +13,9 @@ public class Settings {
 
     public static String SO_NAME;
     public static String SO_SHORT_NAME;
+    public static final int CURRENT_SO;
+    public static final int SO_WINDOWS = 0;
+    public static final int SO_LINUX = 1;
 
     public static int TAB_SIZE = 4;
     public static int LINE_ENDING;
@@ -38,9 +41,11 @@ public class Settings {
         if (SO_SHORT_NAME.equals("win")) {
             FONT = new Font("Consolas", Font.PLAIN, 16);
             LINE_ENDING = LNE_CRLF;
+            CURRENT_SO = SO_WINDOWS;
         } else {
             FONT = new Font("FreeMono", Font.PLAIN, 17);
             LINE_ENDING = LNE_LF;
+            CURRENT_SO = SO_LINUX;
         }
 
         COLOR_RESERVED = Color.BLUE;
@@ -48,7 +53,7 @@ public class Settings {
         COLOR_NUMBER = Color.GREEN;
         COLOR_STRING = Color.ORANGE;
         COLOR_DEFAULT = Color.BLACK;
-        COLOR_COMMENTS = Color.LIGHT_GRAY;
+        COLOR_COMMENTS = Color.MAGENTA;
     }
 
     public static void save() {

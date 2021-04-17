@@ -1,6 +1,7 @@
 package br.univali.ttoproject.ide.components.editor;
 
 import br.univali.ttoproject.ide.components.Settings.Settings;
+import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.*;
 import javax.swing.text.SimpleAttributeSet;
@@ -57,10 +58,12 @@ public class CodeEditor extends JTextPane {
 
     public void setText(String t) {
         super.setText(t);
-        syntaxHighlightParser();
+        // o windows está com um bug que faz com que as cores sejam posicionadas no local errado
+        if(Settings.CURRENT_SO != Settings.SO_WINDOWS)
+            syntaxHighlight();
     }
 
-    private void syntaxHighlightParser() {
+    private void syntaxHighlight() {
         var text = getText();
         var length = text.length();
         var word = "";
@@ -81,6 +84,7 @@ public class CodeEditor extends JTextPane {
                 char endChar;
                 if (word.equals("/*")) {
                     do{
+                        // TODO: finish block comment highlight
                         ++i;
                     } while (i < length);
                 } else {
@@ -135,7 +139,7 @@ public class CodeEditor extends JTextPane {
     public void setTabSize(int size) {
         var at = new AffineTransform();
         var frc = new FontRenderContext(at, true, true);
-        TabSizeEditorKit.TAB_WIDTH = (int) (Settings.FONT.getStringBounds(" ", frc).getWidth()) * size;
+        TabSizeEditorKit.TAB_WIDTH = (float) (Settings.FONT.getStringBounds(" ", frc).getWidth()) * (float) size;
     }
 
     private void handleKeyTyped(KeyEvent e) {
@@ -148,7 +152,9 @@ public class CodeEditor extends JTextPane {
 
     private void handleKeyReleased(KeyEvent e) {
         if (!(e.isActionKey() || e.isControlDown() || e.isAltDown() || e.isShiftDown() || e.isAltGraphDown() || e.isMetaDown())) {
-            syntaxHighlightParser();
+            // o windows está com um bug que faz com que as cores sejam posicionadas no local errado
+            if(Settings.CURRENT_SO != Settings.SO_WINDOWS)
+                syntaxHighlight();
         }
     }
 
