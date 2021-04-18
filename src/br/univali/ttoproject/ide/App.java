@@ -6,7 +6,6 @@ import br.univali.ttoproject.ide.components.*;
 import br.univali.ttoproject.ide.components.Settings.Settings;
 import br.univali.ttoproject.ide.components.Settings.SettingsForm;
 import br.univali.ttoproject.ide.components.editor.CodeEditor;
-import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -16,7 +15,6 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,9 +48,6 @@ public class App extends JFrame {
 
 
     public static void main(String[] args) {
-        // TODO: select look and feel in settings (cross platform default)
-        // TODO: light and dark font theme option in settings (light default)
-        // TODO: add syntax highlight option in settings (windows disabled)
         try {
             //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());

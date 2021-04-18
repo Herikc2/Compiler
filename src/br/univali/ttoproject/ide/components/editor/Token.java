@@ -44,10 +44,10 @@ public class Token {
             '!'
     };
 
-    private static final String[] specBegin = {
-            ":-",
-            "/*",
-            "\""
+    private static final char[] specBegin = {
+            ':',
+            '/',
+            '\"'
     };
 
     public static boolean isSkip(char c){
@@ -72,9 +72,9 @@ public class Token {
         return false;
     }
 
-    public static boolean isSpec(String word){
+    public static boolean isSpec(char word){
         for (var token : specBegin){
-            if (word.equalsIgnoreCase(token)) return true;
+            if (word == token) return true;
         }
         return false;
     }

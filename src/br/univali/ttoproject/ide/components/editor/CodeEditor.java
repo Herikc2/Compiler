@@ -2,7 +2,6 @@ package br.univali.ttoproject.ide.components.editor;
 
 import br.univali.ttoproject.ide.components.Settings.FontTheme;
 import br.univali.ttoproject.ide.components.Settings.Settings;
-import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.*;
 import javax.swing.text.SimpleAttributeSet;
@@ -13,7 +12,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
-import java.util.Set;
 import java.util.Stack;
 import java.util.function.Consumer;
 
@@ -30,17 +28,24 @@ public class CodeEditor extends JTextPane {
         this.changesListener = changesListener;
         undoStates = new Stack<>();
         redoStates = new Stack<>();
-
         setEditorKit(new TabSizeEditorKit());
         setTabSize(4);
         setFont(Settings.FONT);
         addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e) { handleKeyPressed(e); }
+            public void keyPressed(KeyEvent e) {
+                handleKeyPressed(e);
+            }
+
             @Override
-            public void keyReleased(KeyEvent e) { handleKeyReleased(e); }
+            public void keyReleased(KeyEvent e) {
+                handleKeyReleased(e);
+            }
+
             @Override
-            public void keyTyped(KeyEvent e) { handleKeyTyped(e); }
+            public void keyTyped(KeyEvent e) {
+                handleKeyTyped(e);
+            }
         });
         addCaretListener(e -> lcListener.accept(null));
     }
@@ -58,7 +63,7 @@ public class CodeEditor extends JTextPane {
     public void setText(String t) {
         super.setText(t);
         // o windows está com um bug que faz com que as cores sejam posicionadas no local errado
-        if(Settings.SYNTAX_HIGHLIGHT)
+        if (Settings.SYNTAX_HIGHLIGHT)
             syntaxHighlight();
     }
 
@@ -67,46 +72,57 @@ public class CodeEditor extends JTextPane {
         var length = text.length();
         var word = "";
         setDefaultColor();
+        changeColor(FontTheme.COLOR_DEFAULT, 0, length);
         for (int i = 0; i < length; ++i) {
             //Debug.print("loop");
             char c = text.charAt(i);
-            if (Token.isSymbol(c)) {
-                //Debug.print(c);
-                changeColor(FontTheme.COLOR_SPECIAL, (i + 1) - 1, (i + 1) - (i - 1));
-            }
-            if (Token.isNumber(c)) {
-                changeColor(FontTheme.COLOR_NUMBER, (i + 1) - 1, (i + 1) - (i - 1));
-            }
-            if (Token.isSpec(word)) {
-                var si = i;
+            if (Token.isSpec(c)) {
+                var si = i + 1;
                 var len = 0;
                 char endChar;
-                if (word.equals("/*")) {
-                    do{
-                        // TODO: finish block comment highlight
-                        ++i;
-                    } while (i < length);
-                } else {
-                    if (word.equals("\"")) {
-                        endChar = '"';
-                        while (i < length && text.charAt(i) != endChar) ++i;
-                        len = i;
-                        changeColor(FontTheme.COLOR_STRING, si - 1, (len - si) + 2);
-                    } else if (word.equals(":-")) {
-                        endChar = '\n';
-                        while (i < length && text.charAt(i) != endChar) ++i;
-                        len = i;
-                        changeColor(FontTheme.COLOR_COMMENTS, si - 1, (len - si) + 2);
-                    }
+                if (c == '/' && i < length - 1 && text.charAt(i + 1) == '*') {
+                    i += 2;
+                    while ((i < length && text.charAt(i) != '*') && (i < length - 1 && text.charAt(i + 1) != '/')) ++i;
+                    i++;
+                    len = i;
+                    changeColor(FontTheme.COLOR_COMMENTS, si - 1, (len - si) + 2);
+                    word = "";
+                    continue;
+                } else if (c == '\"') {
+                    ++i;
+                    endChar = '"';
+                    while (i < length && text.charAt(i) != endChar) ++i;
+                    len = i;
+                    changeColor(FontTheme.COLOR_STRING, si - 1, (len - si) + 2);
+                    word = "";
+                    continue;
+                } else if (c == ':' && i < length - 1 && text.charAt(i + 1) == '-') {
+                    ++i;
+                    endChar = '\n';
+                    while (i < length && text.charAt(i) != endChar) ++i;
+                    len = i;
+                    changeColor(FontTheme.COLOR_COMMENTS, si - 1, (len - si) + 2);
+                    word = "";
+                    continue;
                 }
-                word = "";
-                continue;
+            }
+            if (Token.isSymbol(c)) {
+                changeColor(FontTheme.COLOR_SPECIAL, (i + 1) - 1, (i + 1) - i);
+            }
+            if (Token.isNumber(c)) {
+                changeColor(FontTheme.COLOR_NUMBER, (i + 1) - 1, (i + 1) - i);
             }
             if (Token.isSkip(c)) {
-                checkTokens(word, i);
+                if (Token.isReserved(word)) {
+                    changeColor(FontTheme.COLOR_RESERVED, i - word.length(), i - (i - word.length()));
+                }
                 word = "";
             } else if (i == length - 1) {
-                checkTokens(word + c, ++i);
+                word += c;
+                ++i;
+                if (Token.isReserved(word)) {
+                    changeColor(FontTheme.COLOR_RESERVED, i - word.length(), i - (i - word.length()));
+                }
             } else {
                 word += c;
             }
@@ -115,9 +131,6 @@ public class CodeEditor extends JTextPane {
     }
 
     private void checkTokens(String word, int i) {
-        if (Token.isReserved(word)) {
-            changeColor(FontTheme.COLOR_RESERVED, i - word.length(), i - (i - word.length()));
-        }
     }
 
     private void changeColor(Color c, int beginIndex, int length) {
@@ -137,10 +150,11 @@ public class CodeEditor extends JTextPane {
 
     public void setTabSize(int size) {
         Settings.TAB_SIZE = size;
-        if (Settings.TAB_TYPE == Settings.TT_TAB){
+        if (Settings.TAB_TYPE == Settings.TT_TAB) {
             var at = new AffineTransform();
-            var frc = new FontRenderContext(at, true, true);
-            TabSizeEditorKit.TAB_WIDTH = (float) (Settings.FONT.getStringBounds(" ", frc).getWidth());
+            var frc = new FontRenderContext(at, false, true);
+            //Debug.print(""+((float) (Settings.FONT.getStringBounds(" ", frc).getWidth())));
+            TabSizeEditorKit.SPACE_WIDTH = (float) (Settings.FONT.getStringBounds(" ", frc).getWidth());
         }
     }
 
@@ -155,12 +169,12 @@ public class CodeEditor extends JTextPane {
     private void handleKeyReleased(KeyEvent e) {
         if (!(e.isActionKey() || e.isControlDown() || e.isAltDown() || e.isShiftDown() || e.isAltGraphDown() || e.isMetaDown())) {
             // o windows está com um bug que faz com que as cores sejam posicionadas no local errado
-            if(Settings.SYNTAX_HIGHLIGHT)
+            if (Settings.SYNTAX_HIGHLIGHT)
                 syntaxHighlight();
         }
     }
 
-    private void handleKeyPressed(KeyEvent e){
+    private void handleKeyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_TAB) {
             if (Settings.TAB_TYPE == Settings.TT_SPACES) {
                 e.consume();

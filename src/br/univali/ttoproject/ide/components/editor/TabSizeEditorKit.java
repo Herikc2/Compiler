@@ -1,13 +1,12 @@
 package br.univali.ttoproject.ide.components.editor;
 
 import br.univali.ttoproject.ide.components.Settings.Settings;
-import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.text.*;
 
 public class TabSizeEditorKit extends StyledEditorKit {
 
-    public static float TAB_WIDTH;
+    public static float SPACE_WIDTH;
 
     public ViewFactory getViewFactory() {
         return new TTOViewFactory();
@@ -45,7 +44,14 @@ public class TabSizeEditorKit extends StyledEditorKit {
         public float nextTabStop(float x, int tabOffset) {
             TabSet tabs = getTabSet();
             if (tabs == null) {
-                return (getTabBase() + ((x / TAB_WIDTH + 1) * TAB_WIDTH)) * Settings.TAB_SIZE;
+                var fullTab = SPACE_WIDTH * (float) Settings.TAB_SIZE;
+//                Debug.print("init--------------------------------------------");
+//                Debug.print("tab: "+(getTabBase() + ((x / fullTab + 1) * fullTab)));
+//                Debug.print("getTabBase(): "+getTabBase());
+//                Debug.print("x: "+x);
+//                Debug.print("fullTab: "+fullTab);
+//                Debug.print("end---------------------------------------------");
+                return x + fullTab;
             }
             return super.nextTabStop(x, tabOffset);
         }

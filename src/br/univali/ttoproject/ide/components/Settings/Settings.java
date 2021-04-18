@@ -1,5 +1,6 @@
 package br.univali.ttoproject.ide.components.Settings;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class Settings {
@@ -31,7 +32,7 @@ public class Settings {
     public static boolean SHOW_STATUS_BAR = true;
     public static boolean SHOW_CONSOLE = true;
     public static int LOOK_AND_FEEL = 0;
-    public static int FONT_THEME;
+    public static int FONT_THEME = 0;
     public static boolean SYNTAX_HIGHLIGHT;
 
     static {
@@ -40,24 +41,28 @@ public class Settings {
 
         // TODO: If exists "$user/.2021.1/config: load configs"
         // else:
+        FontTheme.setDefaultLight();
         if (SO_SHORT_NAME.equals("win")) {
             FONT = new Font("Consolas", Font.PLAIN, 16);
             LINE_ENDING = LNE_CRLF;
             CURRENT_SO = SO_WINDOWS;
             TAB_TYPE = TT_SPACES;
-            FontTheme.setDefaultLight();
-            FONT_THEME = 0;
             SYNTAX_HIGHLIGHT = false;
         } else {
-            FONT = new Font("FreeMono", Font.PLAIN, 17);
+            FONT = new Font("Ubuntu Mono", Font.PLAIN, 18);
             LINE_ENDING = LNE_LF;
             CURRENT_SO = SO_LINUX;
             TAB_TYPE = TT_TAB;
-            FontTheme.setDefaultDark();
-            FONT_THEME = 1;
             SYNTAX_HIGHLIGHT = true;
         }
 
+        // debug
+        FontTheme.setDefaultDark();
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void load() {
