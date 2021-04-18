@@ -1,5 +1,6 @@
 package br.univali.ttoproject.ide.components.editor;
 
+import br.univali.ttoproject.ide.components.Settings.Settings;
 import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.text.*;
@@ -44,7 +45,7 @@ public class TabSizeEditorKit extends StyledEditorKit {
         public float nextTabStop(float x, int tabOffset) {
             TabSet tabs = getTabSet();
             if (tabs == null) {
-                return getTabBase() + ((x / TAB_WIDTH + 1) * TAB_WIDTH);
+                return (getTabBase() + ((x / TAB_WIDTH + 1) * TAB_WIDTH)) * Settings.TAB_SIZE;
             }
             return super.nextTabStop(x, tabOffset);
         }

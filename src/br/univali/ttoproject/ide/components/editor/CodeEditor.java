@@ -1,5 +1,6 @@
 package br.univali.ttoproject.ide.components.editor;
 
+import br.univali.ttoproject.ide.components.Settings.FontTheme;
 import br.univali.ttoproject.ide.components.Settings.Settings;
 import br.univali.ttoproject.ide.util.Debug;
 
@@ -12,6 +13,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.util.Set;
 import java.util.Stack;
 import java.util.function.Consumer;
 
@@ -34,14 +36,11 @@ public class CodeEditor extends JTextPane {
         setFont(Settings.FONT);
         addKeyListener(new KeyAdapter() {
             @Override
-            public void keyReleased(KeyEvent e) {
-                handleKeyReleased(e);
-            }
-
+            public void keyPressed(KeyEvent e) { handleKeyPressed(e); }
             @Override
-            public void keyTyped(KeyEvent e) {
-                handleKeyTyped(e);
-            }
+            public void keyReleased(KeyEvent e) { handleKeyReleased(e); }
+            @Override
+            public void keyTyped(KeyEvent e) { handleKeyTyped(e); }
         });
         addCaretListener(e -> lcListener.accept(null));
     }
@@ -59,7 +58,7 @@ public class CodeEditor extends JTextPane {
     public void setText(String t) {
         super.setText(t);
         // o windows está com um bug que faz com que as cores sejam posicionadas no local errado
-        if(Settings.CURRENT_SO != Settings.SO_WINDOWS)
+        if(Settings.SYNTAX_HIGHLIGHT)
             syntaxHighlight();
     }
 
@@ -73,10 +72,10 @@ public class CodeEditor extends JTextPane {
             char c = text.charAt(i);
             if (Token.isSymbol(c)) {
                 //Debug.print(c);
-                changeColor(Settings.COLOR_SPECIAL, (i + 1) - 1, (i + 1) - (i - 1));
+                changeColor(FontTheme.COLOR_SPECIAL, (i + 1) - 1, (i + 1) - (i - 1));
             }
             if (Token.isNumber(c)) {
-                changeColor(Settings.COLOR_NUMBER, (i + 1) - 1, (i + 1) - (i - 1));
+                changeColor(FontTheme.COLOR_NUMBER, (i + 1) - 1, (i + 1) - (i - 1));
             }
             if (Token.isSpec(word)) {
                 var si = i;
@@ -92,12 +91,12 @@ public class CodeEditor extends JTextPane {
                         endChar = '"';
                         while (i < length && text.charAt(i) != endChar) ++i;
                         len = i;
-                        changeColor(Settings.COLOR_STRING, si - 1, (len - si) + 2);
+                        changeColor(FontTheme.COLOR_STRING, si - 1, (len - si) + 2);
                     } else if (word.equals(":-")) {
                         endChar = '\n';
                         while (i < length && text.charAt(i) != endChar) ++i;
                         len = i;
-                        changeColor(Settings.COLOR_COMMENTS, si - 1, (len - si) + 2);
+                        changeColor(FontTheme.COLOR_COMMENTS, si - 1, (len - si) + 2);
                     }
                 }
                 word = "";
@@ -117,7 +116,7 @@ public class CodeEditor extends JTextPane {
 
     private void checkTokens(String word, int i) {
         if (Token.isReserved(word)) {
-            changeColor(Settings.COLOR_RESERVED, i - word.length(), i - (i - word.length()));
+            changeColor(FontTheme.COLOR_RESERVED, i - word.length(), i - (i - word.length()));
         }
     }
 
@@ -132,14 +131,17 @@ public class CodeEditor extends JTextPane {
     private void setDefaultColor() {
         var sas = new SimpleAttributeSet();
         sas = new SimpleAttributeSet();
-        StyleConstants.setForeground(sas, Settings.COLOR_DEFAULT);
+        StyleConstants.setForeground(sas, FontTheme.COLOR_DEFAULT);
         setCharacterAttributes(sas, false);
     }
 
     public void setTabSize(int size) {
-        var at = new AffineTransform();
-        var frc = new FontRenderContext(at, true, true);
-        TabSizeEditorKit.TAB_WIDTH = (float) (Settings.FONT.getStringBounds(" ", frc).getWidth()) * (float) size;
+        Settings.TAB_SIZE = size;
+        if (Settings.TAB_TYPE == Settings.TT_TAB){
+            var at = new AffineTransform();
+            var frc = new FontRenderContext(at, true, true);
+            TabSizeEditorKit.TAB_WIDTH = (float) (Settings.FONT.getStringBounds(" ", frc).getWidth());
+        }
     }
 
     private void handleKeyTyped(KeyEvent e) {
@@ -153,8 +155,23 @@ public class CodeEditor extends JTextPane {
     private void handleKeyReleased(KeyEvent e) {
         if (!(e.isActionKey() || e.isControlDown() || e.isAltDown() || e.isShiftDown() || e.isAltGraphDown() || e.isMetaDown())) {
             // o windows está com um bug que faz com que as cores sejam posicionadas no local errado
-            if(Settings.CURRENT_SO != Settings.SO_WINDOWS)
+            if(Settings.SYNTAX_HIGHLIGHT)
                 syntaxHighlight();
+        }
+    }
+
+    private void handleKeyPressed(KeyEvent e){
+        if (e.getKeyCode() == KeyEvent.VK_TAB) {
+            if (Settings.TAB_TYPE == Settings.TT_SPACES) {
+                e.consume();
+                var caretPosition = getCaretPosition();
+                var tabSize = Settings.TAB_SIZE;
+                var text1 = getText().substring(0, caretPosition);
+                var text2 = getText().substring(caretPosition);
+                // TODO: verify incomplete tab cases
+                setText(text1 + " ".repeat(tabSize) + text2);
+                setCaretPosition(caretPosition + tabSize);
+            }
         }
     }
 

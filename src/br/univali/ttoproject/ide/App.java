@@ -6,6 +6,7 @@ import br.univali.ttoproject.ide.components.*;
 import br.univali.ttoproject.ide.components.Settings.Settings;
 import br.univali.ttoproject.ide.components.Settings.SettingsForm;
 import br.univali.ttoproject.ide.components.editor.CodeEditor;
+import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +33,7 @@ public class App extends JFrame {
     private final JScrollPane scpConsole;
     private final JScrollPane scpCodeEditor;
     private final JLabel lblLnCol;
+    private final JLabel lblTabType;
     private final JLabel lblTabSize;
     private final JLabel lblEncoding;
     private final JLabel lblLineEnding;
@@ -47,9 +50,14 @@ public class App extends JFrame {
 
 
     public static void main(String[] args) {
+        // TODO: select look and feel in settings (cross platform default)
+        // TODO: light and dark font theme option in settings (light default)
+        // TODO: add syntax highlight option in settings (windows disabled)
         try {
             //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+//            Debug.print(UIManager.getCrossPlatformLookAndFeelClassName());
+//            Debug.print(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException |
                 InstantiationException |
                 IllegalAccessException |
@@ -104,10 +112,12 @@ public class App extends JFrame {
         // status bar
         statusBar = new StatusBar();
         lblLnCol = new JLabel("Ln 1, Col 1");
+        lblTabType = new JLabel(Settings.stringTabType());
         lblTabSize = new JLabel(Settings.TAB_SIZE + " spaces");
         lblEncoding = new JLabel(Settings.stringEncoding());
         lblLineEnding = new JLabel(Settings.stringLineEnding());
         statusBar.add(lblLnCol);
+        statusBar.add(lblTabType);
         statusBar.add(lblTabSize);
         statusBar.add(lblEncoding);
         statusBar.add(lblLineEnding);
@@ -393,9 +403,11 @@ public class App extends JFrame {
         // Atualiza as novas configurações definidas no form Settings
         codeEditor.setFont(Settings.FONT);
         codeEditor.setTabSize(Settings.TAB_SIZE);
+        lblTabType.setText(Settings.stringTabType());
         lblTabSize.setText(Settings.TAB_SIZE + " spaces");
         lblEncoding.setText(Settings.stringEncoding());
         lblLineEnding.setText(Settings.stringLineEnding());
+        SwingUtilities.updateComponentTreeUI(this);
     }
 
     public void resetControlVars() {
