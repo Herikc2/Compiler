@@ -62,7 +62,6 @@ public class CodeEditor extends JTextPane {
 
     public void setText(String t) {
         super.setText(t);
-        // o windows está com um bug que faz com que as cores sejam posicionadas no local errado
         if (Settings.SYNTAX_HIGHLIGHT)
             syntaxHighlight();
     }
@@ -130,9 +129,6 @@ public class CodeEditor extends JTextPane {
         //Debug.print("fim\n\n");
     }
 
-    private void checkTokens(String word, int i) {
-    }
-
     private void changeColor(Color c, int beginIndex, int length) {
         var sas = new SimpleAttributeSet();
         StyleConstants.setForeground(sas, c);
@@ -163,12 +159,53 @@ public class CodeEditor extends JTextPane {
             hasChanges = true;
             changesListener.accept(null);
             undoStates.push(new State(getText(), getCaretPosition()));
+            coder(e);
         }
     }
 
+    private void coder(KeyEvent e){
+        var kChar = e.getKeyChar();
+        int tabLevel = getTabLevel();
+        if(kChar == '{'){
+            ++tabLevel;
+            e.consume();
+            var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
+            var curCaretPosition = getCaretPosition();
+            var caretPad = isTab ? 1 : Settings.TAB_SIZE;
+            var t1 = getText().substring(0, getCaretPosition());
+            var t2 = getText().substring(getCaretPosition());
+            var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
+            if(!t1.endsWith(" ")) t1 += " ";
+            setText(t1 + "{\n" + tab.repeat(tabLevel) + "\n" + tab.repeat(tabLevel-1) + "}" + t2);
+            setCaretPosition(curCaretPosition + (caretPad * tabLevel) + 3);
+        } else if(kChar == '\n'){
+            e.consume();
+            var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
+            var curCaretPosition = getCaretPosition();
+            var caretPad = isTab ? 1 : Settings.TAB_SIZE;
+            var t1 = getText().substring(0, getCaretPosition());
+            var t2 = getText().substring(getCaretPosition());
+            var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
+            setText(t1 + tab.repeat(tabLevel) + t2);
+            setCaretPosition(curCaretPosition + (caretPad * tabLevel));
+        }
+    }
+
+    private int getTabLevel() {
+        var text = getText().substring(0, getCaretPosition());
+        int tabLevel = 0;
+        for (int i = 0; i < text.length(); ++i) {
+            var c = text.charAt(i);
+            if (c == '{') tabLevel++;
+            else if (c == '}') tabLevel--;
+            if (tabLevel < 0) tabLevel = 0;
+        }
+        return tabLevel;
+    }
+
     private void handleKeyReleased(KeyEvent e) {
-        if (!(e.isActionKey() || e.isControlDown() || e.isAltDown() || e.isShiftDown() || e.isAltGraphDown() || e.isMetaDown())) {
-            // o windows está com um bug que faz com que as cores sejam posicionadas no local errado
+        if (!(e.isActionKey() || e.isControlDown() || e.isAltDown() ||
+                e.isShiftDown() || e.isAltGraphDown() || e.isMetaDown())) {
             if (Settings.SYNTAX_HIGHLIGHT)
                 syntaxHighlight();
         }
