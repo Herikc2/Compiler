@@ -1,8 +1,6 @@
 package br.univali.ttoproject.ide.components.Settings;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 
 public class Settings {
 
@@ -42,20 +40,20 @@ public class Settings {
 
         // TODO: If exists "$user/.2021.1/config: load configs" else:
         FontTheme.setFontTheme(FONT_THEME);
-        try {
-            FONT = Font.createFont(Font.TRUETYPE_FONT, new File("./src/res/fonts/consolas.ttf")).deriveFont(16f);
-            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(FONT);
-        } catch (IOException | FontFormatException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            FONT = Font.createFont(Font.TRUETYPE_FONT, new File("./src/res/fonts/consolas.ttf")).deriveFont(16f);
+//            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(FONT);
+//        } catch (IOException | FontFormatException e) {
+//            e.printStackTrace();
+//        }
         if (SO_SHORT_NAME.equals("win")) {
-            //FONT = new Font("Consolas", Font.PLAIN, 16);
+            FONT = new Font("Consolas", Font.PLAIN, 16);
             LINE_ENDING = LNE_CRLF;
             CURRENT_SO = SO_WINDOWS;
             //TAB_TYPE = TT_SPACES;
             //SYNTAX_HIGHLIGHT = false;
         } else {
-            //FONT = new Font("Ubuntu Mono", Font.PLAIN, 16);
+            FONT = new Font("Ubuntu Mono", Font.PLAIN, 16);
             LINE_ENDING = LNE_LF;
             CURRENT_SO = SO_LINUX;
             //TAB_TYPE = TT_TAB;
