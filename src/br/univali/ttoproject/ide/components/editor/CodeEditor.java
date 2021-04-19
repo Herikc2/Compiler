@@ -169,13 +169,17 @@ public class CodeEditor extends JTextPane {
             e.consume();
             var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
             var curCaretPosition = getCaretPosition();
+            var pad = 2;
             var caretPad = isTab ? 1 : Settings.TAB_SIZE;
             var t1 = getText().substring(0, getCaretPosition());
             var t2 = getText().substring(getCaretPosition());
             var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
-            if(!t1.endsWith(" ")) t1 += " ";
+            if(!t1.endsWith(" ")) {
+                t1 += " ";
+                pad++;
+            }
             setText(t1 + "{\n" + tab.repeat(tabLevel) + "\n" + tab.repeat(tabLevel-1) + "}" + t2);
-            setCaretPosition(curCaretPosition + (caretPad * tabLevel) + 3);
+            setCaretPosition(curCaretPosition + (caretPad * tabLevel) + pad);
         } else if(kChar == '\n'){
             e.consume();
             var isTab = Settings.TAB_TYPE == Settings.TT_TAB;

@@ -1,6 +1,7 @@
 package br.univali.ttoproject.ide;
 
 import br.univali.ttoproject.compiler.Program;
+import br.univali.ttoproject.compiler.Compiler;
 import br.univali.ttoproject.ide.components.MenuBar;
 import br.univali.ttoproject.ide.components.*;
 import br.univali.ttoproject.ide.components.Settings.Settings;
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.StringReader;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,10 +26,13 @@ public class App extends JFrame {
     private JPanel panelMain;
 
     private final CodeEditor codeEditor;
+    private final JTabbedPane tab;
     private final Console console;
+    private final JTextArea log;
     private final ToolBar toolBar;
     private final StatusBar statusBar;
     private final JSplitPane splitPane;
+    private final JScrollPane scpLog;
     private final JScrollPane scpConsole;
     private final JScrollPane scpCodeEditor;
     private final JLabel lblLnCol;
@@ -118,7 +123,7 @@ public class App extends JFrame {
         statusBar.add(lblLineEnding);
         panelMain.add(statusBar, BorderLayout.SOUTH);
 
-        // split pane (up: editor down: console)
+        // split pane (up(left): editor / down(right): console)
         splitPane = new JSplitPane();
         splitPane.setResizeWeight(0.8);
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -127,7 +132,19 @@ public class App extends JFrame {
         // console
         console = new Console();
         scpConsole = new JScrollPane(console);
-        splitPane.setRightComponent(scpConsole);
+
+        // log
+        log = new JTextArea();
+        log.setEditable(false);
+        scpLog = new JScrollPane(log);
+
+        // creating and setting up tab
+        tab = new JTabbedPane();
+        tab.add("Run", scpConsole);
+        tab.add("Log", scpLog);
+
+        // adding tab (console and log)
+        splitPane.setRightComponent(tab);
 
         // editor
         codeEditor = new CodeEditor(o -> updateLCLabel(), o -> updateFileEdit());
@@ -273,7 +290,7 @@ public class App extends JFrame {
         } else {
             panelMain.remove(scpCodeEditor);
             panelMain.add(splitPane, BorderLayout.CENTER);
-            splitPane.setRightComponent(scpConsole);
+            splitPane.setRightComponent(tab);
             splitPane.setLeftComponent(scpCodeEditor);
             splitPane.setResizeWeight(0.8);
             splitPane.setDividerLocation(0.8);
@@ -302,7 +319,7 @@ public class App extends JFrame {
         if (!mSave()) return false;
 
         compiled = true;
-        //console.setText(new Compiler().build(new StringReader(codeEditor.getText())));
+        console.setText(new Compiler().build(new StringReader(codeEditor.getText())));
 
         return true;
     }
@@ -319,13 +336,13 @@ public class App extends JFrame {
         }
         running = true;
 
-        program = new TestProgram(console);
-        new Thread(() -> {
-            program.run();
-            //noinspection StatementWithEmptyBody
-            while (!program.isFinished());
-            console.addContent("\nProcess finished");
-        }).start();
+//        program = new TestProgram(console);
+//        new Thread(() -> {
+//            program.run();
+//            //noinspection StatementWithEmptyBody
+//            while (!program.isFinished());
+//            console.addContent("\nProcess finished");
+//        }).start();
 
         return true;
     }
