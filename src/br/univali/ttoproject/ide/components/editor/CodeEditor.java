@@ -73,7 +73,6 @@ public class CodeEditor extends JTextPane {
         setDefaultColor();
         changeColor(FontTheme.COLOR_DEFAULT, 0, length);
         for (int i = 0; i < length; ++i) {
-            //Debug.print("loop");
             char c = text.charAt(i);
             if (Token.isSpec(c)) {
                 var si = i + 1;
@@ -81,7 +80,7 @@ public class CodeEditor extends JTextPane {
                 char endChar;
                 if (c == '/' && i < length - 1 && text.charAt(i + 1) == '*') {
                     i += 2;
-                    while ((i < length && text.charAt(i) != '*') && (i < length - 1 && text.charAt(i + 1) != '/')) ++i;
+                    while ((i < length && text.charAt(i) != '*') || (i < length - 1 && text.charAt(i + 1) != '/')) ++i;
                     i++;
                     len = i;
                     changeColor(FontTheme.COLOR_COMMENTS, si - 1, (len - si) + 2);
@@ -126,7 +125,6 @@ public class CodeEditor extends JTextPane {
                 word += c;
             }
         }
-        //Debug.print("fim\n\n");
     }
 
     private void changeColor(Color c, int beginIndex, int length) {
@@ -247,11 +245,11 @@ public class CodeEditor extends JTextPane {
         }
     }
 
-    private boolean canUndo() {
+    public boolean canUndo() {
         return undoStates.size() > 0;
     }
 
-    private boolean canRedo() {
+    public boolean canRedo() {
         return redoStates.size() > 0;
     }
 
