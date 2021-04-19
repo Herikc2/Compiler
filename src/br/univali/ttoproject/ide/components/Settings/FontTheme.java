@@ -22,20 +22,20 @@ public class FontTheme {
     }
 
     public static void setDefaultLight(){
-        COLOR_RESERVED = new Color(48, 88, 222);
+        COLOR_RESERVED = new Color(0, 0, 255);
         COLOR_SPECIAL = Color.DARK_GRAY;
-        COLOR_NUMBER = new Color(18, 172, 72);
-        COLOR_STRING = new Color(194, 97, 45);
+        COLOR_NUMBER = new Color(9, 134, 88);
+        COLOR_STRING = new Color(163, 21, 21);
         COLOR_DEFAULT = Color.BLACK;
-        COLOR_COMMENTS = new Color(42, 42, 42);
+        COLOR_COMMENTS = new Color(0, 128, 0);
     }
 
     public static void setDefaultDark(){
-        COLOR_RESERVED = new Color(66, 109, 255);
+        COLOR_RESERVED = new Color(86, 156, 214);
         COLOR_SPECIAL = Color.LIGHT_GRAY;
-        COLOR_NUMBER = new Color(52, 255, 125);
-        COLOR_STRING = new Color(255, 127, 58);
+        COLOR_NUMBER = new Color(181, 206, 168);
+        COLOR_STRING = new Color(206, 145, 120);
         COLOR_DEFAULT = Color.WHITE;
-        COLOR_COMMENTS = new Color(42, 42, 42);
+        COLOR_COMMENTS = new Color(106, 153, 85);
     }
 }
