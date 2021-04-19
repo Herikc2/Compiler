@@ -89,7 +89,8 @@ public class CodeEditor extends JTextPane {
                 } else if (c == '\"') {
                     ++i;
                     endChar = '"';
-                    while (i < length && text.charAt(i) != endChar) ++i;
+                    while ((i < length && text.charAt(i) != endChar) ||
+                            (i - 1 >= 0 && i - 1 < length && text.charAt(i - 1) == '\\')) ++i;
                     len = i;
                     changeColor(FontTheme.COLOR_STRING, si - 1, (len - si) + 2);
                     word = "";
@@ -105,21 +106,25 @@ public class CodeEditor extends JTextPane {
                 }
             }
             if (Token.isSymbol(c)) {
-                changeColor(FontTheme.COLOR_SPECIAL, (i + 1) - 1, (i + 1) - i);
+                changeColor(FontTheme.COLOR_SPECIAL, i, (i + 1) - i);
             }
             if (Token.isNumber(c)) {
-                changeColor(FontTheme.COLOR_NUMBER, (i + 1) - 1, (i + 1) - i);
+                changeColor(FontTheme.COLOR_NUMBER, i, (i + 1) - i);
             }
             if (Token.isSkip(c)) {
                 if (Token.isReserved(word)) {
-                    changeColor(FontTheme.COLOR_RESERVED, i - word.length(), i - (i - word.length()));
+                    var from = i - word.length();
+                    var to = i - from;
+                    changeColor(FontTheme.COLOR_RESERVED, from, to);
                 }
                 word = "";
             } else if (i == length - 1) {
                 word += c;
                 ++i;
                 if (Token.isReserved(word)) {
-                    changeColor(FontTheme.COLOR_RESERVED, i - word.length(), i - (i - word.length()));
+                    var from = i - word.length();
+                    var to = i - from;
+                    changeColor(FontTheme.COLOR_RESERVED, from, to);
                 }
             } else {
                 word += c;
@@ -147,7 +152,6 @@ public class CodeEditor extends JTextPane {
         if (Settings.TAB_TYPE == Settings.TT_TAB) {
             var at = new AffineTransform();
             var frc = new FontRenderContext(at, false, true);
-            //Debug.print(""+((float) (Settings.FONT.getStringBounds(" ", frc).getWidth())));
             TabSizeEditorKit.SPACE_WIDTH = (float) (Settings.FONT.getStringBounds(" ", frc).getWidth());
         }
     }
