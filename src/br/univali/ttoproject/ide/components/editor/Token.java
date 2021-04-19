@@ -47,7 +47,8 @@ public class Token {
     private static final char[] specBegin = {
             ':',
             '/',
-            '\"'
+            '"',
+            '\''
     };
 
     public static boolean isSkip(char c){

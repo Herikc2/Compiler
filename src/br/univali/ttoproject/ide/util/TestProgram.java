@@ -1,9 +1,7 @@
-package br.univali.ttoproject.ide;
+package br.univali.ttoproject.ide.util;
 
 import br.univali.ttoproject.compiler.Program;
 import br.univali.ttoproject.ide.components.Console;
-
-import javax.swing.*;
 
 public class TestProgram extends Program {
 

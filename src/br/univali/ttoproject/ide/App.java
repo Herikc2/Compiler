@@ -323,6 +323,7 @@ public class App extends JFrame {
                     JOptionPane.WARNING_MESSAGE);
             return false;
         }
+
         // salva o arquivo antes de compilar
         //if (!mSave()) return false;
 

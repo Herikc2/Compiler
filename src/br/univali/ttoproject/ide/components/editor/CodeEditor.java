@@ -86,7 +86,16 @@ public class CodeEditor extends JTextPane {
                     changeColor(FontTheme.COLOR_COMMENTS, si - 1, (len - si) + 2);
                     word = "";
                     continue;
-                } else if (c == '\"') {
+                } else if (c == '\'') {
+                    ++i;
+                    endChar = '\'';
+                    while ((i < length && text.charAt(i) != endChar) ||
+                            (i - 1 >= 0 && i - 1 < length && text.charAt(i - 1) == '\\')) ++i;
+                    len = i;
+                    changeColor(FontTheme.COLOR_STRING, si - 1, (len - si) + 2);
+                    word = "";
+                    continue;
+                } else if (c == '"') {
                     ++i;
                     endChar = '"';
                     while ((i < length && text.charAt(i) != endChar) ||
