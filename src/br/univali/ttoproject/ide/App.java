@@ -1,7 +1,7 @@
 package br.univali.ttoproject.ide;
 
-import br.univali.ttoproject.compiler.Program;
 import br.univali.ttoproject.compiler.Compiler;
+import br.univali.ttoproject.compiler.Program;
 import br.univali.ttoproject.ide.components.MenuBar;
 import br.univali.ttoproject.ide.components.*;
 import br.univali.ttoproject.ide.components.Settings.Settings;
@@ -10,6 +10,7 @@ import br.univali.ttoproject.ide.components.editor.CodeEditor;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
 import java.awt.*;
@@ -42,6 +43,7 @@ public class App extends JFrame {
     private final JLabel lblLineEnding;
 
     private FileTTO file;
+    private String currentFolder;
 
     private Program program;
 
@@ -78,6 +80,8 @@ public class App extends JFrame {
     public App() {
         // Inicialização de objetos ------------------------------------------------------------------------------------
         file = new FileTTO();
+        currentFolder = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator + "*";
+        //Debug.print(File.separator);
 
         // Interface ---------------------------------------------------------------------------------------------------
         setTitle("Compiler");
@@ -168,6 +172,9 @@ public class App extends JFrame {
         // verifica se existe arquivo a ser salvo, se tiver isso é tratado
         if (cancelSaveFileOp()) return false;
 
+        console.reset();
+        log.setText("");
+
         // reinicializa as variaveis de arquivo
         file = new FileTTO();
         codeEditor.setText("");
@@ -180,6 +187,9 @@ public class App extends JFrame {
 
     public boolean mOpen() {
         if (cancelSaveFileOp()) return false;
+
+        console.reset();
+        log.setText("");
 
         // pega o caminho do arquivo a ser aberto
         var fullPath = getFilePath(false);
@@ -210,15 +220,13 @@ public class App extends JFrame {
 
     public boolean mSaveAs() {
         // se o arquivo possui alterações ele é salvo
-        if (!savedFile) {
-            var fullPath = getFilePath(true);
-            if (fullPath.equals("")) return false;
+        var fullPath = getFilePath(true);
+        if (fullPath.equals("")) return false;
 
-            file = new FileTTO(fullPath);
-            resetFileVars();
-            setTitle("Compiler - " + file.getName());
-            file.save(codeEditor.getText());
-        }
+        file = new FileTTO(fullPath);
+        resetFileVars();
+        setTitle("Compiler - " + file.getName());
+        file.save(codeEditor.getText());
         return true;
     }
 
@@ -316,7 +324,7 @@ public class App extends JFrame {
             return false;
         }
         // salva o arquivo antes de compilar
-        if (!mSave()) return false;
+        //if (!mSave()) return false;
 
         compiled = true;
         console.setText(new Compiler().build(new StringReader(codeEditor.getText())));
@@ -465,9 +473,13 @@ public class App extends JFrame {
         // configura o file chooser
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a file to " + optionString);
-        fileChooser.setFileFilter(new FileNameExtensionFilter("2021.1 Files", "tto", "2021.1"));
+        //fileChooser.setFileFilter(new FileNameExtensionFilter("2021.1 files", "tto"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("2021.1 files", "tto"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Text files", "txt"));
         if (save) {
             fileChooser.setSelectedFile(new File(file.getName()));
+        } else {
+            fileChooser.setSelectedFile(new File(currentFolder));
         }
 
         int userSelection;
@@ -482,11 +494,11 @@ public class App extends JFrame {
             }
 
             if (userSelection == JFileChooser.APPROVE_OPTION) {
-                File fileToSave = fileChooser.getSelectedFile();
+                File file = fileChooser.getSelectedFile();
                 // se for salvar, será verificado se o arquivo existe, caso exista será perguntado que o arquivo deve
                 // ser sobrescrito, se a opção for diferente de APPROVE_OPTION uma string vazia é retornada
                 if (save) {
-                    if (fileToSave.exists()) {
+                    if (file.exists()) {
                         int result = JOptionPane.showConfirmDialog(
                                 this,
                                 "A file with that name already exists. Would you like to overwrite?",
@@ -501,17 +513,21 @@ public class App extends JFrame {
                 } else {
                     existisVerDone = true;
                 }
-                fullPath = fileToSave.getAbsolutePath();
+                fullPath = file.getAbsolutePath();
+                currentFolder = fullPath.substring(0, fullPath.lastIndexOf(File.separator)) + File.separator  + "*";
+                //Debug.print(currentFolder);
             } else {
                 return "";
             }
         } while (!existisVerDone);
 
         // adiciona a extenção caso não tenha
-        if (fullPath.length() >= 4 && !fullPath.endsWith(".tto")) {
-            fullPath += ".tto";
-        } else if (fullPath.length() < 4) {
-            fullPath += ".tto";
+        if(!fullPath.endsWith(".txt")){
+            if (fullPath.length() >= 4 && !fullPath.endsWith(".tto")) {
+                fullPath += ".tto";
+            } else if (fullPath.length() < 4) {
+                fullPath += ".tto";
+            }
         }
 
         return fullPath;

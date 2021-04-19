@@ -1,13 +1,12 @@
 package br.univali.ttoproject.ide.components;
 
-import java.io.*;
-
 import javax.swing.filechooser.FileSystemView;
+import java.io.*;
 
 public class FileTTO extends File {
 
     private static final String DEFAULT_PATH =
-            FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "\\" + "untitled.tto";
+            FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator + "untitled.tto";
 
     public FileTTO() {
         super(DEFAULT_PATH);
