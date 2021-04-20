@@ -20,7 +20,7 @@ SKIP :
 | <"\t">
 | <"\n">
 | <"\r">
-|< ":-" (~["\r", "\n"])* >
+|< "//" (~["\r", "\n"])* >
 }
 
 SKIP: { <"/*"> : BLOCK_COMMENT_STATE}
@@ -42,10 +42,10 @@ TOKEN [IGNORE_CASE]:
 | <NOT: "not">
 | <VARIABLE: "variable">
 | <IS: "is">
-| <NATURAL: "natural">
-| <REAL: "real">
-| <CHAR: "char">
-| <BOOLEAN: "boolean">
+| <NATURAL_TYPE: "natural">
+| <REAL_TYPE: "real">
+| <CHAR_TYPE: "char">
+| <BOOLEAN_TYPE: "boolean">
 | <EXECUTE: "execute">
 | <SET: "set">
 | <TO: "to">
@@ -62,8 +62,11 @@ TOKEN [IGNORE_CASE]:
 /* SPECIAL SYMBOLS */
 TOKEN :
 {
-  <LBRACE: "{">
+  <HEADER: ":-">
+| <LBRACE: "{">
 | <RBRACE: "}">
+| <LBRACKET: "[">
+| <RBRACKET: "]">
 | <PARENTHESESL: "(">
 | <PARANTHESESR: ")">
 | <DOT: ".">
@@ -89,25 +92,24 @@ TOKEN :
 /* IDENTIFIERS */
 TOKEN :
 {
-    <IDENTIFIER: ("_"|<LETTER>)("_"|<LETTER>|<UNSIGNED>)+>
+    <IDENTIFIER: (<LETTER>)+>
 }
 
 /* CONSTS */
 TOKEN :
 {
-    <CHAR_CONST : "\""((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\"">
-|   <NATURAL_CONST: <SIGNED>|<UNSIGNED>>
-|   <REAL_CONST: <REAL_SIGNED>|<REAL_UNSIGNED>>
+    <CHAR_CONST : "\""((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\"" |
+     "\'"((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\'">
+|   <NATURAL_CONST: <INTEGER> (<INTEGER>)? (<INTEGER>)?>
+|   <REAL_CONST: <REAL>>
 |   <BOOLEAN_CONST: "true"|"false">
 }
 
 TOKEN :
 {
     <LETTER: ["a"-"z","A"-"Z"]>
-|   <UNSIGNED: (["0"-"9"])+>
-|   <SIGNED: ("-"|"+")(["0"-"9"])+>
-|   <REAL_UNSIGNED: <UNSIGNED>"."<UNSIGNED>>
-|   <REAL_SIGNED: <SIGNED>"."<UNSIGNED>>
+|   <INTEGER: (["0"-"9"])>
+|   <REAL: <INTEGER> (<INTEGER>)? (<INTEGER>)? (<INTEGER>)? (<INTEGER>)?  "." <INTEGER> (<INTEGER>)?>
 }
 
 <*> TOKEN : { <UNKNOWN: ~[]> }
