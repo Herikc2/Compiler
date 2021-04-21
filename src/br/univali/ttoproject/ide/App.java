@@ -172,8 +172,7 @@ public class App extends JFrame {
         // verifica se existe arquivo a ser salvo, se tiver isso é tratado
         if (cancelSaveFileOp()) return false;
 
-        console.reset();
-        log.setText("");
+        clearOutputs();
 
         // reinicializa as variaveis de arquivo
         file = new FileTTO();
@@ -188,8 +187,7 @@ public class App extends JFrame {
     public boolean mOpen() {
         if (cancelSaveFileOp()) return false;
 
-        console.reset();
-        log.setText("");
+        clearOutputs();
 
         // pega o caminho do arquivo a ser aberto
         var fullPath = getFilePath(false);
@@ -419,6 +417,11 @@ public class App extends JFrame {
     //------------------------------------------------------------------------------------------------------------------
     // Auxiliary functions
     //------------------------------------------------------------------------------------------------------------------
+
+    public void clearOutputs(){
+        console.reset();
+        log.setText("");
+    }
 
     public void updateSettings() {
         // Atualiza as novas configurações definidas no form Settings

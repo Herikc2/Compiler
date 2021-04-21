@@ -4,9 +4,7 @@ import br.univali.ttoproject.ide.components.Settings.FontTheme;
 import br.univali.ttoproject.ide.components.Settings.Settings;
 
 import javax.swing.*;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -174,6 +172,7 @@ public class CodeEditor extends JTextPane {
     private void coder(KeyEvent e){
         var kChar = e.getKeyChar();
         int tabLevel = getTabLevel();
+
         if(kChar == '{'){
             ++tabLevel;
             e.consume();
@@ -198,6 +197,18 @@ public class CodeEditor extends JTextPane {
             var t1 = getText().substring(0, getCaretPosition());
             var t2 = getText().substring(getCaretPosition());
             var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
+
+            var curTabLevel = 0;
+            var rowStart = 0;
+            try { rowStart = Utilities.getRowStart(this, curCaretPosition-1); }
+            catch (BadLocationException err) { err.printStackTrace(); }
+            var chars = t1.substring(rowStart, curCaretPosition - 1).chars();
+            if(isTab)
+                curTabLevel = (int) chars.filter(ch -> ch == '\t').count();
+            else
+                curTabLevel = (int) chars.filter(ch -> ch == ' ').count() / Settings.TAB_SIZE;
+            tabLevel = Math.max(curTabLevel, tabLevel);
+
             setText(t1 + tab.repeat(tabLevel) + t2);
             setCaretPosition(curCaretPosition + (caretPad * tabLevel));
         }
