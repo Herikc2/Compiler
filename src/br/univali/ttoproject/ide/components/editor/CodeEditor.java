@@ -74,42 +74,46 @@ public class CodeEditor extends JTextPane {
         changeColor(FontTheme.COLOR_DEFAULT, 0, length);
         for (int i = 0; i < length; ++i) {
             char c = text.charAt(i);
-            if (Token.isSpec(c)) {
+            if (Token.isSpec(c) || Token.isNumber(c)) {
                 var si = i + 1;
                 var len = 0;
                 char endChar;
-                if (c == '/' && i < length - 1 && text.charAt(i + 1) == '*') {
+                boolean spec = false, str = false, num = false;
+                if(Token.isNumber(c) && word.isEmpty()){
+                    if((i - 1 >= 0 && Token.isNumMate(text.charAt(i - 1))) || i == 0){
+                        --si;
+                        while (i < length && Token.isNumber(text.charAt(i))) ++i;
+                        spec = true;
+                        num = true;
+                    }
+                } else if (c == '/' && i < length - 1 && text.charAt(i + 1) == '*') {
                     i += 2;
                     while ((i < length && text.charAt(i) != '*') || (i < length - 1 && text.charAt(i + 1) != '/')) ++i;
                     i++;
-                    len = i;
-                    changeColor(FontTheme.COLOR_COMMENTS, si - 1, (len - si) + 2);
-                    word = "";
-                    continue;
-                } else if (c == '\'') {
+                    spec = true;
+                } else if (c == '/' && i < length - 1 && text.charAt(i + 1) == '/') {
                     ++i;
-                    endChar = '\'';
+                    endChar = '\n';
+                    while (i < length && text.charAt(i) != endChar) ++i;
+                    spec = true;
+                } else if (c == '\'' || c == '"') {
+                    ++i;
+                    endChar = c;
                     while ((i < length && text.charAt(i) != endChar) ||
                             (i - 1 >= 0 && i - 1 < length && text.charAt(i - 1) == '\\')) ++i;
-                    len = i;
-                    changeColor(FontTheme.COLOR_STRING, si - 1, (len - si) + 2);
-                    word = "";
-                    continue;
-                } else if (c == '"') {
-                    ++i;
-                    endChar = '"';
-                    while ((i < length && text.charAt(i) != endChar) ||
-                            (i - 1 >= 0 && i - 1 < length && text.charAt(i - 1) == '\\')) ++i;
-                    len = i;
-                    changeColor(FontTheme.COLOR_STRING, si - 1, (len - si) + 2);
-                    word = "";
-                    continue;
+                    spec = true;
+                    str = true;
                 } else if (c == ':' && i < length - 1 && text.charAt(i + 1) == '-') {
                     ++i;
                     endChar = '\n';
                     while (i < length && text.charAt(i) != endChar) ++i;
+                    spec = true;
+                }
+                if (spec){
                     len = i;
-                    changeColor(FontTheme.COLOR_COMMENTS, si - 1, (len - si) + 2);
+                    if (str) changeColor(FontTheme.COLOR_STRING, si - 1, (len - si) + 2);
+                    if (num) changeColor(FontTheme.COLOR_NUMBER, si - 1, (len - si) + 1);
+                    else changeColor(FontTheme.COLOR_COMMENTS, si - 1, (len - si) + 2);
                     word = "";
                     continue;
                 }
@@ -117,24 +121,17 @@ public class CodeEditor extends JTextPane {
             if (Token.isSymbol(c)) {
                 changeColor(FontTheme.COLOR_SPECIAL, i, (i + 1) - i);
             }
-            if (Token.isNumber(c)) {
-                changeColor(FontTheme.COLOR_NUMBER, i, (i + 1) - i);
-            }
-            if (Token.isSkip(c)) {
+            if (Token.isSkip(c) || i == length - 1) {
+                if (i == length - 1 && !Token.isSkip(c)) {
+                    word += c;
+                    ++i;
+                }
                 if (Token.isReserved(word)) {
                     var from = i - word.length();
                     var to = i - from;
                     changeColor(FontTheme.COLOR_RESERVED, from, to);
                 }
                 word = "";
-            } else if (i == length - 1) {
-                word += c;
-                ++i;
-                if (Token.isReserved(word)) {
-                    var from = i - word.length();
-                    var to = i - from;
-                    changeColor(FontTheme.COLOR_RESERVED, from, to);
-                }
             } else {
                 word += c;
             }

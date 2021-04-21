@@ -73,11 +73,15 @@ public class Token {
         return false;
     }
 
-    public static boolean isSpec(char word){
-        for (var token : specBegin){
-            if (word == token) return true;
+    public static boolean isSpec(char c){
+        for (var symbol : specBegin){
+            if (c == symbol) return true;
         }
         return false;
+    }
+
+    public static boolean isNumMate(char c){
+        return isNumber(c) || isSymbol(c) || c == ' ';
     }
 
 }
