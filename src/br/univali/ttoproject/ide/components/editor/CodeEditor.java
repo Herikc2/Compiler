@@ -8,6 +8,8 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.Stack;
@@ -44,6 +46,49 @@ public class CodeEditor extends JTextPane {
             }
         });
         addCaretListener(e -> lcListener.accept(null));
+
+        addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if (event.getButton() == MouseEvent.BUTTON3) {
+                    var keyCtrl = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+                    var popupMenu = new JPopupMenu();
+                    JMenuItem menuItem;
+
+                    menuItem = new JMenuItem("Cut");
+                    menuItem.addActionListener(e -> cut());
+                    menuItem.setAccelerator(KeyStroke.getKeyStroke('X', keyCtrl));
+                    popupMenu.add(menuItem);
+
+                    menuItem = new JMenuItem("Copy");
+                    menuItem.addActionListener(e -> copy());
+                    menuItem.setAccelerator(KeyStroke.getKeyStroke('C', keyCtrl));
+                    popupMenu.add(menuItem);
+
+                    menuItem = new JMenuItem("Paste");
+                    menuItem.addActionListener(e -> paste());
+                    menuItem.setAccelerator(KeyStroke.getKeyStroke('V', keyCtrl));
+                    popupMenu.add(menuItem);
+
+                    popupMenu.addSeparator();
+
+                    menuItem = new JMenuItem("Select all");
+                    menuItem.addActionListener(e -> selectAll());
+                    menuItem.setAccelerator(KeyStroke.getKeyStroke('A', keyCtrl));
+                    popupMenu.add(menuItem);
+
+                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
+                }
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        });
     }
 
 //    public String getText() {

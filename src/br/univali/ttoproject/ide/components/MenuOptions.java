@@ -12,15 +12,16 @@ public enum MenuOptions {
     CUT(8),
     COPY(9),
     PASTE(10),
-    SHOW_TOOL_BAR(11),
-    SHOW_STATUS_BAR(12),
-    SHOW_CONSOLE(13),
-    COMPILE_RUN(14),
-    COMPILE(15),
-    RUN(16),
-    STOP(17),
-    HELP(18),
-    ABOUT(19);
+    SELECT_ALL(11),
+    SHOW_TOOL_BAR(12),
+    SHOW_STATUS_BAR(13),
+    SHOW_CONSOLE(14),
+    COMPILE_RUN(15),
+    COMPILE(16),
+    RUN(17),
+    STOP(18),
+    HELP(19),
+    ABOUT(20);
 
     private int id;
 

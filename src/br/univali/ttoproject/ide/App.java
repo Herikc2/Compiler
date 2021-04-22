@@ -51,8 +51,7 @@ public class App extends JFrame {
 
 
     public App() {
-        //TODO: add text editor context menu
-        //TODO: add tool tip texts (mainly at tool bar items)
+        //TODO: add open recent
 
         // Inicialização de objetos ------------------------------------------------------------------------------------
         file = new FileTTO();
@@ -79,8 +78,9 @@ public class App extends JFrame {
 
         // menu methods
         Supplier<?>[] menuMethods = {this::mNew, this::mOpen, this::mSave, this::mSaveAs, this::mSettings, this::mExit,
-                this::mUndo, this::mRedo, this::mCut, this::mCopy, this::mPaste, this::mToolBar, this::mStatusBar,
-                this::mConsole, this::mCompileRun, this::mCompile, this::mRun, this::mStop, this::mHelp, this::mAbout};
+                this::mUndo, this::mRedo, this::mCut, this::mCopy, this::mPaste, this::mSelectAll, this::mToolBar,
+                this::mStatusBar, this::mConsole, this::mCompileRun, this::mCompile, this::mRun, this::mStop,
+                this::mHelp, this::mAbout};
 
         // menu bar
         setJMenuBar(new MenuBar(menuMethods));
@@ -257,6 +257,12 @@ public class App extends JFrame {
 
     public boolean mPaste() {
         codeEditor.paste();
+
+        return true;
+    }
+
+    public boolean mSelectAll() {
+        codeEditor.selectAll();
 
         return true;
     }

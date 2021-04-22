@@ -5,6 +5,8 @@ import br.univali.ttoproject.ide.components.Settings.Settings;
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class Console extends JTextArea {
 
@@ -17,11 +19,6 @@ public class Console extends JTextArea {
 
     public Console() {
         setTabSize(4);
-//        if (Settings.CURRENT_SO == Settings.SO_WINDOWS) {
-//            setFont(new Font("Consolas", Font.PLAIN, 16));
-//        } else {
-//            setFont(new Font("FreeMono", Font.PLAIN, 17));
-//        }
         setFont(Settings.FONT);
         setFocusTraversalKeysEnabled(false);
         addKeyListener(new KeyAdapter() {
@@ -34,6 +31,29 @@ public class Console extends JTextArea {
             public void keyPressed(KeyEvent e) {
                 handleKeyPressed(e);
             }
+        });
+        addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if (event.getButton() == MouseEvent.BUTTON3) {
+                    var popupMenu = new JPopupMenu();
+                    JMenuItem menuItem;
+
+                    menuItem = new JMenuItem("Clear all");
+                    menuItem.addActionListener(e -> reset());
+                    popupMenu.add(menuItem);
+
+                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
+                }
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
         });
     }
 
