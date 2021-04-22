@@ -2,6 +2,7 @@ package br.univali.ttoproject.ide;
 
 import br.univali.ttoproject.compiler.Compiler;
 import br.univali.ttoproject.compiler.Program;
+import br.univali.ttoproject.ide.components.Console;
 import br.univali.ttoproject.ide.components.MenuBar;
 import br.univali.ttoproject.ide.components.*;
 import br.univali.ttoproject.ide.components.Settings.Settings;
@@ -16,8 +17,8 @@ import javax.swing.text.Utilities;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.StringReader;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class App extends JFrame {
@@ -38,7 +39,9 @@ public class App extends JFrame {
     private final JLabel lblEncoding;
     private final JLabel lblLineEnding;
     private JPanel panelMain;
+
     private FileTTO file;
+    private ArrayList<String> recentFiles;
     private String currentFolder;
 
     private Program program;
@@ -56,6 +59,7 @@ public class App extends JFrame {
         // Inicialização de objetos ------------------------------------------------------------------------------------
         file = new FileTTO();
         currentFolder = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator + "*";
+        loadRecentFiles();
         //Debug.print(File.separator);
 
         // Interface ---------------------------------------------------------------------------------------------------
@@ -416,6 +420,41 @@ public class App extends JFrame {
         log.setText("");
     }
 
+    public boolean pathExists(String testPath){
+        for (var path : recentFiles){
+            if (testPath.equals(path)) return true;
+        }
+        return false;
+    }
+
+    public void loadRecentFiles(){
+        recentFiles = new ArrayList<>();
+        var file = new File(Settings.getDefaultRecentFilePath());
+        if (file.exists()) {
+            try {
+                var br = new BufferedReader(new FileReader(file));
+                String line = br.readLine();
+                while (line != null) {
+                    recentFiles.add(line);
+                    line = br.readLine();
+                }
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void saveRecentFiles() {
+        var file = new File(Settings.getDefaultRecentFilePath());
+        try (var out = new PrintWriter(file)) {
+            for (var path : recentFiles)
+                out.println(path + System.lineSeparator());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void updateSettings() {
         // Atualiza as novas configurações definidas no form Settings
         codeEditor.setFont(Settings.FONT);
@@ -438,6 +477,7 @@ public class App extends JFrame {
             mConsole();
             ((JCheckBoxMenuItem) menuBar.getItem(2)).setState(Settings.SHOW_CONSOLE);
         }
+        if (Settings.SYNTAX_HIGHLIGHT) codeEditor.syntaxHighlight();
     }
 
     public void resetControlVars() {
@@ -465,7 +505,7 @@ public class App extends JFrame {
         if (result == JOptionPane.YES_OPTION) {
             return mSave();
         }
-        return result != JOptionPane.CANCEL_OPTION;
+        return result != JOptionPane.CANCEL_OPTION && result != JOptionPane.CLOSED_OPTION;
     }
 
     public boolean cancelSaveFileOp() {
@@ -493,7 +533,7 @@ public class App extends JFrame {
         }
 
         int userSelection;
-        boolean existisVerDone = false;
+        boolean verifyIfExistsOperationDone = false;
 
         // loop para verificação se de fato foi selecionado um caminho
         do {
@@ -515,21 +555,28 @@ public class App extends JFrame {
                                 "Overwrite",
                                 JOptionPane.YES_NO_OPTION);
                         if (result == JOptionPane.YES_OPTION) {
-                            existisVerDone = true;
+                            verifyIfExistsOperationDone = true;
                         }
                     } else {
-                        existisVerDone = true;
+                        verifyIfExistsOperationDone = true;
                     }
                 } else {
-                    existisVerDone = true;
+                    verifyIfExistsOperationDone = true;
                 }
                 fullPath = file.getAbsolutePath();
+                if(!pathExists(fullPath)){
+                    recentFiles.add(fullPath);
+                }
+                if(recentFiles.size() > 10){
+                    recentFiles.remove(0);
+                }
+                saveRecentFiles();
                 currentFolder = fullPath.substring(0, fullPath.lastIndexOf(File.separator)) + File.separator + "*";
                 //Debug.print(currentFolder);
             } else {
                 return "";
             }
-        } while (!existisVerDone);
+        } while (!verifyIfExistsOperationDone);
 
         // adiciona a extenção caso não tenha
         if (!fullPath.endsWith(".txt")) {

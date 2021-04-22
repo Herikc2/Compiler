@@ -93,7 +93,7 @@ public class MenuBar extends JMenuBar {
         menu.addSeparator();
 
         menuItem = new JMenuItem("Select all");
-        menuItem.addActionListener(e -> methods[MenuOptions.PASTE.getId()].get());
+        menuItem.addActionListener(e -> methods[MenuOptions.SELECT_ALL.getId()].get());
         menuItem.setAccelerator(KeyStroke.getKeyStroke('A', keyCtrl));
         menu.add(menuItem);
 

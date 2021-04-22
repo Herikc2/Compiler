@@ -103,11 +103,10 @@ public class CodeEditor extends JTextPane {
 
     public void setText(String t) {
         super.setText(t);
-        if (Settings.SYNTAX_HIGHLIGHT)
-            syntaxHighlight();
+        if (Settings.SYNTAX_HIGHLIGHT) syntaxHighlight();
     }
 
-    private void syntaxHighlight() {
+    public void syntaxHighlight() {
         var text = getText();
         var length = text.length();
         var word = "";
@@ -121,7 +120,6 @@ public class CodeEditor extends JTextPane {
                 char endChar;
                 boolean spec = false, str = false, num = false;
                 if (Token.isNumber(c) && word.isEmpty()) {
-                    --si;
                     while (i < length && Token.isNumber(text.charAt(i))) ++i;
                     spec = true;
                     num = true;
@@ -271,11 +269,12 @@ public class CodeEditor extends JTextPane {
     }
 
     private void handleKeyReleased(KeyEvent e) {
-        if (!(e.isActionKey() || e.isControlDown() || e.isAltDown() ||
-                e.isShiftDown() || e.isAltGraphDown() || e.isMetaDown())) {
-            if (Settings.SYNTAX_HIGHLIGHT)
-                syntaxHighlight();
-        }
+//        if (!(e.isActionKey() || e.isControlDown() || e.isAltDown() ||
+//                e.isShiftDown() || e.isAltGraphDown() || e.isMetaDown())) {
+//            if (Settings.SYNTAX_HIGHLIGHT)
+//                syntaxHighlight();
+//        }
+        if (Settings.SYNTAX_HIGHLIGHT) syntaxHighlight();
     }
 
     private void handleKeyPressed(KeyEvent e) {

@@ -99,7 +99,7 @@ public class Settings {
         properties.setProperty("LOOK_AND_FEEL", Integer.toString(LOOK_AND_FEEL));
         properties.setProperty("FONT_THEME", Integer.toString(FONT_THEME));
         properties.setProperty("SYNTAX_HIGHLIGHT", Boolean.toString(SYNTAX_HIGHLIGHT));
-        var directory = new File(getDefaultConfigPath());
+        var directory = new File(getDefaultConfigFolderPath());
         if (!directory.exists()) directory.mkdir();
         try {
             properties.store(new FileWriter(getDefaultConfigFilePath()), "2021.1 Compiler configs");
@@ -113,7 +113,7 @@ public class Settings {
             FONT = new Font("Consolas", Font.PLAIN, 16);
             LINE_ENDING = LNE_CRLF;
         } else {
-            FONT = new Font("Monospace", Font.PLAIN, 15);
+            FONT = new Font("Monospaced", Font.PLAIN, 15);
             LINE_ENDING = LNE_LF;
         }
         TAB_TYPE = TT_TAB;
@@ -127,6 +127,7 @@ public class Settings {
         SYNTAX_HIGHLIGHT = true;
         setFontTheme();
         setLookAndFeel();
+        save();
     }
 
     public static void update() {
@@ -151,12 +152,16 @@ public class Settings {
         FontTheme.setFontTheme(op);
     }
 
-    public static String getDefaultConfigPath() {
+    public static String getDefaultConfigFolderPath() {
         return FileSystemView.getFileSystemView().getDefaultDirectory() + File.separator + "2021-1";
     }
 
     public static String getDefaultConfigFilePath() {
-        return getDefaultConfigPath() + File.separator + "config.properties";
+        return getDefaultConfigFolderPath() + File.separator + "config.properties";
+    }
+
+    public static String getDefaultRecentFilePath() {
+        return getDefaultConfigFolderPath() + File.separator + "recent";
     }
 
     public static String stringLineEnding() {
