@@ -10,18 +10,18 @@ public class FontTheme {
     public static Color COLOR_NUMBER;
     public static Color COLOR_STRING;
 
-    public static String[] getFontThemes(){
+    public static String[] getFontThemes() {
         return new String[]{"Light", "Dark"};
     }
 
-    public static void setFontTheme(int t){
+    public static void setFontTheme(int t) {
         switch (t) {
             case 0 -> setDefaultLight();
             case 1 -> setDefaultDark();
         }
     }
 
-    public static void setDefaultLight(){
+    public static void setDefaultLight() {
         COLOR_DEFAULT = Color.BLACK;
         COLOR_COMMENTS = new Color(0, 128, 0);
         COLOR_RESERVED = new Color(0, 0, 255);
@@ -30,7 +30,7 @@ public class FontTheme {
         COLOR_STRING = new Color(163, 21, 21);
     }
 
-    public static void setDefaultDark(){
+    public static void setDefaultDark() {
         COLOR_DEFAULT = Color.WHITE;
         COLOR_COMMENTS = new Color(106, 153, 85);
         COLOR_RESERVED = new Color(86, 156, 214);

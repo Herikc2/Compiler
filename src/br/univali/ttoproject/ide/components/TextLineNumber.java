@@ -1,13 +1,20 @@
 package br.univali.ttoproject.ide.components;
 
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.*;
 import java.awt.*;
-import java.beans.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serial;
 import java.util.HashMap;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
 
 /**
  * This class will display line numbers for a related text component. The text
@@ -19,15 +26,14 @@ import javax.swing.text.*;
  * of a JScrollPane.
  */
 public class TextLineNumber extends JPanel implements CaretListener, DocumentListener, PropertyChangeListener {
+    public final static float LEFT = 0.0f;
+    public final static float CENTER = 0.5f;
+    public final static float RIGHT = 1.0f;
     /**
      *
      */
     @Serial
     private static final long serialVersionUID = 8743194483608456061L;
-    public final static float LEFT = 0.0f;
-    public final static float CENTER = 0.5f;
-    public final static float RIGHT = 1.0f;
-
     private final static Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
 
     private final static int HEIGHT = Integer.MAX_VALUE - 1000000;

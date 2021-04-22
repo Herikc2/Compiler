@@ -1,24 +1,17 @@
 package br.univali.ttoproject.ide.components.Settings;
 
-import br.univali.ttoproject.ide.App;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SettingsForm extends JDialog {
-
-    private JPanel panelMain;
-    private JButton btnSave;
-    private JTabbedPane tabbedPane;
-    private JButton btnRestoreDefault;
 
     private final EditorSettings editorSettings;
     private final AppearanceSettings appearanceSettings;
     private final FontSettings fontSettings;
+    private JPanel panelMain;
+    private JButton btnSave;
+    private JTabbedPane tabbedPane;
+    private JButton btnRestoreDefault;
 
     public SettingsForm(JFrame parent) {
         super(parent, false);
@@ -56,7 +49,7 @@ public class SettingsForm extends JDialog {
         getRootPane().setDefaultButton(btnSave);
     }
 
-    private void restoreDefault(){
+    private void restoreDefault() {
         Settings.setDefaultSettings();
         saveSettingsAndClose();
     }
@@ -79,7 +72,7 @@ public class SettingsForm extends JDialog {
         saveSettingsAndClose();
     }
 
-    private void saveSettingsAndClose(){
+    private void saveSettingsAndClose() {
         Settings.setLookAndFeel();
         Settings.setFontTheme();
         Settings.save();

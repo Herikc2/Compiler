@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class App extends JFrame {
 
     private final CodeEditor codeEditor;
-    private final JTabbedPane tab;
+    private final JTabbedPane tabIO;
     private final Console console;
     private final JTextArea log;
     private final ToolBar toolBar;
@@ -116,12 +116,12 @@ public class App extends JFrame {
         scpLog = new JScrollPane(log);
 
         // creating and setting up tab
-        tab = new JTabbedPane();
-        tab.add("Run", scpConsole);
-        tab.add("Log", scpLog);
+        tabIO = new JTabbedPane();
+        tabIO.add("Run", scpConsole);
+        tabIO.add("Log", scpLog);
 
         // adding tab (console and log)
-        splitPane.setRightComponent(tab);
+        splitPane.setRightComponent(tabIO);
 
         // editor
         codeEditor = new CodeEditor(o -> updateLCLabel(), o -> updateFileEdit());
@@ -271,16 +271,16 @@ public class App extends JFrame {
     }
 
     public boolean mConsole() {
-        tab.setVisible(!tab.isVisible());
+        tabIO.setVisible(!tabIO.isVisible());
 
-        if (!tab.isVisible()) {
+        if (!tabIO.isVisible()) {
             panelMain.remove(splitPane);
             splitPane.setVisible(false);
             panelMain.add(scpCodeEditor, BorderLayout.CENTER);
         } else {
             panelMain.remove(scpCodeEditor);
             panelMain.add(splitPane, BorderLayout.CENTER);
-            splitPane.setRightComponent(tab);
+            splitPane.setRightComponent(tabIO);
             splitPane.setLeftComponent(scpCodeEditor);
             splitPane.setResizeWeight(0.8);
             splitPane.setDividerLocation(0.8);
@@ -425,7 +425,7 @@ public class App extends JFrame {
             mToolBar();
             ((JCheckBoxMenuItem) menuBar.getItem(1)).setState(Settings.SHOW_TOOL_BAR);
         }
-        if (Settings.SHOW_CONSOLE != tab.isVisible()) {
+        if (Settings.SHOW_CONSOLE != tabIO.isVisible()) {
             mConsole();
             ((JCheckBoxMenuItem) menuBar.getItem(2)).setState(Settings.SHOW_CONSOLE);
         }

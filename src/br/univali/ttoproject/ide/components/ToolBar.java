@@ -3,7 +3,6 @@ package br.univali.ttoproject.ide.components;
 import br.univali.ttoproject.ide.App;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.function.Supplier;
 
 public class ToolBar extends JToolBar {

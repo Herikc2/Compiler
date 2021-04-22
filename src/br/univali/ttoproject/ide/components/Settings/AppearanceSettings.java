@@ -24,7 +24,7 @@ public class AppearanceSettings {
             cboLookAndFeel.addItem(laf.getName());
         }
 
-        for (var t : fontThemes){
+        for (var t : fontThemes) {
             cboFontTheme.addItem(t);
         }
 

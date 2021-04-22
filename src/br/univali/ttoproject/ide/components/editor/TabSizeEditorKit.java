@@ -45,12 +45,6 @@ public class TabSizeEditorKit extends StyledEditorKit {
             TabSet tabs = getTabSet();
             if (tabs == null) {
                 var fullTab = SPACE_WIDTH * (float) Settings.TAB_SIZE;
-//                Debug.print("init--------------------------------------------");
-//                Debug.print("tab: "+(getTabBase() + ((x / fullTab + 1) * fullTab)));
-//                Debug.print("getTabBase(): "+getTabBase());
-//                Debug.print("x: "+x);
-//                Debug.print("fullTab: "+fullTab);
-//                Debug.print("end---------------------------------------------");
                 return x + fullTab;
             }
             return super.nextTabStop(x, tabOffset);

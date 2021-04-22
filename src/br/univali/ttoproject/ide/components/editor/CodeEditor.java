@@ -15,11 +15,9 @@ import java.util.function.Consumer;
 
 public class CodeEditor extends JTextPane {
 
-    Consumer<Object> changesListener;
-
     private final Stack<State> undoStates;
     private final Stack<State> redoStates;
-
+    Consumer<Object> changesListener;
     private boolean hasChanges = false;
 
     public CodeEditor(Consumer<Object> lcListener, Consumer<Object> changesListener) {

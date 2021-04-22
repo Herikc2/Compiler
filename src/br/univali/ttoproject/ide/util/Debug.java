@@ -1,6 +1,6 @@
 package br.univali.ttoproject.ide.util;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 public class Debug {
 
