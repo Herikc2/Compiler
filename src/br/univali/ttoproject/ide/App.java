@@ -19,12 +19,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.StringReader;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class App extends JFrame {
-
-    private JPanel panelMain;
 
     private final CodeEditor codeEditor;
     private final JTabbedPane tab;
@@ -41,7 +37,7 @@ public class App extends JFrame {
     private final JLabel lblTabSize;
     private final JLabel lblEncoding;
     private final JLabel lblLineEnding;
-
+    private JPanel panelMain;
     private FileTTO file;
     private String currentFolder;
 
@@ -53,29 +49,6 @@ public class App extends JFrame {
     private boolean compiled = false;
     private boolean running = false;
 
-
-    public static void main(String[] args) {
-        try {
-            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-//            Debug.print(UIManager.getCrossPlatformLookAndFeelClassName());
-//            Debug.print(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException |
-                InstantiationException |
-                IllegalAccessException |
-                UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        // Inicializa a aplicação
-        EventQueue.invokeLater(() -> {
-            try {
-                new App();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
 
     public App() {
         // Inicialização de objetos ------------------------------------------------------------------------------------
@@ -164,6 +137,17 @@ public class App extends JFrame {
         codeEditor.requestFocus();
     }
 
+    public static void main(String[] args) {
+        // Inicializa a aplicação
+        EventQueue.invokeLater(() -> {
+            try {
+                Settings.app = new App();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // Actions
     // -----------------------------------------------------------------------------------------------------------------
@@ -229,7 +213,7 @@ public class App extends JFrame {
     }
 
     public boolean mSettings() {
-        new SettingsForm(this, o -> updateSettings());
+        new SettingsForm(this);
 
         return true;
     }
@@ -287,9 +271,9 @@ public class App extends JFrame {
     }
 
     public boolean mConsole() {
-        scpConsole.setVisible(!scpConsole.isVisible());
+        tab.setVisible(!tab.isVisible());
 
-        if (!scpConsole.isVisible()) {
+        if (!tab.isVisible()) {
             panelMain.remove(splitPane);
             splitPane.setVisible(false);
             panelMain.add(scpCodeEditor, BorderLayout.CENTER);
@@ -418,7 +402,7 @@ public class App extends JFrame {
     // Auxiliary functions
     //------------------------------------------------------------------------------------------------------------------
 
-    public void clearOutputs(){
+    public void clearOutputs() {
         console.reset();
         log.setText("");
     }
@@ -432,6 +416,19 @@ public class App extends JFrame {
         lblEncoding.setText(Settings.stringEncoding());
         lblLineEnding.setText(Settings.stringLineEnding());
         SwingUtilities.updateComponentTreeUI(this);
+        var menuBar = getJMenuBar().getMenu(2);
+        if (Settings.SHOW_STATUS_BAR != statusBar.isVisible()) {
+            mStatusBar();
+            ((JCheckBoxMenuItem) menuBar.getItem(0)).setState(Settings.SHOW_STATUS_BAR);
+        }
+        if (Settings.SHOW_TOOL_BAR != toolBar.isVisible()) {
+            mToolBar();
+            ((JCheckBoxMenuItem) menuBar.getItem(1)).setState(Settings.SHOW_TOOL_BAR);
+        }
+        if (Settings.SHOW_CONSOLE != tab.isVisible()) {
+            mConsole();
+            ((JCheckBoxMenuItem) menuBar.getItem(2)).setState(Settings.SHOW_CONSOLE);
+        }
     }
 
     public void resetControlVars() {
@@ -518,7 +515,7 @@ public class App extends JFrame {
                     existisVerDone = true;
                 }
                 fullPath = file.getAbsolutePath();
-                currentFolder = fullPath.substring(0, fullPath.lastIndexOf(File.separator)) + File.separator  + "*";
+                currentFolder = fullPath.substring(0, fullPath.lastIndexOf(File.separator)) + File.separator + "*";
                 //Debug.print(currentFolder);
             } else {
                 return "";
@@ -526,7 +523,7 @@ public class App extends JFrame {
         } while (!existisVerDone);
 
         // adiciona a extenção caso não tenha
-        if(!fullPath.endsWith(".txt")){
+        if (!fullPath.endsWith(".txt")) {
             if (fullPath.length() >= 4 && !fullPath.endsWith(".tto")) {
                 fullPath += ".tto";
             } else if (fullPath.length() < 4) {

@@ -4,26 +4,25 @@ import br.univali.ttoproject.ide.App;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SettingsForm extends JDialog {
 
-    private final Consumer<Object> update;
-
     private JPanel panelMain;
     private JButton btnSave;
     private JTabbedPane tabbedPane;
+    private JButton btnRestoreDefault;
 
     private final EditorSettings editorSettings;
     private final AppearanceSettings appearanceSettings;
     private final FontSettings fontSettings;
 
-    public SettingsForm(JFrame parent, Consumer<Object> update) {
+    public SettingsForm(JFrame parent) {
         super(parent, false);
         // vars and instantiating objects
-        this.update = update;
         editorSettings = new EditorSettings();
         appearanceSettings = new AppearanceSettings();
         fontSettings = new FontSettings();
@@ -45,11 +44,21 @@ public class SettingsForm extends JDialog {
 
         fontSettings.getFontChooser().setSelectedFont(Settings.FONT);
 
+        // btn restore listener
+        btnRestoreDefault.addActionListener(e -> {
+            restoreDefault();
+        });
+
         // btn save listener
         btnSave.addActionListener(e -> {
             update();
         });
         getRootPane().setDefaultButton(btnSave);
+    }
+
+    private void restoreDefault(){
+        Settings.setDefaultSettings();
+        saveSettingsAndClose();
     }
 
     private void update() {
@@ -66,30 +75,18 @@ public class SettingsForm extends JDialog {
         Settings.LOOK_AND_FEEL = appearanceSettings.getCboLookAndFeel().getSelectedIndex();
         Settings.FONT_THEME = appearanceSettings.getCboFontTheme().getSelectedIndex();
         Settings.SYNTAX_HIGHLIGHT = appearanceSettings.getCkbSyntaxHighlight().isSelected();
-        setLookAndFeel();
-        setFontTheme();
 
-        update.accept(null);
+        saveSettingsAndClose();
+    }
+
+    private void saveSettingsAndClose(){
+        Settings.setLookAndFeel();
+        Settings.setFontTheme();
+        Settings.save();
+        Settings.update();
+
         setVisible(false);
         dispose();
-    }
-
-    private void setLookAndFeel(){
-        try {
-            var op = Settings.LOOK_AND_FEEL;
-            var name = UIManager.getInstalledLookAndFeels()[op].getClassName();
-            UIManager.setLookAndFeel(name);
-        } catch (ClassNotFoundException |
-                InstantiationException |
-                IllegalAccessException |
-                UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void setFontTheme(){
-        var op = Settings.FONT_THEME;
-        FontTheme.setFontTheme(op);
     }
 
 }
