@@ -1,12 +1,14 @@
 package br.univali.ttoproject.compiler;
 
+import br.univali.ttoproject.compiler.parser.CategorizedToken;
+import br.univali.ttoproject.compiler.parser.Parser;
+import br.univali.ttoproject.compiler.parser.ParserConstants;
+
 import java.io.FileNotFoundException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import br.univali.ttoproject.compiler.parser.*;
 
 public class Compiler {
 
@@ -18,7 +20,7 @@ public class Compiler {
 
     private String buildLexicalErrorMessage(CategorizedToken token) {
         return "Lexical error at line " + token.beginLine + ", column " + token.beginColumn
-                + ". The following character '" + token.image + "' is invalid.\n\n";
+                + ". The following character '" + token.image + "' is invalid.\n";
     }
 
     public String build(Reader reader) {

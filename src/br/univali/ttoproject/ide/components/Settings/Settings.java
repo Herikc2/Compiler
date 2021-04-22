@@ -17,9 +17,14 @@ public class Settings {
 
     public static final String CRLF = "\r\n";
     public static final String LF = "\n";
+
+
+    public static String SO_NAME;
+    public static String SO_SHORT_NAME;
     public static final int SO_WINDOWS = 0;
     public static final int SO_LINUX = 1;
     public static final int CURRENT_SO;
+
     public static final int LNE_CRLF = 0;
     public static final int LNE_LF = 1;
     public static final int ENC_UTF_8 = 0;
@@ -27,20 +32,20 @@ public class Settings {
     public static final int TT_TAB = 1;
     public static final int LF_SYSTEM = 0;
     public static final int LF_CROSS_PLATFORM = 1;
+
     public static App app;
-    public static String SO_NAME;
-    public static String SO_SHORT_NAME;
-    public static int TAB_TYPE = TT_TAB;
-    public static int TAB_SIZE = 4;
+
+    public static int TAB_TYPE;
+    public static int TAB_SIZE;
     public static int LINE_ENDING;
-    public static int ENCODING = ENC_UTF_8;
+    public static int ENCODING;
     public static Font FONT;
-    public static boolean SHOW_TOOL_BAR = true;
-    public static boolean SHOW_STATUS_BAR = true;
-    public static boolean SHOW_CONSOLE = true;
-    public static int LOOK_AND_FEEL = 0;
-    public static int FONT_THEME = 0;
-    public static boolean SYNTAX_HIGHLIGHT = true;
+    public static boolean SHOW_TOOL_BAR;
+    public static boolean SHOW_STATUS_BAR;
+    public static boolean SHOW_CONSOLE;
+    public static int LOOK_AND_FEEL;
+    public static int FONT_THEME;
+    public static boolean SYNTAX_HIGHLIGHT;
 
     static {
         SO_NAME = System.getProperty("os.name");
@@ -108,7 +113,7 @@ public class Settings {
             FONT = new Font("Consolas", Font.PLAIN, 16);
             LINE_ENDING = LNE_CRLF;
         } else {
-            FONT = new Font("Ubuntu Mono", Font.PLAIN, 16);
+            FONT = new Font("Monospace", Font.PLAIN, 15);
             LINE_ENDING = LNE_LF;
         }
         TAB_TYPE = TT_TAB;
@@ -122,14 +127,6 @@ public class Settings {
         SYNTAX_HIGHLIGHT = true;
         setFontTheme();
         setLookAndFeel();
-
-        // debug
-//        FontTheme.setDefaultDark();
-//        try {
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public static void update() {

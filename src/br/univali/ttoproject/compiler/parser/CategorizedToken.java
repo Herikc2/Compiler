@@ -37,7 +37,7 @@ public class CategorizedToken extends Token {
 
     @Override
     public String toString() {
-        return "Token " + image + " da categoria " + category + " na linha " + beginLine + ", coluna " + beginColumn;
+        return "Token '" + image + "' of category " + category + " at line " + beginLine + ", column " + beginColumn + ".\n";
     }
 
     public boolean isUnknownKind() {
