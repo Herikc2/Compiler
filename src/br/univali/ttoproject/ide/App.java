@@ -51,6 +51,9 @@ public class App extends JFrame {
 
 
     public App() {
+        //TODO: add text editor context menu
+        //TODO: add tool tip texts (mainly at tool bar items)
+
         // Inicialização de objetos ------------------------------------------------------------------------------------
         file = new FileTTO();
         currentFolder = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator + "*";
