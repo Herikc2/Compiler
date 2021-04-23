@@ -133,21 +133,24 @@ public class Token implements java.io.Serializable {
             case ParserConstants.GET:
             case ParserConstants.PUT:
             case ParserConstants.VERIFY:
-            case ParserConstants.TRUE:
-            case ParserConstants.FALSE:
+            //case ParserConstants.TRUE:
+            //case ParserConstants.FALSE:
             case ParserConstants.LOOP:
             case ParserConstants.WHILE:
             case ParserConstants.DO:
                 return new CategorizedToken(TokenCategory.Keyword, ofKind, image);
             case ParserConstants.IDENTIFIER:
-            case ParserConstants.LETTER:
+            //case ParserConstants.LETTER:
                 return new CategorizedToken(TokenCategory.Identifier, ParserConstants.IDENTIFIER, image);
-            case ParserConstants.INTEGER:
+            //case ParserConstants.NUMBER:
+            case ParserConstants.NATURAL_CONST:
                 return new CategorizedToken(TokenCategory.IntegerConstant, ofKind, image);
-            case ParserConstants.REAL:
+            case ParserConstants.REAL_CONST:
                 return new CategorizedToken(TokenCategory.RealConstant, ofKind, image);
             case ParserConstants.CHAR_CONST:
                 return new CategorizedToken(TokenCategory.LiteralConstant, ofKind, image);
+            case ParserConstants.BOOLEAN_CONST:
+                return new CategorizedToken(TokenCategory.BooleanConstant, ofKind, image);
             case ParserConstants.EOF:
             case ParserConstants.LBRACE:
             case ParserConstants.RBRACE:

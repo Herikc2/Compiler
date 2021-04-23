@@ -117,7 +117,7 @@ public class CodeEditor extends JTextPane {
                 boolean spec = false, str = false, num = false, hdr = false;
                 if (Token.isNumber(c) && word.isEmpty()) {
                     while ((i < length && Token.isNumber(text.charAt(i))) ||
-                           (i < length && Token.isNumMate(text.charAt(i)) && text.charAt(i) != ' ' &&
+                           (i < length && Token.isNumMate(text.charAt(i)) && !Token.isNumSep(text.charAt(i)) &&
                             i < length - 1 && Token.isNumber(text.charAt(i + 1))) ||
                            (i < length && text.charAt(i) == '*' &&
                             i < length - 1 && text.charAt(i + 1) == '*' &&
@@ -220,17 +220,17 @@ public class CodeEditor extends JTextPane {
     private void coder(KeyEvent e) {
         var kChar = e.getKeyChar();
         int tabLevel = getTabLevel();
+        var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
+        var curCaretPosition = getCaretPosition();
+        var caretPad = isTab ? 1 : Settings.TAB_SIZE;
+        var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
         var t1 = getText().substring(0, getCaretPosition());
         var t2 = getText().substring(getCaretPosition());
 
         if (kChar == '{') {
-            ++tabLevel;
             e.consume();
-            var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
-            var curCaretPosition = getCaretPosition();
+            ++tabLevel;
             var pad = 2;
-            var caretPad = isTab ? 1 : Settings.TAB_SIZE;
-            var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
             if (!t1.endsWith(" ")) {
                 t1 += " ";
                 pad++;
@@ -239,11 +239,6 @@ public class CodeEditor extends JTextPane {
             setCaretPosition(curCaretPosition + (caretPad * tabLevel) + pad);
         } else if (kChar == '\n') {
             e.consume();
-            var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
-            var curCaretPosition = getCaretPosition();
-            var caretPad = isTab ? 1 : Settings.TAB_SIZE;
-            var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
-
             var curTabLevel = 0;
             var rowStart = 0;
             try {

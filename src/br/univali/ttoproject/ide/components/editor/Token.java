@@ -53,6 +53,12 @@ public class Token {
             '\''
     };
 
+    private static final char[] numSep = {
+            ' ',
+            '[',
+            ']'
+    };
+
     public static boolean isSkip(char c) {
         return c == ' ' || c == '\n' || c == '\r' || c == '\t' || isSymbol(c);
     }
@@ -84,6 +90,13 @@ public class Token {
 
     public static boolean isNumMate(char c) {
         return isNumber(c) || isSymbol(c) || c == ' ';
+    }
+
+    public static boolean isNumSep(char c) {
+        for (var symbol : numSep) {
+            if (c == symbol) return true;
+        }
+        return false;
     }
 
 }

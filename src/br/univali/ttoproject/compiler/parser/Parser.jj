@@ -27,11 +27,14 @@ SKIP: { <"/*"> : BLOCK_COMMENT_STATE}
 <BLOCK_COMMENT_STATE> SKIP: { "*/" : DEFAULT  }
 <BLOCK_COMMENT_STATE> SKIP: { < ~[] > }
 
-<*> TOKEN : { <EOF> {
-    if(curLexState == BLOCK_COMMENT_STATE) {
-       throw new Error("Unmatched comment at line " + matchedToken.beginLine + ", column " + matchedToken.beginColumn + ".");
+<*> TOKEN :
+{
+    <EOF>
+    {
+        if(curLexState == BLOCK_COMMENT_STATE) {
+            throw new Error("Unmatched comment at line " + matchedToken.beginLine + ", column " + matchedToken.beginColumn + ".");
+        }
     }
-  }
 }
 
 /* KEY WORDS */
@@ -52,8 +55,6 @@ TOKEN [IGNORE_CASE]:
 | <GET: "get">
 | <PUT: "put">
 | <VERIFY: "verify">
-| <TRUE: "true">
-| <FALSE: "false">
 | <LOOP: "loop">
 | <WHILE: "while">
 | <DO: "do">
@@ -89,27 +90,26 @@ TOKEN :
 | <NOT_SYMBOL: "!">
 }
 
-/* IDENTIFIERS */
 TOKEN :
 {
-    <IDENTIFIER: (<LETTER>)+>
+    <LETTER: ["a"-"z","A"-"Z"]>
+|   <NUMBER: (["0"-"9"])>
 }
 
 /* CONSTS */
 TOKEN :
 {
     <CHAR_CONST : "\""((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\"" |
-     "\'"((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\'">
-|   <NATURAL_CONST: <INTEGER> (<INTEGER>)? (<INTEGER>)?>
-|   <REAL_CONST: <REAL>>
+                  "\'"((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\'">
+|   <NATURAL_CONST: <NUMBER> (<NUMBER>)? (<NUMBER>)?>
+|   <REAL_CONST: <NUMBER> (<NUMBER>)? (<NUMBER>)? (<NUMBER>)? (<NUMBER>)?  "." <NUMBER> (<NUMBER>)?>
 |   <BOOLEAN_CONST: "true"|"false">
 }
 
+/* IDENTIFIERS */
 TOKEN :
 {
-    <LETTER: ["a"-"z","A"-"Z"]>
-|   <INTEGER: (["0"-"9"])>
-|   <REAL: <INTEGER> (<INTEGER>)? (<INTEGER>)? (<INTEGER>)? (<INTEGER>)?  "." <INTEGER> (<INTEGER>)?>
+    <IDENTIFIER: (<LETTER>)+>
 }
 
 <*> TOKEN : { <UNKNOWN: ~[]> }
