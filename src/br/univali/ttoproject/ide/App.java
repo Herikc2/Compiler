@@ -60,6 +60,16 @@ public class App extends JFrame {
         file = new FileTTO();
         currentFolder = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator + "*";
         loadRecentFiles();
+        var recentMenu = new JMenu("Open recent");
+        if (recentFiles.isEmpty()) {
+            var menuItem = new JMenuItem("No recent files...");
+            recentMenu.add(menuItem);
+        }
+        for (var f : recentFiles) {
+            var menuItem = new JMenuItem(f);
+            menuItem.addActionListener(e -> openRecent(f));
+            recentMenu.add(menuItem);
+        }
         //Debug.print(File.separator);
 
         // Interface ---------------------------------------------------------------------------------------------------
@@ -87,7 +97,7 @@ public class App extends JFrame {
                 this::mHelp, this::mAbout};
 
         // menu bar
-        setJMenuBar(new MenuBar(menuMethods));
+        setJMenuBar(new MenuBar(menuMethods, recentMenu));
 
         // tool bar
         toolBar = new ToolBar(menuMethods);
@@ -420,14 +430,29 @@ public class App extends JFrame {
         log.setText("");
     }
 
-    public boolean pathExists(String testPath){
-        for (var path : recentFiles){
+    public boolean pathExists(String testPath) {
+        for (var path : recentFiles) {
             if (testPath.equals(path)) return true;
         }
         return false;
     }
 
-    public void loadRecentFiles(){
+    public boolean openRecent(String path) {
+        if (cancelSaveFileOp()) return false;
+
+        clearOutputs();
+
+        // abre o arquivo
+        file = new FileTTO(path);
+        resetControlVars();
+        setTitle("Compiler - " + file.getName());
+
+        codeEditor.setText(file.load());
+
+        return true;
+    }
+
+    public void loadRecentFiles() {
         recentFiles = new ArrayList<>();
         var file = new File(Settings.getDefaultRecentFilePath());
         if (file.exists()) {
@@ -449,7 +474,7 @@ public class App extends JFrame {
         var file = new File(Settings.getDefaultRecentFilePath());
         try (var out = new PrintWriter(file)) {
             for (var path : recentFiles)
-                out.println(path + System.lineSeparator());
+                out.println(path);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -564,13 +589,6 @@ public class App extends JFrame {
                     verifyIfExistsOperationDone = true;
                 }
                 fullPath = file.getAbsolutePath();
-                if(!pathExists(fullPath)){
-                    recentFiles.add(fullPath);
-                }
-                if(recentFiles.size() > 10){
-                    recentFiles.remove(0);
-                }
-                saveRecentFiles();
                 currentFolder = fullPath.substring(0, fullPath.lastIndexOf(File.separator)) + File.separator + "*";
                 //Debug.print(currentFolder);
             } else {
@@ -586,6 +604,15 @@ public class App extends JFrame {
                 fullPath += ".tto";
             }
         }
+
+        // add o novo path aos arquivos recentes
+        if (!pathExists(fullPath)) {
+            recentFiles.add(fullPath);
+        }
+        if (recentFiles.size() > 10) {
+            recentFiles.remove(0);
+        }
+        saveRecentFiles();
 
         return fullPath;
     }

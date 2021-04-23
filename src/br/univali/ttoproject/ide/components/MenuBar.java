@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 public class MenuBar extends JMenuBar {
 
-    public MenuBar(Supplier<?>[] methods) {
+    public MenuBar(Supplier<?>[] methods, JMenuItem recentMenu) {
         JMenu menu;
         JMenuItem menuItem;
         JCheckBoxMenuItem checkBoxMenuItem;
@@ -31,6 +31,8 @@ public class MenuBar extends JMenuBar {
         menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/Open Project.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('O', keyCtrl));
         menu.add(menuItem);
+
+        menu.add(recentMenu);
 
         menuItem = new JMenuItem("Save");
         menuItem.addActionListener(e -> methods[MenuOptions.SAVE.getId()].get());
