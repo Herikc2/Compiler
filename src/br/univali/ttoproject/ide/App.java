@@ -54,22 +54,11 @@ public class App extends JFrame {
 
 
     public App() {
-        //TODO: add open recent
-
         // Inicialização de objetos ------------------------------------------------------------------------------------
         file = new FileTTO();
         currentFolder = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator + "*";
         loadRecentFiles();
-        var recentMenu = new JMenu("Open recent");
-        if (recentFiles.isEmpty()) {
-            var menuItem = new JMenuItem("No recent files...");
-            recentMenu.add(menuItem);
-        }
-        for (var f : recentFiles) {
-            var menuItem = new JMenuItem(f);
-            menuItem.addActionListener(e -> openRecent(f));
-            recentMenu.add(menuItem);
-        }
+        var recentMenu = createRecentMenu();
         //Debug.print(File.separator);
 
         // Interface ---------------------------------------------------------------------------------------------------
@@ -437,6 +426,24 @@ public class App extends JFrame {
         return false;
     }
 
+    public void updateRecentMenu(){
+        ((MenuBar)getJMenuBar()).setOpenRecentMenu(createRecentMenu());
+    }
+
+    public JMenu createRecentMenu(){
+        var recentMenu = new JMenu("Open recent");
+        if (recentFiles.isEmpty()) {
+            var menuItem = new JMenuItem("No recent files...");
+            recentMenu.add(menuItem);
+        }
+        for (var f : recentFiles) {
+            var menuItem = new JMenuItem(f);
+            menuItem.addActionListener(e -> openRecent(f));
+            recentMenu.add(menuItem);
+        }
+        return recentMenu;
+    }
+
     public boolean openRecent(String path) {
         if (cancelSaveFileOp()) return false;
 
@@ -612,6 +619,7 @@ public class App extends JFrame {
         if (recentFiles.size() > 10) {
             recentFiles.remove(0);
         }
+        updateRecentMenu();
         saveRecentFiles();
 
         return fullPath;

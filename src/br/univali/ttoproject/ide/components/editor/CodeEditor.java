@@ -91,15 +91,11 @@ public class CodeEditor extends JTextPane {
         });
     }
 
-//    public String getText() {
-//        String text = super.getText();
-//        if (Settings.LINE_ENDING == Settings.LNE_CRLF) {
-//            text = text.replaceAll("![\r]\n", "\r\n");
-//        } else {
-//            text = text.replaceAll("\r\n", "\n");
-//        }
-//        return text;
-//    }
+    public String getText() {
+        String text = super.getText();
+        text = text.replaceAll("\r\n", "\n");
+        return text;
+    }
 
     public void setText(String t) {
         super.setText(t);
@@ -118,15 +114,24 @@ public class CodeEditor extends JTextPane {
                 var si = i + 1;
                 var len = 0;
                 char endChar;
-                boolean spec = false, str = false, num = false;
+                boolean spec = false, str = false, num = false, hdr = false;
                 if (Token.isNumber(c) && word.isEmpty()) {
-                    while (i < length && Token.isNumber(text.charAt(i))) ++i;
+                    while ((i < length && Token.isNumber(text.charAt(i))) ||
+                           (i < length && Token.isNumMate(text.charAt(i)) && text.charAt(i) != ' ' &&
+                            i < length - 1 && Token.isNumber(text.charAt(i + 1))) ||
+                           (i < length && text.charAt(i) == '*' &&
+                            i < length - 1 && text.charAt(i + 1) == '*' &&
+                            i < length - 2 && Token.isNumber(text.charAt(i + 2))) ||
+                           (i < length && text.charAt(i) == '%' &&
+                            i < length - 1 && text.charAt(i + 1) == '%' &&
+                            i < length - 2 && Token.isNumber(text.charAt(i + 2)))) ++i;
+                    --i;
                     spec = true;
                     num = true;
                 } else if (c == '/' && i < length - 1 && text.charAt(i + 1) == '*') {
                     i += 2;
                     while ((i < length && text.charAt(i) != '*') || (i < length - 1 && text.charAt(i + 1) != '/')) ++i;
-                    i++;
+                    ++i;
                     spec = true;
                 } else if (c == '/' && i < length - 1 && text.charAt(i + 1) == '/') {
                     ++i;
@@ -145,12 +150,16 @@ public class CodeEditor extends JTextPane {
                     endChar = '\n';
                     while (i < length && text.charAt(i) != endChar) ++i;
                     spec = true;
+                    hdr = true;
                 }
                 if (spec) {
                     len = i;
-                    if (str) changeColor(FontTheme.COLOR_STRING, si - 1, (len - si) + 2);
-                    else if (num) changeColor(FontTheme.COLOR_NUMBER, si - 1, (len - si) + 1);
-                    else changeColor(FontTheme.COLOR_COMMENTS, si - 1, (len - si) + 2);
+                    Color color;
+                    if (str) color = FontTheme.COLOR_STRING;
+                    else if (num) color = FontTheme.COLOR_NUMBER;
+                    else if (hdr) color = FontTheme.COLOR_HEADER;
+                    else color = FontTheme.COLOR_COMMENTS;
+                    changeColor(color, si - 1, (len - si) + 2);
                     word = "";
                     continue;
                 }
@@ -211,6 +220,8 @@ public class CodeEditor extends JTextPane {
     private void coder(KeyEvent e) {
         var kChar = e.getKeyChar();
         int tabLevel = getTabLevel();
+        var t1 = getText().substring(0, getCaretPosition());
+        var t2 = getText().substring(getCaretPosition());
 
         if (kChar == '{') {
             ++tabLevel;
@@ -219,8 +230,6 @@ public class CodeEditor extends JTextPane {
             var curCaretPosition = getCaretPosition();
             var pad = 2;
             var caretPad = isTab ? 1 : Settings.TAB_SIZE;
-            var t1 = getText().substring(0, getCaretPosition());
-            var t2 = getText().substring(getCaretPosition());
             var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
             if (!t1.endsWith(" ")) {
                 t1 += " ";
@@ -233,8 +242,6 @@ public class CodeEditor extends JTextPane {
             var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
             var curCaretPosition = getCaretPosition();
             var caretPad = isTab ? 1 : Settings.TAB_SIZE;
-            var t1 = getText().substring(0, getCaretPosition());
-            var t2 = getText().substring(getCaretPosition());
             var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
 
             var curTabLevel = 0;

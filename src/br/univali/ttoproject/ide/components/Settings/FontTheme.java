@@ -4,6 +4,7 @@ import java.awt.*;
 
 public class FontTheme {
     public static Color COLOR_DEFAULT;
+    public static Color COLOR_HEADER;
     public static Color COLOR_COMMENTS;
     public static Color COLOR_RESERVED;
     public static Color COLOR_SPECIAL;
@@ -23,6 +24,7 @@ public class FontTheme {
 
     public static void setDefaultLight() {
         COLOR_DEFAULT = Color.BLACK;
+        COLOR_HEADER = new Color(129, 13, 250);
         COLOR_COMMENTS = new Color(0, 128, 0);
         COLOR_RESERVED = new Color(0, 0, 255);
         COLOR_SPECIAL = Color.DARK_GRAY;
@@ -32,6 +34,7 @@ public class FontTheme {
 
     public static void setDefaultDark() {
         COLOR_DEFAULT = Color.WHITE;
+        COLOR_HEADER = new Color(147, 99, 196);
         COLOR_COMMENTS = new Color(106, 153, 85);
         COLOR_RESERVED = new Color(86, 156, 214);
         COLOR_SPECIAL = Color.LIGHT_GRAY;

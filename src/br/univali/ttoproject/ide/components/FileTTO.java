@@ -32,10 +32,11 @@ public class FileTTO extends File {
             var br = new BufferedReader(new FileReader(this));
             String line = br.readLine();
             while (line != null) {
-                content.append(line);
-                content.append(System.lineSeparator());
+                content.append(line).append("\n");
+                //content.append(System.lineSeparator());
                 line = br.readLine();
             }
+            content.delete(content.length() - 2, content.length() - 1);
             br.close();
         } catch (IOException e) {
             e.printStackTrace();

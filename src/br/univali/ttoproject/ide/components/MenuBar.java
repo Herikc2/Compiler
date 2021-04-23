@@ -158,4 +158,11 @@ public class MenuBar extends JMenuBar {
         menu.add(menuItem);
     }
 
+    // 0:2
+    public void setOpenRecentMenu(JMenu menu) {
+        var fileMenu = getMenu(0);
+        fileMenu.remove(2);
+        fileMenu.insert(menu, 2);
+    }
+
 }
