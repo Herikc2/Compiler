@@ -109,7 +109,7 @@ TOKEN :
 /* IDENTIFIERS */
 TOKEN :
 {
-    <IDENTIFIER: ("_"<NU>|<LETTER>)(<LETTER>|<DIGIT><ND>|"_"<NU>)*((<LETTER>|<DIGIT>)"_")?>
+    <IDENTIFIER: "_"|(("_"<NU>|<LETTER>)(<LETTER>|<DIGIT><ND>|"_"<NU>)*((<LETTER>|<DIGIT>)"_")?)>
 |   <NU: <LETTER>|<DIGIT><ND>>
 |   <ND: <LETTER>|"_">
 }
