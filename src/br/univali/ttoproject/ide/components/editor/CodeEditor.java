@@ -235,6 +235,13 @@ public class CodeEditor extends JTextPane {
             }
             setText(t1 + "{\n" + tab.repeat(tabLevel) + "\n" + tab.repeat(tabLevel - 1) + "}" + t2);
             setCaretPosition(curCaretPosition + (caretPad * tabLevel) + pad);
+        } else if (kChar == '"' || kChar == '\'' || kChar == '[') {
+            e.consume();
+            if (kChar == '[')
+                setText(t1 + kChar + ']' + t2);
+            else
+                setText(t1 + kChar + kChar + t2);
+            setCaretPosition(curCaretPosition + 1);
         } else if (kChar == '\n') {
             e.consume();
             var curTabLevel = 0;
