@@ -6,7 +6,10 @@ import br.univali.ttoproject.ide.components.Settings.Settings;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.Stack;
@@ -77,14 +80,22 @@ public class CodeEditor extends JTextPane {
                     popupMenu.show(event.getComponent(), event.getX(), event.getY());
                 }
             }
+
             @Override
-            public void mousePressed(MouseEvent e) {}
+            public void mousePressed(MouseEvent e) {
+            }
+
             @Override
-            public void mouseReleased(MouseEvent e) {}
+            public void mouseReleased(MouseEvent e) {
+            }
+
             @Override
-            public void mouseEntered(MouseEvent e) {}
+            public void mouseEntered(MouseEvent e) {
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {
+            }
         });
 
     }
@@ -115,14 +126,14 @@ public class CodeEditor extends JTextPane {
                 boolean spec = false, str = false, num = false, hdr = false;
                 if (Token.isNumber(c) && (word.length() == 0)) {
                     while ((i < length && Token.isNumber(text.charAt(i))) ||
-                           (i < length && Token.isNumMate(text.charAt(i)) && !Token.isNumSep(text.charAt(i)) &&
-                            i < length - 1 && Token.isNumber(text.charAt(i + 1))) ||
-                           (i < length && text.charAt(i) == '*' &&
-                            i < length - 1 && text.charAt(i + 1) == '*' &&
-                            i < length - 2 && Token.isNumber(text.charAt(i + 2))) ||
-                           (i < length && text.charAt(i) == '%' &&
-                            i < length - 1 && text.charAt(i + 1) == '%' &&
-                            i < length - 2 && Token.isNumber(text.charAt(i + 2)))) ++i;
+                            (i < length && Token.isNumMate(text.charAt(i)) && !Token.isNumSep(text.charAt(i)) &&
+                                    i < length - 1 && Token.isNumber(text.charAt(i + 1))) ||
+                            (i < length && text.charAt(i) == '*' &&
+                                    i < length - 1 && text.charAt(i + 1) == '*' &&
+                                    i < length - 2 && Token.isNumber(text.charAt(i + 2))) ||
+                            (i < length && text.charAt(i) == '%' &&
+                                    i < length - 1 && text.charAt(i + 1) == '%' &&
+                                    i < length - 2 && Token.isNumber(text.charAt(i + 2)))) ++i;
                     --i;
                     spec = true;
                     num = true;
@@ -216,7 +227,7 @@ public class CodeEditor extends JTextPane {
     }
 
     private void coder(KeyEvent e) {
-        var kChar = e.getKeyChar();
+        var keyChar = e.getKeyChar();
         int tabLevel = getTabLevel();
         var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
         var curCaretPosition = getCaretPosition();
@@ -225,7 +236,7 @@ public class CodeEditor extends JTextPane {
         var t1 = getText().substring(0, getCaretPosition());
         var t2 = getText().substring(getCaretPosition());
 
-        if (kChar == '{') {
+        if (keyChar == '{') {
             e.consume();
             ++tabLevel;
             var pad = 2;
@@ -235,14 +246,20 @@ public class CodeEditor extends JTextPane {
             }
             setText(t1 + "{\n" + tab.repeat(tabLevel) + "\n" + tab.repeat(tabLevel - 1) + "}" + t2);
             setCaretPosition(curCaretPosition + (caretPad * tabLevel) + pad);
-        } else if (kChar == '"' || kChar == '\'' || kChar == '[') {
+        } else if (keyChar == '"' || keyChar == '\'' || keyChar == '[') {
             e.consume();
-            if (kChar == '[')
-                setText(t1 + kChar + ']' + t2);
+            if (keyChar == '[')
+                setText(t1 + keyChar + ']' + t2);
             else
-                setText(t1 + kChar + kChar + t2);
+                setText(t1 + keyChar + keyChar + t2);
             setCaretPosition(curCaretPosition + 1);
-        } else if (kChar == '\n') {
+        } else if (keyChar == '*') {
+            if (t1.endsWith("/*")) {
+                e.consume();
+                setText(t1 + "*" + "\n" + tab.repeat(tabLevel) + " * \n" + tab.repeat(tabLevel) + " */" + t2);
+                setCaretPosition(curCaretPosition + (caretPad * tabLevel) + 5);
+            }
+        } else if (keyChar == '\n') {
             e.consume();
             var curTabLevel = 0;
             var rowStart = 0;

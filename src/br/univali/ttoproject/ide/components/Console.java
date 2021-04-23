@@ -97,10 +97,10 @@ public class Console extends JTextArea {
     }
 
     private void handleKeyPressed(KeyEvent e) {
-        var keyChar = e.getKeyCode();
+        var keyCode = e.getKeyCode();
         var curCaretPosition = getCaretPosition();
 
-        if (keyChar == KeyEvent.VK_BACK_SPACE) {
+        if (keyCode == KeyEvent.VK_BACK_SPACE) {
             // manipula backspace
             if (!allowConsoleInput) {
                 // se o console tiver desabilitado o caractere apenas é consumido
@@ -113,7 +113,7 @@ public class Console extends JTextArea {
                 // qualquer outro caso consome o caractere
                 e.consume();
             }
-        } else if (keyChar == KeyEvent.VK_ENTER) {
+        } else if (keyCode == KeyEvent.VK_ENTER) {
             // o enter sempre será consumido
             e.consume();
             // caso o enter seja pressionado enquanto o console está ativo, o dado é enviado para a função de retorno
@@ -123,7 +123,7 @@ public class Console extends JTextArea {
                 inputReady = true;
                 setCaretPosition(getText().length());
             }
-        } else if (keyChar == KeyEvent.VK_TAB) {
+        } else if (keyCode == KeyEvent.VK_TAB) {
             // tab será sempre consumido
             e.consume();
         }
