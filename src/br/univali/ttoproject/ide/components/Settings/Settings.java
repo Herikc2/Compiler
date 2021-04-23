@@ -16,12 +16,14 @@ import java.util.logging.Logger;
 public class Settings {
 
     public static final String CRLF = "\r\n";
+    public static final String CR = "\r";
     public static final String LF = "\n";
 
     public static String SO_NAME;
     public static String SO_SHORT_NAME;
     public static final int SO_WINDOWS = 0;
     public static final int SO_LINUX = 1;
+    public static final int SO_MAC = 2;
     public static final int CURRENT_SO;
 
     public static final int LNE_CRLF = 0;
@@ -46,7 +48,7 @@ public class Settings {
 
     static {
         SO_NAME = System.getProperty("os.name");
-        SO_SHORT_NAME = System.getProperty("os.name").substring(0, 3).toLowerCase();
+        SO_SHORT_NAME = SO_NAME.substring(0, 3).toLowerCase();
 
         if (SO_SHORT_NAME.equals("win")) CURRENT_SO = SO_WINDOWS;
         else CURRENT_SO = SO_LINUX;

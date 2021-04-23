@@ -108,10 +108,11 @@ public class CodeEditor extends JTextPane {
 
     public void setText(String t) {
         super.setText(t);
-        if (Settings.SYNTAX_HIGHLIGHT) syntaxHighlight();
+        syntaxHighlight();
     }
 
     public void syntaxHighlight() {
+        if (!Settings.SYNTAX_HIGHLIGHT) return;
         var text = getText();
         var length = text.length();
         StringBuilder word = new StringBuilder();
@@ -298,7 +299,7 @@ public class CodeEditor extends JTextPane {
 //            if (Settings.SYNTAX_HIGHLIGHT)
 //                syntaxHighlight();
 //        }
-        if (Settings.SYNTAX_HIGHLIGHT) syntaxHighlight();
+        syntaxHighlight();
     }
 
     private void handleKeyPressed(KeyEvent e) {

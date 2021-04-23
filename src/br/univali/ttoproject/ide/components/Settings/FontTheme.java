@@ -23,21 +23,21 @@ public class FontTheme {
     }
 
     public static void setDefaultLight() {
-        COLOR_DEFAULT = Color.BLACK;
+        COLOR_DEFAULT = new Color(0, 0, 0);
         COLOR_HEADER = new Color(129, 13, 250);
         COLOR_COMMENTS = new Color(0, 128, 0);
         COLOR_RESERVED = new Color(0, 0, 255);
-        COLOR_SPECIAL = Color.DARK_GRAY;
+        COLOR_SPECIAL = new Color(64, 64, 64);
         COLOR_NUMBER = new Color(9, 134, 88);
         COLOR_STRING = new Color(163, 21, 21);
     }
 
     public static void setDefaultDark() {
-        COLOR_DEFAULT = Color.WHITE;
+        COLOR_DEFAULT = new Color(255, 255, 255);
         COLOR_HEADER = new Color(147, 99, 196);
         COLOR_COMMENTS = new Color(106, 153, 85);
         COLOR_RESERVED = new Color(86, 156, 214);
-        COLOR_SPECIAL = Color.LIGHT_GRAY;
+        COLOR_SPECIAL = new Color(192, 192, 192);
         COLOR_NUMBER = new Color(181, 206, 168);
         COLOR_STRING = new Color(206, 145, 120);
     }
