@@ -93,7 +93,7 @@ TOKEN :
 TOKEN :
 {
     <LETTER: ["a"-"z","A"-"Z"]>
-|   <NUMBER: (["0"-"9"])>
+|   <DIGIT: (["0"-"9"])>
 }
 
 /* CONSTS */
@@ -101,15 +101,17 @@ TOKEN :
 {
     <CHAR_CONST : "\""((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\"" |
                   "\'"((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\'">
-|   <NATURAL_CONST: <NUMBER> (<NUMBER>)? (<NUMBER>)?>
-|   <REAL_CONST: <NUMBER> (<NUMBER>)? (<NUMBER>)? (<NUMBER>)? (<NUMBER>)?  "." <NUMBER> (<NUMBER>)?>
+|   <NATURAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)?>
+|   <REAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)? (<DIGIT>)? (<DIGIT>)?  "." <DIGIT> (<DIGIT>)?>
 |   <BOOLEAN_CONST: "true"|"false">
 }
 
 /* IDENTIFIERS */
 TOKEN :
 {
-    <IDENTIFIER: (<LETTER>)+>
+    <IDENTIFIER: ("_"<NU>|<LETTER>)(<LETTER>|<DIGIT><ND>|"_"<NU>)*((<LETTER>|<DIGIT>)"_")?>
+|   <NU: <LETTER>|<DIGIT><ND>>
+|   <ND: <LETTER>|"_">
 }
 
 <*> TOKEN : { <UNKNOWN: ~[]> }

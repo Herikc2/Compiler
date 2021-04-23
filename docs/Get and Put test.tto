@@ -1,0 +1,16 @@
+:- Get and Put test [Author: Carlos Machado]
+program {
+	define {
+		variable
+			char is name .
+	}
+	execute {
+		put { "Type your name: " } .
+		get { name } .
+		put { "Hello " } .
+		put { name } .
+		put { "." } .
+	}
+}
+get_put_test
+
