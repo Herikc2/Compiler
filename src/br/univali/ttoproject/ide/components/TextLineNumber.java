@@ -1,7 +1,5 @@
 package br.univali.ttoproject.ide.components;
 
-import br.univali.ttoproject.ide.components.Settings.FontTheme;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -78,7 +76,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
         setFont(component.getFont());
 
         setBorderGap(5);
-        setCurrentLineForeground(FontTheme.COLOR_RESERVED);
+        setCurrentLineForeground(new Color(86, 156, 214));
         setDigitAlignment(RIGHT);
         setMinimumDisplayDigits(minimumDisplayDigits);
 
@@ -269,8 +267,6 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     private boolean isCurrentLine(int rowStartOffset) {
         int caretPosition = component.getCaretPosition();
         Element root = component.getDocument().getDefaultRootElement();
-
-        setCurrentLineForeground(FontTheme.COLOR_RESERVED);
 
         return root.getElementIndex(rowStartOffset) == root.getElementIndex(caretPosition);
     }

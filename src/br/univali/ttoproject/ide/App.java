@@ -429,7 +429,7 @@ public class App extends JFrame {
     }
 
     public JMenu createRecentMenu(){
-        var recentMenu = new JMenu("Open recent");
+        var recentMenu = new JMenu("Open Recent");
         if (recentFiles.isEmpty()) {
             var menuItem = new JMenuItem("No recent files...");
             recentMenu.add(menuItem);

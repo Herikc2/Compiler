@@ -39,7 +39,7 @@ public class Console extends JTextArea {
                     var popupMenu = new JPopupMenu();
                     JMenuItem menuItem;
 
-                    menuItem = new JMenuItem("Clear all");
+                    menuItem = new JMenuItem("Clear All");
                     menuItem.addActionListener(e -> reset());
                     popupMenu.add(menuItem);
 

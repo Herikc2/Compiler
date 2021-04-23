@@ -22,13 +22,13 @@ public class MenuBar extends JMenuBar {
 
         menuItem = new JMenuItem("New");
         menuItem.addActionListener(e -> methods[MenuOptions.NEW.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/New File.png"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/new.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('N', keyCtrl));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Open");
         menuItem.addActionListener(e -> methods[MenuOptions.OPEN.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/Open Project.png"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/open.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('O', keyCtrl));
         menu.add(menuItem);
 
@@ -36,11 +36,11 @@ public class MenuBar extends JMenuBar {
 
         menuItem = new JMenuItem("Save");
         menuItem.addActionListener(e -> methods[MenuOptions.SAVE.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/Save File.png"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/save.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('S', keyCtrl));
         menu.add(menuItem);
 
-        menuItem = new JMenuItem("Save as...");
+        menuItem = new JMenuItem("Save As...");
         menuItem.addActionListener(e -> methods[MenuOptions.SAVE_AS.getID()].get());
         menuItem.setAccelerator(KeyStroke.getKeyStroke('S', keyShift | keyCtrl));
         menu.add(menuItem);
@@ -62,13 +62,13 @@ public class MenuBar extends JMenuBar {
 
         menuItem = new JMenuItem("Undo");
         menuItem.addActionListener(e -> methods[MenuOptions.UNDO.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/Undo.PNG"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/undo.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('Z', keyCtrl));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Redo");
         menuItem.addActionListener(e -> methods[MenuOptions.REDO.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/Redo.PNG"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/redo.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('Y', keyCtrl));
         menu.add(menuItem);
 
@@ -76,25 +76,25 @@ public class MenuBar extends JMenuBar {
 
         menuItem = new JMenuItem("Cut");
         menuItem.addActionListener(e -> methods[MenuOptions.CUT.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/Cut.PNG"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/cut.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('X', keyCtrl));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Copy");
         menuItem.addActionListener(e -> methods[MenuOptions.COPY.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/Copy.PNG"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/copy.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('C', keyCtrl));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Paste");
         menuItem.addActionListener(e -> methods[MenuOptions.PASTE.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/Paste.png"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/paste.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('V', keyCtrl));
         menu.add(menuItem);
 
         menu.addSeparator();
 
-        menuItem = new JMenuItem("Select all");
+        menuItem = new JMenuItem("Select All");
         menuItem.addActionListener(e -> methods[MenuOptions.SELECT_ALL.getID()].get());
         menuItem.setAccelerator(KeyStroke.getKeyStroke('A', keyCtrl));
         menu.add(menuItem);
@@ -102,12 +102,12 @@ public class MenuBar extends JMenuBar {
         menu = new JMenu("View");
         add(menu);
 
-        checkBoxMenuItem = new JCheckBoxMenuItem("Tool bar");
+        checkBoxMenuItem = new JCheckBoxMenuItem("Tool Bar");
         checkBoxMenuItem.setState(true);
         checkBoxMenuItem.addActionListener(e -> methods[MenuOptions.SHOW_TOOL_BAR.getID()].get());
         menu.add(checkBoxMenuItem);
 
-        checkBoxMenuItem = new JCheckBoxMenuItem("Status bar");
+        checkBoxMenuItem = new JCheckBoxMenuItem("Status Bar");
         checkBoxMenuItem.setState(true);
         checkBoxMenuItem.addActionListener(e -> methods[MenuOptions.SHOW_STATUS_BAR.getID()].get());
         menu.add(checkBoxMenuItem);
@@ -120,35 +120,36 @@ public class MenuBar extends JMenuBar {
         menu = new JMenu("Build");
         add(menu);
 
-        menuItem = new JMenuItem("Compile and run");
+        menuItem = new JMenuItem("Compile and Run");
         menuItem.addActionListener(e -> methods[MenuOptions.COMPILE_RUN.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/CR.png"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/compile_run.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke("F5"));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Compile");
         menuItem.addActionListener(e -> methods[MenuOptions.COMPILE.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/Cog.png"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/build.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke("F6"));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Run");
         menuItem.addActionListener(e -> methods[MenuOptions.RUN.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/Run.PNG"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/run.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke("F7"));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Stop");
         menuItem.addActionListener(e -> methods[MenuOptions.STOP.getID()].get());
-        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/Stop.PNG"))));
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/stop.png"))));
         menuItem.setAccelerator(KeyStroke.getKeyStroke("F8"));
         menu.add(menuItem);
 
         menu = new JMenu("Help");
         add(menu);
 
-        menuItem = new JMenuItem("Show help");
+        menuItem = new JMenuItem("Show Help");
         menuItem.addActionListener(e -> methods[MenuOptions.HELP.getID()].get());
+        menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/help.png"))));
         menu.add(menuItem);
 
         menu.addSeparator();
@@ -158,7 +159,6 @@ public class MenuBar extends JMenuBar {
         menu.add(menuItem);
     }
 
-    // 0:2
     public void setOpenRecentMenu(JMenu menu) {
         var fileMenu = getMenu(0);
         fileMenu.remove(2);

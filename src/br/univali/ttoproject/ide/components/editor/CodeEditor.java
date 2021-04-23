@@ -6,10 +6,7 @@ import br.univali.ttoproject.ide.components.Settings.Settings;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.Stack;
@@ -72,7 +69,7 @@ public class CodeEditor extends JTextPane {
 
                     popupMenu.addSeparator();
 
-                    menuItem = new JMenuItem("Select all");
+                    menuItem = new JMenuItem("Select All");
                     menuItem.addActionListener(e -> selectAll());
                     menuItem.setAccelerator(KeyStroke.getKeyStroke('A', keyCtrl));
                     popupMenu.add(menuItem);
@@ -89,6 +86,7 @@ public class CodeEditor extends JTextPane {
             @Override
             public void mouseExited(MouseEvent e) {}
         });
+
     }
 
     public String getText() {
