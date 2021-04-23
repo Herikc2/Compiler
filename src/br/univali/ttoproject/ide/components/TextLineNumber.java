@@ -1,5 +1,7 @@
 package br.univali.ttoproject.ide.components;
 
+import br.univali.ttoproject.ide.components.Settings.FontTheme;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -13,7 +15,6 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Serial;
 import java.util.HashMap;
 
 /**
@@ -29,18 +30,13 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     public final static float LEFT = 0.0f;
     public final static float CENTER = 0.5f;
     public final static float RIGHT = 1.0f;
-    /**
-     *
-     */
-    @Serial
-    private static final long serialVersionUID = 8743194483608456061L;
     private final static Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
 
     private final static int HEIGHT = Integer.MAX_VALUE - 1000000;
 
     //  Text component this TextTextLineNumber component is in sync with
 
-    private JTextComponent component;
+    private final JTextComponent component;
 
     //  Properties that can be changed
 
@@ -82,7 +78,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
         setFont(component.getFont());
 
         setBorderGap(5);
-        setCurrentLineForeground(Color.RED);
+        setCurrentLineForeground(FontTheme.COLOR_RESERVED);
         setDigitAlignment(RIGHT);
         setMinimumDisplayDigits(minimumDisplayDigits);
 
@@ -145,7 +141,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     }
 
     /**
-     * The Color used to render the current line digits. Default is Coolor.RED.
+     * The Color used to render the current line digits. Default is Color.RED.
      *
      * @param currentLineForeground the Color used to render the current line
      */
@@ -186,7 +182,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     }
 
     /**
-     * Specify the mimimum number of digits used to calculate the preferred
+     * Specify the minimum number of digits used to calculate the preferred
      * width of the component. Default is 3.
      *
      * @param minimumDisplayDigits the number digits used in the preferred
@@ -274,10 +270,9 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
         int caretPosition = component.getCaretPosition();
         Element root = component.getDocument().getDefaultRootElement();
 
-        if (root.getElementIndex(rowStartOffset) == root.getElementIndex(caretPosition))
-            return true;
-        else
-            return false;
+        setCurrentLineForeground(FontTheme.COLOR_RESERVED);
+
+        return root.getElementIndex(rowStartOffset) == root.getElementIndex(caretPosition);
     }
 
     /*
@@ -322,7 +317,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
             descent = fontMetrics.getDescent();
         } else { // We need to check all the attributes for font changes
             if (fonts == null)
-                fonts = new HashMap<String, FontMetrics>();
+                fonts = new HashMap<>();
 
             Element root = component.getDocument().getDefaultRootElement();
             int index = root.getElementIndex(rowStartOffset);
@@ -397,21 +392,18 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
         //  View of the component has not been updated at the time
         //  the DocumentEvent is fired
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    int endPos = component.getDocument().getLength();
-                    Rectangle rect = component.modelToView(endPos);
+        SwingUtilities.invokeLater(() -> {
+            try {
+                int endPos = component.getDocument().getLength();
+                Rectangle rect = component.modelToView(endPos);
 
-                    if (rect != null && rect.y != lastHeight) {
-                        setPreferredWidth();
+                if (rect != null && rect.y != lastHeight) {
+                    setPreferredWidth();
 //						repaint();
-                        getParent().repaint();
-                        lastHeight = rect.y;
-                    }
-                } catch (BadLocationException ex) { /* nothing to do */ }
-            }
+                    getParent().repaint();
+                    lastHeight = rect.y;
+                }
+            } catch (BadLocationException ex) { /* nothing to do */ }
         });
     }
 

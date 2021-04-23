@@ -23,13 +23,13 @@ public enum MenuOptions {
     HELP(19),
     ABOUT(20);
 
-    private int id;
+    private final int ID;
 
     MenuOptions(int id) {
-        this.id = id;
+        this.ID = id;
     }
 
-    public int getId() {
-        return id;
+    public int getID() {
+        return ID;
     }
 }

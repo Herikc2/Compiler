@@ -17,7 +17,7 @@ public class FileTTO extends File {
     }
 
     public void save(String content) {
-        // salva o conteudo no arquivo
+        // salva o conteúdo no arquivo
         try (var out = new PrintWriter(this)) {
             out.println(content);
         } catch (FileNotFoundException e) {
@@ -26,7 +26,7 @@ public class FileTTO extends File {
     }
 
     public String load() {
-        // carrega e retorna o conteudo do arquivo
+        // carrega e retorna o conteúdo do arquivo
         var content = new StringBuilder();
         try {
             var br = new BufferedReader(new FileReader(this));

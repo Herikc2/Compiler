@@ -105,7 +105,7 @@ public class CodeEditor extends JTextPane {
     public void syntaxHighlight() {
         var text = getText();
         var length = text.length();
-        var word = "";
+        StringBuilder word = new StringBuilder();
         setDefaultColor();
         changeColor(FontTheme.COLOR_DEFAULT, 0, length);
         for (int i = 0; i < length; ++i) {
@@ -115,7 +115,7 @@ public class CodeEditor extends JTextPane {
                 var len = 0;
                 char endChar;
                 boolean spec = false, str = false, num = false, hdr = false;
-                if (Token.isNumber(c) && word.isEmpty()) {
+                if (Token.isNumber(c) && (word.length() == 0)) {
                     while ((i < length && Token.isNumber(text.charAt(i))) ||
                            (i < length && Token.isNumMate(text.charAt(i)) && !Token.isNumSep(text.charAt(i)) &&
                             i < length - 1 && Token.isNumber(text.charAt(i + 1))) ||
@@ -160,7 +160,7 @@ public class CodeEditor extends JTextPane {
                     else if (hdr) color = FontTheme.COLOR_HEADER;
                     else color = FontTheme.COLOR_COMMENTS;
                     changeColor(color, si - 1, (len - si) + 2);
-                    word = "";
+                    word = new StringBuilder();
                     continue;
                 }
             }
@@ -169,17 +169,17 @@ public class CodeEditor extends JTextPane {
             }
             if (Token.isSkip(c) || i == length - 1) {
                 if (i == length - 1 && !Token.isSkip(c)) {
-                    word += c;
+                    word.append(c);
                     ++i;
                 }
-                if (Token.isReserved(word)) {
+                if (Token.isReserved(word.toString())) {
                     var from = i - word.length();
                     var to = i - from;
                     changeColor(FontTheme.COLOR_RESERVED, from, to);
                 }
-                word = "";
+                word = new StringBuilder();
             } else {
-                word += c;
+                word.append(c);
             }
         }
     }

@@ -38,14 +38,10 @@ public class SettingsForm extends JDialog {
         fontSettings.getFontChooser().setSelectedFont(Settings.FONT);
 
         // btn restore listener
-        btnRestoreDefault.addActionListener(e -> {
-            restoreDefault();
-        });
+        btnRestoreDefault.addActionListener(e -> restoreDefault() );
 
         // btn save listener
-        btnSave.addActionListener(e -> {
-            update();
-        });
+        btnSave.addActionListener(e -> update());
         getRootPane().setDefaultButton(btnSave);
     }
 

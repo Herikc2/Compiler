@@ -30,8 +30,6 @@ public class App extends JFrame {
     private final ToolBar toolBar;
     private final StatusBar statusBar;
     private final JSplitPane splitPane;
-    private final JScrollPane scpLog;
-    private final JScrollPane scpConsole;
     private final JScrollPane scpCodeEditor;
     private final JLabel lblLnCol;
     private final JLabel lblTabType;
@@ -114,12 +112,12 @@ public class App extends JFrame {
 
         // console
         console = new Console();
-        scpConsole = new JScrollPane(console);
+        var scpConsole = new JScrollPane(console);
 
         // log
         log = new JTextArea();
         log.setEditable(false);
-        scpLog = new JScrollPane(log);
+        var scpLog = new JScrollPane(log);
 
         // creating and setting up tab
         tabIO = new JTabbedPane();
@@ -164,7 +162,7 @@ public class App extends JFrame {
 
         clearOutputs();
 
-        // reinicializa as variaveis de arquivo
+        // reinicializa as variáveis de arquivo
         file = new FileTTO();
         codeEditor.setText("");
         resetControlVars();
@@ -444,8 +442,8 @@ public class App extends JFrame {
         return recentMenu;
     }
 
-    public boolean openRecent(String path) {
-        if (cancelSaveFileOp()) return false;
+    public void openRecent(String path) {
+        if (cancelSaveFileOp()) return;
 
         clearOutputs();
 
@@ -455,8 +453,6 @@ public class App extends JFrame {
         setTitle("Compiler - " + file.getName());
 
         codeEditor.setText(file.load());
-
-        return true;
     }
 
     public void loadRecentFiles() {
@@ -528,7 +524,7 @@ public class App extends JFrame {
     }
 
     public boolean verifySaveFile() {
-        // verifica se o usuario deseja salvar o arquivo
+        // verifica se o usuário deseja salvar o arquivo
         int result = JOptionPane.showConfirmDialog(
                 this,
                 "Would you like to save the file?",
@@ -603,7 +599,7 @@ public class App extends JFrame {
             }
         } while (!verifyIfExistsOperationDone);
 
-        // adiciona a extenção caso não tenha
+        // adiciona a extensão caso não tenha
         if (!fullPath.endsWith(".txt")) {
             if (fullPath.length() >= 4 && !fullPath.endsWith(".tto")) {
                 fullPath += ".tto";

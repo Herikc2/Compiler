@@ -18,7 +18,6 @@ public class Settings {
     public static final String CRLF = "\r\n";
     public static final String LF = "\n";
 
-
     public static String SO_NAME;
     public static String SO_SHORT_NAME;
     public static final int SO_WINDOWS = 0;
@@ -30,8 +29,6 @@ public class Settings {
     public static final int ENC_UTF_8 = 0;
     public static final int TT_SPACES = 0;
     public static final int TT_TAB = 1;
-    public static final int LF_SYSTEM = 0;
-    public static final int LF_CROSS_PLATFORM = 1;
 
     public static App app;
 
@@ -100,7 +97,8 @@ public class Settings {
         properties.setProperty("FONT_THEME", Integer.toString(FONT_THEME));
         properties.setProperty("SYNTAX_HIGHLIGHT", Boolean.toString(SYNTAX_HIGHLIGHT));
         var directory = new File(getDefaultConfigFolderPath());
-        if (!directory.exists()) directory.mkdir();
+        if (!directory.exists()) //noinspection ResultOfMethodCallIgnored
+            directory.mkdir();
         try {
             properties.store(new FileWriter(getDefaultConfigFilePath()), "2021.1 Compiler configs");
         } catch (IOException e) {

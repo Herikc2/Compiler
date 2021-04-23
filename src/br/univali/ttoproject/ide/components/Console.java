@@ -84,12 +84,12 @@ public class Console extends JTextArea {
         // caso o console esteja recebendo dados
         if (allowConsoleInput) {
             var curCaretPosition = getCaretPosition();
-            // antes do input do teclado, é verificado se a posição do caret está fora da área perminida
+            // antes do input do teclado, é verificado se a posição do caret está fora da área permitida
             if (curCaretPosition < initialAllowedArea || curCaretPosition > finalAllowedArea) {
                 // se não tiver, o caret é posicionado ao final da área permitida
                 setCaretPosition(finalAllowedArea);
             }
-            // aumenta o compimento da área permitida em um caracter
+            // aumenta o comprimento da área permitida em um caractere
             finalAllowedArea++;
         } else {
             e.consume();
@@ -110,7 +110,7 @@ public class Console extends JTextArea {
                 // da área permitida
                 finalAllowedArea--;
             } else {
-                // qualquer outro caso consome o caracter
+                // qualquer outro caso consome o caractere
                 e.consume();
             }
         } else if (keyChar == KeyEvent.VK_ENTER) {

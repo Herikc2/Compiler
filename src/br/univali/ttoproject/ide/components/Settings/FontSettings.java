@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class FontSettings {
     private JPanel panelMain;
-    private JFontChooser fontChooser;
+    private final JFontChooser fontChooser;
 
     public FontSettings() {
         fontChooser = new JFontChooser();
