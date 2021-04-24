@@ -2,6 +2,7 @@ package br.univali.ttoproject.ide.components.editor;
 
 import br.univali.ttoproject.ide.components.Settings.FontTheme;
 import br.univali.ttoproject.ide.components.Settings.Settings;
+import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -254,6 +255,11 @@ public class CodeEditor extends JTextPane {
             else
                 setText(t1 + keyChar + keyChar + t2);
             setCaretPosition(curCaretPosition + 1);
+        } else if (keyChar == '\b') {
+            if (t2.startsWith("'") || t2.startsWith("\"") || t2.startsWith("]")) {
+                setText(t1 + t2.substring(1));
+                setCaretPosition(curCaretPosition);
+            }
         } else if (keyChar == '*') {
             if (t1.endsWith("/*")) {
                 e.consume();
