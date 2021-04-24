@@ -19,12 +19,12 @@ public class Settings {
     public static final String CR = "\r";
     public static final String LF = "\n";
 
-    public static String SO_NAME;
-    public static String SO_SHORT_NAME;
-    public static final int SO_WINDOWS = 0;
-    public static final int SO_LINUX = 1;
-    public static final int SO_MAC = 2;
-    public static final int CURRENT_SO;
+    public static String OS_NAME;
+    public static String OS_SHORT_NAME;
+    public static final int OS_WINDOWS = 0;
+    public static final int OS_LINUX = 1;
+    public static final int OS_MAC = 2;
+    public static final int CURRENT_OS;
 
     public static final int LNE_CRLF = 0;
     public static final int LNE_LF = 1;
@@ -48,11 +48,11 @@ public class Settings {
     public static String CURRENT_FOLDER;
 
     static {
-        SO_NAME = System.getProperty("os.name");
-        SO_SHORT_NAME = SO_NAME.substring(0, 3).toLowerCase();
+        OS_NAME = System.getProperty("os.name");
+        OS_SHORT_NAME = OS_NAME.substring(0, 3).toLowerCase();
 
-        if (SO_SHORT_NAME.equals("win")) CURRENT_SO = SO_WINDOWS;
-        else CURRENT_SO = SO_LINUX;
+        if (OS_SHORT_NAME.equals("win")) CURRENT_OS = OS_WINDOWS;
+        else CURRENT_OS = OS_LINUX;
 
         if (new File(getDefaultConfigFilePath()).exists()) {
             load();
@@ -113,7 +113,7 @@ public class Settings {
     }
 
     public static void setDefaultSettings() {
-        if (CURRENT_SO == SO_WINDOWS) {
+        if (CURRENT_OS == OS_WINDOWS) {
             FONT = new Font("Consolas", Font.PLAIN, 16);
             LINE_ENDING = LNE_CRLF;
         } else {

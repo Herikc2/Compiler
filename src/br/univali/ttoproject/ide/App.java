@@ -455,6 +455,11 @@ public class App extends JFrame {
 
         clearOutputs();
 
+        recentFiles.remove(path);
+        recentFiles.add(0, path);
+        updateRecentMenu();
+        saveRecentFiles();
+
         // abre o arquivo
         file = new FileTTO(path);
         resetControlVars();
@@ -618,10 +623,10 @@ public class App extends JFrame {
 
         // add o novo path aos arquivos recentes
         if (!pathExists(fullPath)) {
-            recentFiles.add(fullPath);
+            recentFiles.add(0, fullPath);
         }
         if (recentFiles.size() > 10) {
-            recentFiles.remove(0);
+            recentFiles.remove(recentFiles.size() - 1);
         }
         updateRecentMenu();
         saveRecentFiles();
