@@ -7,24 +7,18 @@ import br.univali.ttoproject.ide.util.Debug;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.Stack;
-import java.util.function.Consumer;
 
 public class CodeEditor extends JTextPane {
 
     private final Stack<State> undoStates;
     private final Stack<State> redoStates;
-    Consumer<Object> changesListener;
     private boolean hasChanges = false;
 
-    public CodeEditor(Consumer<Object> lcListener, Consumer<Object> changesListener) {
-        this.changesListener = changesListener;
+    public CodeEditor() {
         undoStates = new Stack<>();
         redoStates = new Stack<>();
         setEditorKit(new TabSizeEditorKit());
@@ -32,71 +26,15 @@ public class CodeEditor extends JTextPane {
         setFont(Settings.FONT);
         addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e) {
-                handleKeyPressed(e);
-            }
-
+            public void keyPressed(KeyEvent e) { handleKeyPressed(e); }
             @Override
-            public void keyReleased(KeyEvent e) {
-                handleKeyReleased(e);
-            }
-
+            public void keyReleased(KeyEvent e) { handleKeyReleased(e); }
             @Override
-            public void keyTyped(KeyEvent e) {
-                handleKeyTyped(e);
-            }
+            public void keyTyped(KeyEvent e) { handleKeyTyped(e); }
         });
-        addCaretListener(e -> lcListener.accept(null));
-
-        addMouseListener(new MouseListener() {
+        addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent event) {
-                if (event.getButton() == MouseEvent.BUTTON3) {
-                    var keyCtrl = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
-                    var popupMenu = new JPopupMenu();
-                    JMenuItem menuItem;
-
-                    menuItem = new JMenuItem("Cut");
-                    menuItem.addActionListener(e -> cut());
-                    menuItem.setAccelerator(KeyStroke.getKeyStroke('X', keyCtrl));
-                    popupMenu.add(menuItem);
-
-                    menuItem = new JMenuItem("Copy");
-                    menuItem.addActionListener(e -> copy());
-                    menuItem.setAccelerator(KeyStroke.getKeyStroke('C', keyCtrl));
-                    popupMenu.add(menuItem);
-
-                    menuItem = new JMenuItem("Paste");
-                    menuItem.addActionListener(e -> paste());
-                    menuItem.setAccelerator(KeyStroke.getKeyStroke('V', keyCtrl));
-                    popupMenu.add(menuItem);
-
-                    popupMenu.addSeparator();
-
-                    menuItem = new JMenuItem("Select All");
-                    menuItem.addActionListener(e -> selectAll());
-                    menuItem.setAccelerator(KeyStroke.getKeyStroke('A', keyCtrl));
-                    popupMenu.add(menuItem);
-
-                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
-                }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseClicked(MouseEvent e) { handleMouseClicked(e); }
         });
 
     }
@@ -112,7 +50,7 @@ public class CodeEditor extends JTextPane {
         syntaxHighlight();
     }
 
-    public void syntaxHighlight() {
+    public void  syntaxHighlight() {
         if (!Settings.SYNTAX_HIGHLIGHT) return;
         var text = getText();
         var length = text.length();
@@ -219,12 +157,111 @@ public class CodeEditor extends JTextPane {
         }
     }
 
+    private void handleKeyReleased(KeyEvent e) {
+//        if (!(e.isActionKey() || e.isControlDown() || e.isAltDown() ||
+//                e.isShiftDown() || e.isAltGraphDown() || e.isMetaDown())) {
+//            if (Settings.SYNTAX_HIGHLIGHT)
+//                syntaxHighlight();
+//        }
+        syntaxHighlight();
+    }
+
+    private void handleKeyPressed(KeyEvent e) {
+        if (e.getKeyCode() == '\t') {
+            if (Settings.TAB_TYPE == Settings.TT_SPACES) {
+                e.consume();
+                var curCaretPosition = getCaretPosition();
+                var tabSize = Settings.TAB_SIZE;
+                var t1 = getText().substring(0, curCaretPosition);
+                var t2 = getText().substring(curCaretPosition);
+
+                var rowStart = 0;
+                try {
+                    rowStart = Utilities.getRowStart(this, curCaretPosition);
+                } catch (BadLocationException err) {
+                    err.printStackTrace();
+                }
+                var lineSize = t1.substring(rowStart, curCaretPosition).length();
+                if (lineSize < Settings.TAB_SIZE) {
+                    tabSize -= lineSize;
+                } else if (lineSize > Settings.TAB_SIZE) {
+                    var calc = lineSize % Settings.TAB_SIZE;
+                    tabSize = calc != 0 ? tabSize - calc : tabSize;
+                }
+
+                setText(t1 + " ".repeat(tabSize) + t2);
+                setCaretPosition(curCaretPosition + tabSize);
+            }
+        } else if (e.getKeyCode() == '\b') {
+            if (Settings.TAB_TYPE == Settings.TT_SPACES) {
+                var curCaretPosition = getCaretPosition();
+                var tabSize = Settings.TAB_SIZE;
+                var t1 = getText().substring(0, curCaretPosition);
+                var t2 = getText().substring(curCaretPosition);
+
+                var rowStart = 0;
+                try {
+                    rowStart = Utilities.getRowStart(this, curCaretPosition);
+                } catch (BadLocationException err) {
+                    err.printStackTrace();
+                }
+                // pega a linha e tamanho
+                var line = t1.substring(rowStart, curCaretPosition);
+                var lineSize = line.length();
+
+                if (line.chars().filter(ch -> ch == ' ').count() == lineSize) {
+                    e.consume();
+                    if (lineSize < Settings.TAB_SIZE) {
+                        tabSize -= lineSize;
+                    } else if (lineSize > Settings.TAB_SIZE) {
+                        var calc = lineSize % Settings.TAB_SIZE;
+                        tabSize = calc != 0 ? tabSize - calc : tabSize;
+                    }
+
+                    setText(t1.substring(0, t1.length() - (tabSize)) + t2);
+                    setCaretPosition(curCaretPosition - tabSize);
+                }
+            }
+        }
+    }
+
     private void handleKeyTyped(KeyEvent e) {
         if (!e.isControlDown()) {
             hasChanges = true;
-            changesListener.accept(null);
             undoStates.push(new State(getText(), getCaretPosition()));
             coder(e);
+        }
+    }
+
+    private void handleMouseClicked(MouseEvent event) {
+        if (event.getButton() == MouseEvent.BUTTON3) {
+            var keyCtrl = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+            var popupMenu = new JPopupMenu();
+            JMenuItem menuItem;
+
+            menuItem = new JMenuItem("Cut");
+            menuItem.addActionListener(e -> cut());
+            menuItem.setAccelerator(KeyStroke.getKeyStroke('X', keyCtrl));
+            popupMenu.add(menuItem);
+
+            menuItem = new JMenuItem("Copy");
+            menuItem.addActionListener(e -> copy());
+            menuItem.setAccelerator(KeyStroke.getKeyStroke('C', keyCtrl));
+            popupMenu.add(menuItem);
+
+            menuItem = new JMenuItem("Paste");
+            menuItem.addActionListener(e -> paste());
+            menuItem.setAccelerator(KeyStroke.getKeyStroke('V', keyCtrl));
+            popupMenu.add(menuItem);
+
+            popupMenu.addSeparator();
+
+            menuItem = new JMenuItem("Select All");
+            menuItem.addActionListener(e -> selectAll());
+            menuItem.setAccelerator(KeyStroke.getKeyStroke('A', keyCtrl));
+            popupMenu.add(menuItem);
+
+            popupMenu.show(event.getComponent(), event.getX(), event.getY());
         }
     }
 
@@ -238,17 +275,7 @@ public class CodeEditor extends JTextPane {
         var t1 = getText().substring(0, getCaretPosition());
         var t2 = getText().substring(getCaretPosition());
 
-        if (keyChar == '{') {
-            e.consume();
-            ++tabLevel;
-            var pad = 2;
-            if (!t1.endsWith(" ")) {
-                t1 += " ";
-                pad++;
-            }
-            setText(t1 + "{\n" + tab.repeat(tabLevel) + "\n" + tab.repeat(tabLevel - 1) + "}" + t2);
-            setCaretPosition(curCaretPosition + (caretPad * tabLevel) + pad);
-        } else if (keyChar == '"' || keyChar == '\'' || keyChar == '[') {
+        if (keyChar == '"' || keyChar == '\'' || keyChar == '[') {
             e.consume();
             if (keyChar == '[')
                 setText(t1 + keyChar + ']' + t2);
@@ -260,30 +287,37 @@ public class CodeEditor extends JTextPane {
                 setText(t1 + t2.substring(1));
                 setCaretPosition(curCaretPosition);
             }
-        } else if (keyChar == '*') {
-            if (t1.endsWith("/*")) {
-                e.consume();
-                setText(t1 + "*" + "\n" + tab.repeat(tabLevel) + " * \n" + tab.repeat(tabLevel) + " */" + t2);
-                setCaretPosition(curCaretPosition + (caretPad * tabLevel) + 5);
-            }
         } else if (keyChar == '\n') {
-            e.consume();
-            var curTabLevel = 0;
-            var rowStart = 0;
-            try {
-                rowStart = Utilities.getRowStart(this, curCaretPosition - 1);
-            } catch (BadLocationException err) {
-                err.printStackTrace();
-            }
-            var chars = t1.substring(rowStart, curCaretPosition - 1).chars();
-            if (isTab)
-                curTabLevel = (int) chars.filter(ch -> ch == '\t').count();
-            else
-                curTabLevel = (int) chars.filter(ch -> ch == ' ').count() / Settings.TAB_SIZE;
-            tabLevel = Math.max(curTabLevel, tabLevel);
+            if (t1.endsWith("{\n")) {
+                var pad = 0;
+                t1 = t1.substring(0, t1.length() - 2);
+                if (!t1.endsWith(" ")) {
+                    t1 += " ";
+                    pad++;
+                }
+                setText(t1 + "{\n" + tab.repeat(tabLevel) + "\n" + tab.repeat(tabLevel - 1) + "}" + t2);
+                setCaretPosition(curCaretPosition + (caretPad * tabLevel) + pad);
+            } else if (t1.endsWith("/**\n")) {
+                setText(t1 + tab.repeat(tabLevel) + " * \n" + tab.repeat(tabLevel) + " */" + t2);
+                setCaretPosition(curCaretPosition + (caretPad * tabLevel) + 3);
+            }  else {
+                var curTabLevel = 0;
+                var rowStart = 0;
+                try {
+                    rowStart = Utilities.getRowStart(this, curCaretPosition - 1);
+                } catch (BadLocationException err) {
+                    err.printStackTrace();
+                }
+                var chars = t1.substring(rowStart, curCaretPosition - 1).chars();
+                if (isTab)
+                    curTabLevel = (int) chars.filter(ch -> ch == '\t').count();
+                else
+                    curTabLevel = (int) chars.filter(ch -> ch == ' ').count() / Settings.TAB_SIZE;
+                tabLevel = Math.max(curTabLevel, tabLevel);
 
-            setText(t1 + tab.repeat(tabLevel) + t2);
-            setCaretPosition(curCaretPosition + (caretPad * tabLevel));
+                setText(t1 + tab.repeat(tabLevel) + t2);
+                setCaretPosition(curCaretPosition + (caretPad * tabLevel));
+            }
         }
     }
 
@@ -299,30 +333,6 @@ public class CodeEditor extends JTextPane {
         return tabLevel;
     }
 
-    private void handleKeyReleased(KeyEvent e) {
-//        if (!(e.isActionKey() || e.isControlDown() || e.isAltDown() ||
-//                e.isShiftDown() || e.isAltGraphDown() || e.isMetaDown())) {
-//            if (Settings.SYNTAX_HIGHLIGHT)
-//                syntaxHighlight();
-//        }
-        syntaxHighlight();
-    }
-
-    private void handleKeyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_TAB) {
-            if (Settings.TAB_TYPE == Settings.TT_SPACES) {
-                e.consume();
-                var caretPosition = getCaretPosition();
-                var tabSize = Settings.TAB_SIZE;
-                var text1 = getText().substring(0, caretPosition);
-                var text2 = getText().substring(caretPosition);
-                // TODO: verify incomplete tab cases
-                setText(text1 + " ".repeat(tabSize) + text2);
-                setCaretPosition(caretPosition + tabSize);
-            }
-        }
-    }
-
     public void undo() {
         if (canUndo()) {
             redoStates.add(new State(getText(), getCaretPosition()));
@@ -331,7 +341,6 @@ public class CodeEditor extends JTextPane {
             setCaretPosition(state.getP());
         } else {
             hasChanges = true;
-            changesListener.accept(null);
         }
     }
 

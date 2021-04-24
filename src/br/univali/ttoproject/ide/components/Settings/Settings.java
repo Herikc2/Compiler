@@ -45,6 +45,7 @@ public class Settings {
     public static int LOOK_AND_FEEL;
     public static int FONT_THEME;
     public static boolean SYNTAX_HIGHLIGHT;
+    public static String CURRENT_FOLDER;
 
     static {
         SO_NAME = System.getProperty("os.name");
@@ -81,6 +82,7 @@ public class Settings {
         LOOK_AND_FEEL = Integer.parseInt(properties.getProperty("LOOK_AND_FEEL"));
         FONT_THEME = Integer.parseInt(properties.getProperty("FONT_THEME"));
         SYNTAX_HIGHLIGHT = Boolean.parseBoolean(properties.getProperty("SYNTAX_HIGHLIGHT"));
+        CURRENT_FOLDER = properties.getProperty("CURRENT_FOLDER");
         setFontTheme();
         setLookAndFeel();
     }
@@ -98,6 +100,8 @@ public class Settings {
         properties.setProperty("LOOK_AND_FEEL", Integer.toString(LOOK_AND_FEEL));
         properties.setProperty("FONT_THEME", Integer.toString(FONT_THEME));
         properties.setProperty("SYNTAX_HIGHLIGHT", Boolean.toString(SYNTAX_HIGHLIGHT));
+        properties.setProperty("CURRENT_FOLDER", CURRENT_FOLDER);
+
         var directory = new File(getDefaultConfigFolderPath());
         if (!directory.exists()) //noinspection ResultOfMethodCallIgnored
             directory.mkdir();
@@ -125,6 +129,7 @@ public class Settings {
         LOOK_AND_FEEL = 0;
         FONT_THEME = 0;
         SYNTAX_HIGHLIGHT = true;
+        CURRENT_FOLDER = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator + "*";
         setFontTheme();
         setLookAndFeel();
         save();

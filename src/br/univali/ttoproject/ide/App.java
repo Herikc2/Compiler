@@ -15,8 +15,7 @@ import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -40,7 +39,6 @@ public class App extends JFrame {
 
     private FileTTO file;
     private ArrayList<String> recentFiles;
-    private String currentFolder;
 
     private Program program;
 
@@ -54,7 +52,6 @@ public class App extends JFrame {
     public App() {
         // Inicialização de objetos ------------------------------------------------------------------------------------
         file = new FileTTO();
-        currentFolder = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator + "*";
         loadRecentFiles();
         var recentMenu = createRecentMenu();
         //Debug.print(File.separator);
@@ -128,7 +125,14 @@ public class App extends JFrame {
         splitPane.setRightComponent(tabIO);
 
         // editor
-        codeEditor = new CodeEditor(o -> updateLCLabel(), o -> updateFileEdit());
+        codeEditor = new CodeEditor();
+        codeEditor.addCaretListener(e -> updateLCLabel());
+        codeEditor.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (!e.isControlDown()) updateFileEdit();
+            }
+        });
         scpCodeEditor = new JScrollPane(codeEditor);
         splitPane.setLeftComponent(scpCodeEditor);
         // editor line number
@@ -142,6 +146,8 @@ public class App extends JFrame {
     }
 
     public static void main(String[] args) {
+        // TODO [BUG]: sometimes files loading without \n and \t
+
         // Inicializa a aplicação
         EventQueue.invokeLater(() -> {
             try {
@@ -234,12 +240,14 @@ public class App extends JFrame {
 
     public boolean mUndo() {
         codeEditor.undo();
+        updateFileEdit();
 
         return true;
     }
 
     public boolean mRedo() {
         codeEditor.redo();
+        updateFileEdit();
 
         return true;
     }
@@ -557,7 +565,7 @@ public class App extends JFrame {
         if (save) {
             fileChooser.setSelectedFile(new File(file.getName()));
         } else {
-            fileChooser.setSelectedFile(new File(currentFolder));
+            fileChooser.setSelectedFile(new File(Settings.CURRENT_FOLDER));
         }
 
         int userSelection;
@@ -592,8 +600,8 @@ public class App extends JFrame {
                     verifyIfExistsOperationDone = true;
                 }
                 fullPath = file.getAbsolutePath();
-                currentFolder = fullPath.substring(0, fullPath.lastIndexOf(File.separator)) + File.separator + "*";
-                //Debug.print(currentFolder);
+                Settings.CURRENT_FOLDER = fullPath.substring(0, fullPath.lastIndexOf(File.separator)) + File.separator + "*";
+                Settings.save();
             } else {
                 return "";
             }
