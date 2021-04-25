@@ -1,9 +1,10 @@
 package br.univali.ttoproject.ide.components;
 
-import br.univali.ttoproject.ide.components.Settings.Settings;
-
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Console extends JTextArea {
 
@@ -103,6 +104,12 @@ public class Console extends JTextArea {
         if (event.getButton() == MouseEvent.BUTTON3) {
             var popupMenu = new JPopupMenu();
             JMenuItem menuItem;
+
+            menuItem = new JMenuItem("Copy");
+            menuItem.addActionListener(e -> copy());
+            popupMenu.add(menuItem);
+
+            popupMenu.addSeparator();
 
             menuItem = new JMenuItem("Clear All");
             menuItem.addActionListener(e -> reset());

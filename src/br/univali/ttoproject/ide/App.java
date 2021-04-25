@@ -25,7 +25,7 @@ public class App extends JFrame {
     private final CodeEditor codeEditor;
     private final JTabbedPane tabIO;
     private final Console console;
-    private final JTextArea log;
+    private final Log log;
     private final ToolBar toolBar;
     private final StatusBar statusBar;
     private final JSplitPane splitPane;
@@ -112,8 +112,7 @@ public class App extends JFrame {
         var scpConsole = new JScrollPane(console);
 
         // log
-        log = new JTextArea();
-        log.setEditable(false);
+        log = new Log();
         var scpLog = new JScrollPane(log);
 
         // creating and setting up tab
@@ -186,6 +185,14 @@ public class App extends JFrame {
         // pega o caminho do arquivo a ser aberto
         var fullPath = getFilePath(false);
         if (fullPath.equals("")) return false;
+        if(!new FileTTO(fullPath).exists()){
+            JOptionPane.showMessageDialog(
+                    this,
+                    "The path " + fullPath + " is not valid.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
 
         // abre o arquivo
         file = new FileTTO(fullPath);
@@ -455,6 +462,14 @@ public class App extends JFrame {
 
     public void openRecent(String path) {
         if (cancelSaveFileOp()) return;
+        if (!new FileTTO(path).exists()){
+            JOptionPane.showMessageDialog(
+                    this,
+                    "The path " + path + " is not valid.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         clearOutputs();
 
