@@ -1,4 +1,4 @@
-package br.univali.ttoproject.ide.components.Settings;
+package br.univali.ttoproject.ide.components.settings;
 
 import javax.swing.*;
 import java.awt.*;

@@ -5,13 +5,12 @@ import br.univali.ttoproject.compiler.Program;
 import br.univali.ttoproject.ide.components.Console;
 import br.univali.ttoproject.ide.components.MenuBar;
 import br.univali.ttoproject.ide.components.*;
-import br.univali.ttoproject.ide.components.Settings.Settings;
-import br.univali.ttoproject.ide.components.Settings.SettingsForm;
+import br.univali.ttoproject.ide.components.settings.Settings;
+import br.univali.ttoproject.ide.components.settings.SettingsForm;
 import br.univali.ttoproject.ide.components.editor.CodeEditor;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
 import java.awt.*;

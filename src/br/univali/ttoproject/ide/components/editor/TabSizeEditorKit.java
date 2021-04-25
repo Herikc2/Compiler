@@ -1,6 +1,6 @@
 package br.univali.ttoproject.ide.components.editor;
 
-import br.univali.ttoproject.ide.components.Settings.Settings;
+import br.univali.ttoproject.ide.components.settings.Settings;
 
 import javax.swing.text.*;
 
