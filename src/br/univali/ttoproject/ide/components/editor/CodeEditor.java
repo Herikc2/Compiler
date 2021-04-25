@@ -2,12 +2,14 @@ package br.univali.ttoproject.ide.components.editor;
 
 import br.univali.ttoproject.ide.components.Settings.FontTheme;
 import br.univali.ttoproject.ide.components.Settings.Settings;
-import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.Stack;
@@ -26,15 +28,25 @@ public class CodeEditor extends JTextPane {
         setFont(Settings.FONT);
         addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e) { handleKeyPressed(e); }
+            public void keyPressed(KeyEvent e) {
+                handleKeyPressed(e);
+            }
+
             @Override
-            public void keyReleased(KeyEvent e) { handleKeyReleased(e); }
+            public void keyReleased(KeyEvent e) {
+                handleKeyReleased(e);
+            }
+
             @Override
-            public void keyTyped(KeyEvent e) { handleKeyTyped(e); }
+            public void keyTyped(KeyEvent e) {
+                handleKeyTyped(e);
+            }
         });
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) { handleMouseClicked(e); }
+            public void mouseClicked(MouseEvent e) {
+                handleMouseClicked(e);
+            }
         });
 
     }
@@ -50,7 +62,7 @@ public class CodeEditor extends JTextPane {
         syntaxHighlight();
     }
 
-    public void  syntaxHighlight() {
+    public void syntaxHighlight() {
         if (!Settings.SYNTAX_HIGHLIGHT) return;
         var text = getText();
         var length = text.length();
@@ -267,7 +279,7 @@ public class CodeEditor extends JTextPane {
 
     private void coder(KeyEvent e) {
         var keyChar = e.getKeyChar();
-        int tabLevel = getTabLevel();
+        int braceTabLevel = getTabLevel();
         var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
         var curCaretPosition = getCaretPosition();
         var caretPad = isTab ? 1 : Settings.TAB_SIZE;
@@ -282,6 +294,18 @@ public class CodeEditor extends JTextPane {
             else
                 setText(t1 + keyChar + keyChar + t2);
             setCaretPosition(curCaretPosition + 1);
+        } else if (keyChar == ' ') {
+            if (t1.endsWith("{")) {
+                e.consume();
+                var pad = 1;
+                t1 = t1.substring(0, t1.length() - 1);
+                if (!t1.endsWith(" ")) {
+                    t1 += " ";
+                    pad++;
+                }
+                setText(t1 + "{ " + " } ." + t2);
+                setCaretPosition(curCaretPosition + pad);
+            }
         } else if (keyChar == '\b') {
             if (t2.startsWith("'") || t2.startsWith("\"") || t2.startsWith("]")) {
                 setText(t1 + t2.substring(1));
@@ -295,12 +319,14 @@ public class CodeEditor extends JTextPane {
                     t1 += " ";
                     pad++;
                 }
-                setText(t1 + "{\n" + tab.repeat(tabLevel) + "\n" + tab.repeat(tabLevel - 1) + "}" + t2);
-                setCaretPosition(curCaretPosition + (caretPad * tabLevel) + pad);
+                setText(t1 + "{\n" + tab.repeat(braceTabLevel) + "\n" + tab.repeat(braceTabLevel - 1) + "}" + t2);
+                setCaretPosition(curCaretPosition + (caretPad * braceTabLevel) + pad);
             } else if (t1.endsWith("/**\n")) {
-                setText(t1 + tab.repeat(tabLevel) + " * \n" + tab.repeat(tabLevel) + " */" + t2);
-                setCaretPosition(curCaretPosition + (caretPad * tabLevel) + 3);
-            }  else {
+                setText(t1 + tab.repeat(braceTabLevel) + " * \n" + tab.repeat(braceTabLevel) + " */" + t2);
+                setCaretPosition(curCaretPosition + (caretPad * braceTabLevel) + 3);
+            } else {
+                // mantém o nível do tab quando teclado enter
+                // prioridade: nível do tab atual -> chaves abertas
                 var curTabLevel = 0;
                 var rowStart = 0;
                 try {
@@ -313,10 +339,10 @@ public class CodeEditor extends JTextPane {
                     curTabLevel = (int) chars.filter(ch -> ch == '\t').count();
                 else
                     curTabLevel = (int) chars.filter(ch -> ch == ' ').count() / Settings.TAB_SIZE;
-                tabLevel = Math.max(curTabLevel, tabLevel);
+                braceTabLevel = Math.max(curTabLevel, braceTabLevel);
 
-                setText(t1 + tab.repeat(tabLevel) + t2);
-                setCaretPosition(curCaretPosition + (caretPad * tabLevel));
+                setText(t1 + tab.repeat(braceTabLevel) + t2);
+                setCaretPosition(curCaretPosition + (caretPad * braceTabLevel));
             }
         }
     }

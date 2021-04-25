@@ -3,10 +3,7 @@ package br.univali.ttoproject.ide.components;
 import br.univali.ttoproject.ide.components.Settings.Settings;
 
 import javax.swing.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 public class Console extends JTextArea {
 
@@ -18,42 +15,15 @@ public class Console extends JTextArea {
     private String input = "";
 
     public Console() {
-        setTabSize(4);
-        setFont(Settings.FONT);
+        //setTabSize(4);
+        //setFont(Settings.FONT);
         setFocusTraversalKeysEnabled(false);
         addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                handleKeyTyped(e);
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                handleKeyPressed(e);
-            }
+            @Override public void keyTyped(KeyEvent e) { handleKeyTyped(e); }
+            @Override public void keyPressed(KeyEvent e) { handleKeyPressed(e); }
         });
-        addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent event) {
-                if (event.getButton() == MouseEvent.BUTTON3) {
-                    var popupMenu = new JPopupMenu();
-                    JMenuItem menuItem;
-
-                    menuItem = new JMenuItem("Clear All");
-                    menuItem.addActionListener(e -> reset());
-                    popupMenu.add(menuItem);
-
-                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
-                }
-            }
-            @Override
-            public void mousePressed(MouseEvent e) {}
-            @Override
-            public void mouseReleased(MouseEvent e) {}
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            @Override
-            public void mouseExited(MouseEvent e) {}
+        addMouseListener(new MouseAdapter() {
+            @Override public void mouseClicked(MouseEvent e) { handleMouseClicked(e); }
         });
     }
 
@@ -126,6 +96,19 @@ public class Console extends JTextArea {
         } else if (keyCode == KeyEvent.VK_TAB) {
             // tab será sempre consumido
             e.consume();
+        }
+    }
+
+    private void handleMouseClicked(MouseEvent event){
+        if (event.getButton() == MouseEvent.BUTTON3) {
+            var popupMenu = new JPopupMenu();
+            JMenuItem menuItem;
+
+            menuItem = new JMenuItem("Clear All");
+            menuItem.addActionListener(e -> reset());
+            popupMenu.add(menuItem);
+
+            popupMenu.show(event.getComponent(), event.getX(), event.getY());
         }
     }
 
