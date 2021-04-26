@@ -145,6 +145,7 @@ public class App extends JFrame {
 
     public static void main(String[] args) {
         // TODO [BUG]: sometimes files loading without \n and \t
+        // TODO [BUG]: add coder and suggestion to options
 
         // Inicializa a aplicação
         EventQueue.invokeLater(() -> {

@@ -173,28 +173,6 @@ public class CodeEditor extends JTextPane {
         }
     }
 
-    private void handleKeyReleased(KeyEvent e) {
-//        if (!(e.isActionKey() || e.isControlDown() || e.isAltDown() ||
-//                e.isShiftDown() || e.isAltGraphDown() || e.isMetaDown())) {
-//            if (Settings.SYNTAX_HIGHLIGHT)
-//                syntaxHighlight();
-//        }
-        syntaxHighlight();
-    }
-
-    private void handleKeyPressed(KeyEvent e) {
-        //coderPressed(e);
-    }
-
-    private void handleKeyTyped(KeyEvent e) {
-        if (!e.isControlDown()) {
-            hasChanges = true;
-            undoStates.push(new State(getText(), getCaretPosition()));
-            //coderTyped(e);
-            //suggestions(e);
-        }
-    }
-
     private void handleMouseClicked(MouseEvent event) {
         if (event.getButton() == MouseEvent.BUTTON3) {
             var keyCtrl = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
@@ -224,6 +202,28 @@ public class CodeEditor extends JTextPane {
             popupMenu.add(menuItem);
 
             popupMenu.show(event.getComponent(), event.getX(), event.getY());
+        }
+    }
+
+    private void handleKeyReleased(KeyEvent e) {
+//        if (!(e.isActionKey() || e.isControlDown() || e.isAltDown() ||
+//                e.isShiftDown() || e.isAltGraphDown() || e.isMetaDown())) {
+//            if (Settings.SYNTAX_HIGHLIGHT)
+//                syntaxHighlight();
+//        }
+        syntaxHighlight();
+    }
+
+    private void handleKeyPressed(KeyEvent e) {
+        //coderPressed(e);
+    }
+
+    private void handleKeyTyped(KeyEvent e) {
+        if (!e.isControlDown()) {
+            hasChanges = true;
+            undoStates.push(new State(getText(), getCaretPosition()));
+            //coderTyped(e);
+            //suggestions(e);
         }
     }
 
@@ -287,6 +287,7 @@ public class CodeEditor extends JTextPane {
     }
 
     private void addSelectedWord(String word, int size){
+        // TODO: to resolve adding bug
         var caretPosition = getCaretPosition();
         var t1 = getText().substring(0, caretPosition - size);
         var t2 = getText().substring(caretPosition);
