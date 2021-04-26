@@ -1,6 +1,7 @@
 package br.univali.ttoproject.ide.components;
 
 import br.univali.ttoproject.ide.App;
+import br.univali.ttoproject.ide.components.settings.Settings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -103,17 +104,17 @@ public class MenuBar extends JMenuBar {
         add(menu);
 
         checkBoxMenuItem = new JCheckBoxMenuItem("Tool Bar");
-        checkBoxMenuItem.setState(true);
+        checkBoxMenuItem.setState(Settings.SHOW_TOOL_BAR);
         checkBoxMenuItem.addActionListener(e -> methods[MenuOptions.SHOW_TOOL_BAR.getID()].get());
         menu.add(checkBoxMenuItem);
 
         checkBoxMenuItem = new JCheckBoxMenuItem("Status Bar");
-        checkBoxMenuItem.setState(true);
+        checkBoxMenuItem.setState(Settings.SHOW_STATUS_BAR);
         checkBoxMenuItem.addActionListener(e -> methods[MenuOptions.SHOW_STATUS_BAR.getID()].get());
         menu.add(checkBoxMenuItem);
 
         checkBoxMenuItem = new JCheckBoxMenuItem("Console");
-        checkBoxMenuItem.setState(true);
+        checkBoxMenuItem.setState(Settings.SHOW_CONSOLE);
         checkBoxMenuItem.addActionListener(e -> methods[MenuOptions.SHOW_CONSOLE.getID()].get());
         menu.add(checkBoxMenuItem);
 

@@ -2,6 +2,7 @@ package br.univali.ttoproject.ide.components.editor;
 
 import br.univali.ttoproject.ide.components.settings.FontTheme;
 import br.univali.ttoproject.ide.components.settings.Settings;
+import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -179,69 +180,14 @@ public class CodeEditor extends JTextPane {
     }
 
     private void handleKeyPressed(KeyEvent e) {
-        if (e.getKeyCode() == '\t') {
-            if (Settings.TAB_TYPE == Settings.TT_SPACES) {
-                e.consume();
-                var curCaretPosition = getCaretPosition();
-                var tabSize = Settings.TAB_SIZE;
-                var t1 = getText().substring(0, curCaretPosition);
-                var t2 = getText().substring(curCaretPosition);
-
-                var rowStart = 0;
-                try {
-                    rowStart = Utilities.getRowStart(this, curCaretPosition);
-                } catch (BadLocationException err) {
-                    err.printStackTrace();
-                }
-                var lineSize = t1.substring(rowStart, curCaretPosition).length();
-                if (lineSize < Settings.TAB_SIZE) {
-                    tabSize -= lineSize;
-                } else if (lineSize > Settings.TAB_SIZE) {
-                    var calc = lineSize % Settings.TAB_SIZE;
-                    tabSize = calc != 0 ? tabSize - calc : tabSize;
-                }
-
-                setText(t1 + " ".repeat(tabSize) + t2);
-                setCaretPosition(curCaretPosition + tabSize);
-            }
-        } else if (e.getKeyCode() == '\b') {
-            if (Settings.TAB_TYPE == Settings.TT_SPACES) {
-                var curCaretPosition = getCaretPosition();
-                var tabSize = Settings.TAB_SIZE;
-                var t1 = getText().substring(0, curCaretPosition);
-                var t2 = getText().substring(curCaretPosition);
-
-                var rowStart = 0;
-                try {
-                    rowStart = Utilities.getRowStart(this, curCaretPosition);
-                } catch (BadLocationException err) {
-                    err.printStackTrace();
-                }
-                // pega a linha e tamanho
-                var line = t1.substring(rowStart, curCaretPosition);
-                var lineSize = line.length();
-
-                if (line.chars().filter(ch -> ch == ' ').count() == lineSize) {
-                    e.consume();
-                    if (lineSize < Settings.TAB_SIZE) {
-                        tabSize -= lineSize;
-                    } else if (lineSize > Settings.TAB_SIZE) {
-                        var calc = lineSize % Settings.TAB_SIZE;
-                        tabSize = calc != 0 ? tabSize - calc : tabSize;
-                    }
-
-                    setText(t1.substring(0, t1.length() - (tabSize)) + t2);
-                    setCaretPosition(curCaretPosition - tabSize);
-                }
-            }
-        }
+        coderPressed(e);
     }
 
     private void handleKeyTyped(KeyEvent e) {
         if (!e.isControlDown()) {
             hasChanges = true;
             undoStates.push(new State(getText(), getCaretPosition()));
-            coder(e);
+            coderTyped(e);
         }
     }
 
@@ -277,7 +223,115 @@ public class CodeEditor extends JTextPane {
         }
     }
 
-    private void coder(KeyEvent e) {
+    private void coderPressed(KeyEvent e) {
+        // handle non printable characters
+
+        var keyCode = e.getKeyCode();
+        var tabSize = Settings.TAB_SIZE;
+        int braceTabLevel = getTabLevel();
+        var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
+        var curCaretPosition = getCaretPosition();
+        var caretPad = isTab ? 1 : Settings.TAB_SIZE;
+        var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
+        var t1 = getText().substring(0, getCaretPosition());
+        var t2 = getText().substring(getCaretPosition());
+
+        if (keyCode == '\t') {
+            if (Settings.TAB_TYPE == Settings.TT_SPACES) {
+                e.consume();
+                var rowStart = 0;
+                try {
+                    rowStart = Utilities.getRowStart(this, curCaretPosition);
+                } catch (BadLocationException err) {
+                    err.printStackTrace();
+                }
+                var lineSize = t1.substring(rowStart, curCaretPosition).length();
+                if (lineSize < Settings.TAB_SIZE) {
+                    tabSize -= lineSize;
+                } else if (lineSize > Settings.TAB_SIZE) {
+                    var calc = lineSize % Settings.TAB_SIZE;
+                    tabSize = calc != 0 ? tabSize - calc : tabSize;
+                }
+
+                setText(t1 + " ".repeat(tabSize) + t2);
+                setCaretPosition(curCaretPosition + tabSize);
+            }
+        } else if (keyCode == '\b') {
+            if (t1.endsWith("'") && t2.startsWith("'") || t1.endsWith("\"") && t2.startsWith("\"") ||
+                    t1.endsWith("[") && t2.startsWith("]") || t1.endsWith("(") && t2.startsWith(")")) {
+                setText(t1 + t2.substring(1));
+                setCaretPosition(curCaretPosition);
+            } else if (Settings.TAB_TYPE == Settings.TT_SPACES) {
+                // handle space tab delete cases
+                var rowStart = 0;
+                try {
+                    rowStart = Utilities.getRowStart(this, curCaretPosition);
+                } catch (BadLocationException err) {
+                    err.printStackTrace();
+                }
+                // pega a linha e tamanho
+                var line = t1.substring(rowStart, curCaretPosition);
+                var lineSize = line.length();
+
+                if (line.chars().filter(ch -> ch == ' ').count() == lineSize && lineSize > 0) {
+                    e.consume();
+                    if (lineSize < Settings.TAB_SIZE) {
+                        tabSize -= lineSize;
+                    } else if (lineSize > Settings.TAB_SIZE) {
+                        var calc = lineSize % Settings.TAB_SIZE;
+                        tabSize = calc != 0 ? tabSize - calc : tabSize;
+                    }
+
+                    setText(t1.substring(0, t1.length() - (tabSize)) + t2);
+                    setCaretPosition(curCaretPosition - tabSize);
+                }
+            }
+        } else if (keyCode == '\n') {
+            if (t1.endsWith("{") && (getTabLevel(t1) > Math.abs(getTabLevel(t2)))) {
+                // handle block cases
+                e.consume();
+                var pad = 1;
+                t1 = t1.substring(0, t1.length() - 1);
+                if (!t1.endsWith(" ")) {
+                    t1 += " ";
+                    pad++;
+                }
+                setText(t1 + "{\n" + tab.repeat(braceTabLevel) + "\n" + tab.repeat(braceTabLevel - 1) + "}" + t2);
+                setCaretPosition(curCaretPosition + (caretPad * braceTabLevel) + pad);
+            } else if (t1.endsWith("/**")) {
+                e.consume();
+                // handle block comment cases
+                setText(t1 + "\n" + tab.repeat(braceTabLevel) + " * \n" + tab.repeat(braceTabLevel) + " */" + t2);
+                setCaretPosition(curCaretPosition + (caretPad * braceTabLevel) + 4);
+            } else {
+                // mantém o nível do tab quando teclado enter
+                // prioridade: nível do tab atual -> chaves abertas
+                e.consume();
+                var curTabLevel = 0;
+                var rowStart = 0;
+                try {
+                    rowStart = Utilities.getRowStart(this, curCaretPosition);
+                } catch (BadLocationException err) {
+                    err.printStackTrace();
+                }
+                var chars = t1.substring(rowStart, curCaretPosition).chars();
+
+                if (isTab)
+                    curTabLevel = (int) chars.filter(ch -> ch == '\t').count();
+                else
+                    curTabLevel = (int) chars.filter(ch -> ch == ' ').count() / Settings.TAB_SIZE;
+
+                var bigger = Math.max(curTabLevel, braceTabLevel);
+
+                setText(t1 + "\n" + tab.repeat(bigger) + t2);
+                setCaretPosition(curCaretPosition + (caretPad * bigger) + 1);
+            }
+        }
+    }
+
+    private void coderTyped(KeyEvent e) {
+        // handle printable characters
+
         var keyChar = e.getKeyChar();
         int braceTabLevel = getTabLevel();
         var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
@@ -287,12 +341,33 @@ public class CodeEditor extends JTextPane {
         var t1 = getText().substring(0, getCaretPosition());
         var t2 = getText().substring(getCaretPosition());
 
-        if (keyChar == '"' || keyChar == '\'' || keyChar == '[') {
+        if (keyChar == ']' || keyChar == ')') {
+            if (t1.endsWith("[")) {
+                e.consume();
+                if (!t2.startsWith("]")) {
+                    setText(t1 + "]" + t2);
+                }
+                setCaretPosition(curCaretPosition + 1);
+            } else if (t1.endsWith("(")) {
+                e.consume();
+                if (!t2.startsWith(")")) {
+                    setText(t1 + ")" + t2);
+                }
+                setCaretPosition(curCaretPosition + 1);
+            }
+        } else if (keyChar == '"' || keyChar == '\'' || keyChar == '[' || keyChar == '(') {
             e.consume();
-            if (keyChar == '[')
+            if (keyChar == '[') {
                 setText(t1 + keyChar + ']' + t2);
-            else
+            } else if (keyChar == '(') {
+                setText(t1 + keyChar + ')' + t2);
+            } else if (t1.endsWith(Character.toString(keyChar))) {
+                if (!t2.startsWith(Character.toString(keyChar))) {
+                    setText(t1 + keyChar + t2);
+                }
+            } else {
                 setText(t1 + keyChar + keyChar + t2);
+            }
             setCaretPosition(curCaretPosition + 1);
         } else if (keyChar == ' ') {
             if (t1.endsWith("{")) {
@@ -306,55 +381,21 @@ public class CodeEditor extends JTextPane {
                 setText(t1 + "{ " + " } ." + t2);
                 setCaretPosition(curCaretPosition + pad);
             }
-        } else if (keyChar == '\b') {
-            if (t2.startsWith("'") || t2.startsWith("\"") || t2.startsWith("]")) {
-                setText(t1 + t2.substring(1));
-                setCaretPosition(curCaretPosition);
-            }
-        } else if (keyChar == '\n') {
-            if (t1.endsWith("{\n")) {
-                var pad = 0;
-                t1 = t1.substring(0, t1.length() - 2);
-                if (!t1.endsWith(" ")) {
-                    t1 += " ";
-                    pad++;
-                }
-                setText(t1 + "{\n" + tab.repeat(braceTabLevel) + "\n" + tab.repeat(braceTabLevel - 1) + "}" + t2);
-                setCaretPosition(curCaretPosition + (caretPad * braceTabLevel) + pad);
-            } else if (t1.endsWith("/**\n")) {
-                setText(t1 + tab.repeat(braceTabLevel) + " * \n" + tab.repeat(braceTabLevel) + " */" + t2);
-                setCaretPosition(curCaretPosition + (caretPad * braceTabLevel) + 3);
-            } else {
-                // mantém o nível do tab quando teclado enter
-                // prioridade: nível do tab atual -> chaves abertas
-                var curTabLevel = 0;
-                var rowStart = 0;
-                try {
-                    rowStart = Utilities.getRowStart(this, curCaretPosition - 1);
-                } catch (BadLocationException err) {
-                    err.printStackTrace();
-                }
-                var chars = t1.substring(rowStart, curCaretPosition - 1).chars();
-                if (isTab)
-                    curTabLevel = (int) chars.filter(ch -> ch == '\t').count();
-                else
-                    curTabLevel = (int) chars.filter(ch -> ch == ' ').count() / Settings.TAB_SIZE;
-                braceTabLevel = Math.max(curTabLevel, braceTabLevel);
-
-                setText(t1 + tab.repeat(braceTabLevel) + t2);
-                setCaretPosition(curCaretPosition + (caretPad * braceTabLevel));
-            }
         }
     }
 
     private int getTabLevel() {
         var text = getText().substring(0, getCaretPosition());
+        return getTabLevel(text);
+    }
+
+    private int getTabLevel(String text) {
         int tabLevel = 0;
         for (int i = 0; i < text.length(); ++i) {
             var c = text.charAt(i);
             if (c == '{') tabLevel++;
             else if (c == '}') tabLevel--;
-            if (tabLevel < 0) tabLevel = 0;
+            //if (tabLevel < 0) tabLevel = 0;
         }
         return tabLevel;
     }

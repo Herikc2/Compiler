@@ -334,10 +334,11 @@ public class App extends JFrame {
         //if (!mSave()) return false;
 
         compiled = true;
-        log.setText(new Compiler().build(new StringReader(codeEditor.getText())));
+        var strLog = new Compiler().build(new StringReader(codeEditor.getText()));
+        log.setText(strLog);
 
-        // temporiariamente sendo impresso no console
-        console.setText(new Compiler().build(new StringReader(codeEditor.getText())));
+        // temporariamente sendo impresso no console
+        console.setText(strLog);
 
         return true;
     }
