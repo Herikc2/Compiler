@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 
 public class App extends JFrame {
 
+    private JPanel panelMain;
     private final CodeEditor codeEditor;
     private final JTabbedPane tabIO;
     private final Console console;
@@ -34,7 +35,6 @@ public class App extends JFrame {
     private final JLabel lblTabSize;
     private final JLabel lblEncoding;
     private final JLabel lblLineEnding;
-    private JPanel panelMain;
 
     private FileTTO file;
     private ArrayList<String> recentFiles;

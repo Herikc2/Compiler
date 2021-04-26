@@ -2,7 +2,6 @@ package br.univali.ttoproject.ide.components.editor;
 
 import br.univali.ttoproject.ide.components.settings.FontTheme;
 import br.univali.ttoproject.ide.components.settings.Settings;
-import br.univali.ttoproject.ide.util.Debug;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -13,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.Stack;
 
 public class CodeEditor extends JTextPane {
@@ -20,6 +20,9 @@ public class CodeEditor extends JTextPane {
     private final Stack<State> undoStates;
     private final Stack<State> redoStates;
     private boolean hasChanges = false;
+
+    private JPopupMenu pmSuggestions;
+    private ArrayList<JMenuItem> suggestions;
 
     public CodeEditor() {
         undoStates = new Stack<>();
@@ -180,14 +183,15 @@ public class CodeEditor extends JTextPane {
     }
 
     private void handleKeyPressed(KeyEvent e) {
-        coderPressed(e);
+        //coderPressed(e);
     }
 
     private void handleKeyTyped(KeyEvent e) {
         if (!e.isControlDown()) {
             hasChanges = true;
             undoStates.push(new State(getText(), getCaretPosition()));
-            coderTyped(e);
+            //coderTyped(e);
+            //suggestions(e);
         }
     }
 
@@ -223,6 +227,86 @@ public class CodeEditor extends JTextPane {
         }
     }
 
+    private void suggestions(KeyEvent e){
+        var curLine = getCurrentLine() + e.getKeyChar();
+        int i;
+        var word = "";
+        var matched = new ArrayList<String>();
+        for(i = curLine.length() - 1; i >= 0; i--){
+            if(Token.isSkip(curLine.charAt(i)) || i == 0) {
+                word = curLine.substring(i).trim();
+                break;
+            }
+        }
+        if(word.isEmpty()) {
+            if(pmSuggestions != null)
+                pmSuggestions.setVisible(false);
+            pmSuggestions = null;
+        } else{
+            for(var t : Token.getReserved()){
+                if(t.startsWith(word)) matched.add(t);
+            }
+
+            pmSuggestions = new JPopupMenu();
+            suggestions = new ArrayList<>();
+            for(var m : matched){
+                if(m.equals(word)){
+                    pmSuggestions.setVisible(false);
+                    pmSuggestions = null;
+                    suggestions = null;
+                    return;
+                }
+                var menuItem = new JMenuItem(m);
+                var wordLength = word.length();
+                menuItem.addActionListener(ee -> addSelectedWord(m, wordLength));
+                pmSuggestions.add(menuItem);
+                suggestions.add(menuItem);
+            }
+            pmSuggestions.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                        var selected = MenuSelectionManager.defaultManager().getSelectedPath();
+                        ((JMenuItem)selected[1]).doClick();
+                        pmSuggestions.setVisible(false);
+                        pmSuggestions = null;
+                        suggestions = null;
+                    }
+                }
+            });
+
+            var fontMetrics = getFontMetrics(Settings.FONT);
+            int fontHeight = fontMetrics.getHeight();
+            int fontWidth = fontMetrics.stringWidth(" ");
+            int x = fontWidth * i;
+            int y = fontHeight * ((int)getText().substring(0, getCaretPosition()).chars().filter(ch -> ch == '\n').count() + 1) + (int)(fontHeight * 0.3);
+            pmSuggestions.show(e.getComponent(), x, y);
+
+            requestFocus();
+        }
+    }
+
+    private void addSelectedWord(String word, int size){
+        var caretPosition = getCaretPosition();
+        var t1 = getText().substring(0, caretPosition - size);
+        var t2 = getText().substring(caretPosition);
+//        Debug.var("t1", t1);
+//        Debug.var("t2", t2);
+//        Debug.var("word", word);
+        setText(t1 + word + t2);
+        setCaretPosition(caretPosition + (word.length() - size));
+    }
+
+    private String getCurrentLine(){
+        var rowStart = 0;
+        try {
+            rowStart = Utilities.getRowStart(this, getCaretPosition());
+        } catch (BadLocationException err) {
+            err.printStackTrace();
+        }
+        return getText().substring(rowStart, getCaretPosition());
+    }
+
     private void coderPressed(KeyEvent e) {
         // handle non printable characters
 
@@ -239,13 +323,7 @@ public class CodeEditor extends JTextPane {
         if (keyCode == '\t') {
             if (Settings.TAB_TYPE == Settings.TT_SPACES) {
                 e.consume();
-                var rowStart = 0;
-                try {
-                    rowStart = Utilities.getRowStart(this, curCaretPosition);
-                } catch (BadLocationException err) {
-                    err.printStackTrace();
-                }
-                var lineSize = t1.substring(rowStart, curCaretPosition).length();
+                var lineSize = getCurrentLine().length();
                 if (lineSize < Settings.TAB_SIZE) {
                     tabSize -= lineSize;
                 } else if (lineSize > Settings.TAB_SIZE) {
@@ -263,14 +341,8 @@ public class CodeEditor extends JTextPane {
                 setCaretPosition(curCaretPosition);
             } else if (Settings.TAB_TYPE == Settings.TT_SPACES) {
                 // handle space tab delete cases
-                var rowStart = 0;
-                try {
-                    rowStart = Utilities.getRowStart(this, curCaretPosition);
-                } catch (BadLocationException err) {
-                    err.printStackTrace();
-                }
                 // pega a linha e tamanho
-                var line = t1.substring(rowStart, curCaretPosition);
+                var line = getCurrentLine();
                 var lineSize = line.length();
 
                 if (line.chars().filter(ch -> ch == ' ').count() == lineSize && lineSize > 0) {
@@ -325,6 +397,11 @@ public class CodeEditor extends JTextPane {
 
                 setText(t1 + "\n" + tab.repeat(bigger) + t2);
                 setCaretPosition(curCaretPosition + (caretPad * bigger) + 1);
+            }
+        } else if(keyCode == KeyEvent.VK_DOWN){
+            if(pmSuggestions != null && pmSuggestions.isVisible()){
+                pmSuggestions.requestFocus();
+                MenuSelectionManager.defaultManager().setSelectedPath(new MenuElement[]{pmSuggestions, suggestions.get(0)});
             }
         }
     }

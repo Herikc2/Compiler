@@ -99,4 +99,7 @@ public class Token {
         return false;
     }
 
+    public static String[] getReserved() {
+        return reserved;
+    }
 }
