@@ -144,8 +144,8 @@ public class App extends JFrame {
     }
 
     public static void main(String[] args) {
-        // TODO [BUG]: sometimes files loading without \n and \t
-        // TODO [BUG]: add coder and suggestion to options
+        // TODO [BUG]: sometimes files loading without \t on windows
+        // TODO [BUG]: remove from recent files the file that tried to open doesn't exists
 
         // Inicializa a aplicação
         EventQueue.invokeLater(() -> {

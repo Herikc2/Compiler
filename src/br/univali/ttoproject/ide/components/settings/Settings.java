@@ -45,6 +45,8 @@ public class Settings {
     public static int LOOK_AND_FEEL;
     public static int FONT_THEME;
     public static boolean SYNTAX_HIGHLIGHT;
+    public static boolean CODING_HELP;
+    public static boolean SUGGESTIONS;
     public static String CURRENT_FOLDER;
 
     static {
@@ -82,6 +84,8 @@ public class Settings {
         LOOK_AND_FEEL = Integer.parseInt(properties.getProperty("LOOK_AND_FEEL"));
         FONT_THEME = Integer.parseInt(properties.getProperty("FONT_THEME"));
         SYNTAX_HIGHLIGHT = Boolean.parseBoolean(properties.getProperty("SYNTAX_HIGHLIGHT"));
+        CODING_HELP = Boolean.parseBoolean(properties.getProperty("CODING_HELP"));
+        SUGGESTIONS = Boolean.parseBoolean(properties.getProperty("SUGGESTIONS"));
         CURRENT_FOLDER = properties.getProperty("CURRENT_FOLDER");
         setFontTheme();
         setLookAndFeel();
@@ -100,6 +104,8 @@ public class Settings {
         properties.setProperty("LOOK_AND_FEEL", Integer.toString(LOOK_AND_FEEL));
         properties.setProperty("FONT_THEME", Integer.toString(FONT_THEME));
         properties.setProperty("SYNTAX_HIGHLIGHT", Boolean.toString(SYNTAX_HIGHLIGHT));
+        properties.setProperty("CODING_HELP", Boolean.toString(CODING_HELP));
+        properties.setProperty("SUGGESTIONS", Boolean.toString(SUGGESTIONS));
         properties.setProperty("CURRENT_FOLDER", CURRENT_FOLDER);
 
         var directory = new File(getDefaultConfigFolderPath());
@@ -128,7 +134,9 @@ public class Settings {
         SHOW_CONSOLE = true;
         LOOK_AND_FEEL = 0;
         FONT_THEME = 0;
-        SYNTAX_HIGHLIGHT = true;
+        SYNTAX_HIGHLIGHT = false;
+        CODING_HELP = false;
+        SUGGESTIONS = false;
         CURRENT_FOLDER = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator + "*";
         setFontTheme();
         setLookAndFeel();

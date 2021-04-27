@@ -68,6 +68,7 @@ public class CodeEditor extends JTextPane {
 
     public void syntaxHighlight() {
         if (!Settings.SYNTAX_HIGHLIGHT) return;
+
         var text = getText();
         var length = text.length();
         StringBuilder word = new StringBuilder();
@@ -215,42 +216,44 @@ public class CodeEditor extends JTextPane {
     }
 
     private void handleKeyPressed(KeyEvent e) {
-        //coderPressed(e);
+        coderPressed(e);
     }
 
     private void handleKeyTyped(KeyEvent e) {
         if (!e.isControlDown()) {
             hasChanges = true;
             undoStates.push(new State(getText(), getCaretPosition()));
-            //coderTyped(e);
-            //suggestions(e);
+            coderTyped(e);
+            suggestions(e);
         }
     }
 
-    private void suggestions(KeyEvent e){
+    private void suggestions(KeyEvent e) {
+        if (!Settings.SUGGESTIONS) return;
+
         var curLine = getCurrentLine() + e.getKeyChar();
         int i;
         var word = "";
         var matched = new ArrayList<String>();
-        for(i = curLine.length() - 1; i >= 0; i--){
-            if(Token.isSkip(curLine.charAt(i)) || i == 0) {
+        for (i = curLine.length() - 1; i >= 0; i--) {
+            if (Token.isSkip(curLine.charAt(i)) || i == 0) {
                 word = curLine.substring(i).trim();
                 break;
             }
         }
-        if(word.isEmpty()) {
-            if(pmSuggestions != null)
+        if (word.isEmpty()) {
+            if (pmSuggestions != null)
                 pmSuggestions.setVisible(false);
             pmSuggestions = null;
-        } else{
-            for(var t : Token.getReserved()){
-                if(t.startsWith(word)) matched.add(t);
+        } else {
+            for (var t : Token.getReserved()) {
+                if (t.startsWith(word)) matched.add(t);
             }
 
             pmSuggestions = new JPopupMenu();
             suggestions = new ArrayList<>();
-            for(var m : matched){
-                if(m.equals(word)){
+            for (var m : matched) {
+                if (m.equals(word)) {
                     pmSuggestions.setVisible(false);
                     pmSuggestions = null;
                     suggestions = null;
@@ -265,9 +268,9 @@ public class CodeEditor extends JTextPane {
             pmSuggestions.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                         var selected = MenuSelectionManager.defaultManager().getSelectedPath();
-                        ((JMenuItem)selected[1]).doClick();
+                        ((JMenuItem) selected[1]).doClick();
                         pmSuggestions.setVisible(false);
                         pmSuggestions = null;
                         suggestions = null;
@@ -279,14 +282,15 @@ public class CodeEditor extends JTextPane {
             int fontHeight = fontMetrics.getHeight();
             int fontWidth = fontMetrics.stringWidth(" ");
             int x = fontWidth * i;
-            int y = fontHeight * ((int)getText().substring(0, getCaretPosition()).chars().filter(ch -> ch == '\n').count() + 1) + (int)(fontHeight * 0.3);
+            int y = fontHeight * ((int) getText().substring(0, getCaretPosition()).chars().filter(ch -> ch == '\n').count() + 1) + (int) (fontHeight * 0.3);
+            // TODO: to resolve position bug
             pmSuggestions.show(e.getComponent(), x, y);
 
             requestFocus();
         }
     }
 
-    private void addSelectedWord(String word, int size){
+    private void addSelectedWord(String word, int size) {
         // TODO: to resolve adding bug
         var caretPosition = getCaretPosition();
         var t1 = getText().substring(0, caretPosition - size);
@@ -298,7 +302,7 @@ public class CodeEditor extends JTextPane {
         setCaretPosition(caretPosition + (word.length() - size));
     }
 
-    private String getCurrentLine(){
+    private String getCurrentLine() {
         var rowStart = 0;
         try {
             rowStart = Utilities.getRowStart(this, getCaretPosition());
@@ -310,6 +314,7 @@ public class CodeEditor extends JTextPane {
 
     private void coderPressed(KeyEvent e) {
         // handle non printable characters
+        if (!Settings.CODING_HELP) return;
 
         var keyCode = e.getKeyCode();
         var tabSize = Settings.TAB_SIZE;
@@ -399,8 +404,8 @@ public class CodeEditor extends JTextPane {
                 setText(t1 + "\n" + tab.repeat(bigger) + t2);
                 setCaretPosition(curCaretPosition + (caretPad * bigger) + 1);
             }
-        } else if(keyCode == KeyEvent.VK_DOWN){
-            if(pmSuggestions != null && pmSuggestions.isVisible()){
+        } else if (keyCode == KeyEvent.VK_DOWN) {
+            if (pmSuggestions != null && pmSuggestions.isVisible()) {
                 pmSuggestions.requestFocus();
                 MenuSelectionManager.defaultManager().setSelectedPath(new MenuElement[]{pmSuggestions, suggestions.get(0)});
             }
@@ -409,6 +414,7 @@ public class CodeEditor extends JTextPane {
 
     private void coderTyped(KeyEvent e) {
         // handle printable characters
+        if (!Settings.CODING_HELP) return;
 
         var keyChar = e.getKeyChar();
         int braceTabLevel = getTabLevel();

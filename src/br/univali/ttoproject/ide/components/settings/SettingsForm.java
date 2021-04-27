@@ -55,6 +55,8 @@ public class SettingsForm extends JDialog {
         Settings.TAB_SIZE = Integer.parseInt(editorSettings.getTfTabSize().getText());
         Settings.LINE_ENDING = editorSettings.getCbLineEnding().getSelectedIndex();
         Settings.ENCODING = editorSettings.getCbEncoding().getSelectedIndex();
+        Settings.CODING_HELP = editorSettings.getCkbCodingHelp().isSelected();
+        Settings.SUGGESTIONS = editorSettings.getCkbCodingSuggestions().isSelected();
 
         Settings.FONT = fontSettings.getFontChooser().getSelectedFont();
 
