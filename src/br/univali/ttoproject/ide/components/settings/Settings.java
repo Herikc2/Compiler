@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +21,8 @@ public class Settings {
             "SHOW_TOOL_BAR", "SHOW_STATUS_BAR", "SHOW_CONSOLE", "LOOK_AND_FEEL", "FONT_THEME",
             "SYNTAX_HIGHLIGHT", "CODING_HELP", "SUGGESTIONS", "CURRENT_FOLDER"
     };
+
+    private static ArrayList<UpdateListener> listeners;
 
     public static final String CRLF = "\r\n";
     public static final String CR = "\r";
@@ -37,9 +40,6 @@ public class Settings {
     public static final int ENC_UTF_8 = 0;
     public static final int TT_SPACES = 0;
     public static final int TT_TAB = 1;
-
-    // TODO: create a custom listener for settings updated
-    public static App app;
 
     public static int TAB_TYPE;
     public static int TAB_SIZE;
@@ -62,6 +62,8 @@ public class Settings {
 
         if (OS_SHORT_NAME.equals("win")) CURRENT_OS = OS_WINDOWS;
         else CURRENT_OS = OS_LINUX;
+
+        listeners = new ArrayList<>();
 
         if (new File(getDefaultConfigFilePath()).exists()) {
             load();
@@ -156,8 +158,13 @@ public class Settings {
         save();
     }
 
+    public static void addListener(UpdateListener listener) {
+        listeners.add(listener);
+    }
+
     public static void update() {
-        app.updateSettings();
+        for (var listener : listeners)
+            listener.update();
     }
 
     public static void setLookAndFeel() {

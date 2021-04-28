@@ -5,16 +5,19 @@ import br.univali.ttoproject.compiler.Program;
 import br.univali.ttoproject.ide.components.Console;
 import br.univali.ttoproject.ide.components.MenuBar;
 import br.univali.ttoproject.ide.components.*;
+import br.univali.ttoproject.ide.components.editor.CodeEditor;
 import br.univali.ttoproject.ide.components.settings.Settings;
 import br.univali.ttoproject.ide.components.settings.SettingsForm;
-import br.univali.ttoproject.ide.components.editor.CodeEditor;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -53,7 +56,7 @@ public class App extends JFrame {
         file = new FileTTO();
         loadRecentFiles();
         var recentMenu = createRecentMenu();
-        //Debug.print(File.separator);
+        Settings.addListener(this::updateSettings);
 
         // Interface ---------------------------------------------------------------------------------------------------
         setTitle("Compiler");
@@ -145,12 +148,11 @@ public class App extends JFrame {
 
     public static void main(String[] args) {
         // TODO [BUG]: sometimes files loading without \t on windows
-        // TODO [BUG]: remove from recent files the file that tried to open doesn't exists
 
         // Inicializa a aplicação
         EventQueue.invokeLater(() -> {
             try {
-                Settings.app = new App();
+                new App();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -205,7 +207,7 @@ public class App extends JFrame {
     }
 
     public boolean mSave() {
-        if (newFile) {
+        if (newFile && !savedFile) {
             // se for arquivo novo salva como
             return mSaveAs();
         } else if (!savedFile) {
@@ -463,21 +465,25 @@ public class App extends JFrame {
 
     public void openRecent(String path) {
         if (cancelSaveFileOp()) return;
+
+        recentFiles.remove(path);
+
         if (!new FileTTO(path).exists()){
             JOptionPane.showMessageDialog(
                     this,
-                    "The path " + path + " is not valid.",
+                    "File not found at " + path + ".",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
+            updateRecentMenu();
+            saveRecentFiles();
             return;
         }
 
-        clearOutputs();
-
-        recentFiles.remove(path);
         recentFiles.add(0, path);
         updateRecentMenu();
         saveRecentFiles();
+
+        clearOutputs();
 
         // abre o arquivo
         file = new FileTTO(path);

@@ -37,7 +37,7 @@ public class FileTTO extends File {
                 content.append(System.lineSeparator());
                 line = br.readLine();
             }
-            content.delete(content.length() - 2, content.length());
+            content.delete(content.length() - 1, content.length());
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
