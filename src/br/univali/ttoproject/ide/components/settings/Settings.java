@@ -15,6 +15,12 @@ import java.util.logging.Logger;
 
 public class Settings {
 
+    private static String[] propertiesName = {
+            "FONT", "LINE_ENDING", "TAB_TYPE", "TAB_SIZE", "ENCODING",
+            "SHOW_TOOL_BAR", "SHOW_STATUS_BAR", "SHOW_CONSOLE", "LOOK_AND_FEEL", "FONT_THEME",
+            "SYNTAX_HIGHLIGHT", "CODING_HELP", "SUGGESTIONS", "CURRENT_FOLDER"
+    };
+
     public static final String CRLF = "\r\n";
     public static final String CR = "\r";
     public static final String LF = "\n";
@@ -71,6 +77,12 @@ public class Settings {
             properties.load(is);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        for(var p : propertiesName){
+            if(!properties.containsKey(p)){
+                save();
+                return;
+            }
         }
         var fontStr = properties.getProperty("FONT").split(",");
         FONT = new Font(fontStr[0], Font.PLAIN, Integer.parseInt(fontStr[1]));
