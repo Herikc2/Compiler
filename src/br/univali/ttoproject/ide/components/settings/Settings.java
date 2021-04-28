@@ -38,6 +38,7 @@ public class Settings {
     public static final int TT_SPACES = 0;
     public static final int TT_TAB = 1;
 
+    // TODO: create a custom listener for settings updated
     public static App app;
 
     public static int TAB_TYPE;
