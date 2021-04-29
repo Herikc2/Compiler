@@ -295,6 +295,7 @@ public class CodeEditor extends JTextPane {
         var caretPosition = getCaretPosition();
         var t1 = getText().substring(0, caretPosition - size);
         var t2 = getText().substring(caretPosition);
+        // TODO: add complex structures instead of just word
         setText(t1 + word + t2);
         setCaretPosition(caretPosition + (word.length() - size));
     }
@@ -402,7 +403,7 @@ public class CodeEditor extends JTextPane {
                 setCaretPosition(curCaretPosition + (caretPad * bigger) + 1);
             }
         } else if (keyCode == KeyEvent.VK_DOWN) {
-            if (pmSuggestions != null && pmSuggestions.isVisible()) {
+            if (pmSuggestions != null && pmSuggestions.isVisible() && suggestions != null && suggestions.size() > 0) {
                 e.consume();
                 pmSuggestions.requestFocus();
                 SwingUtilities.invokeLater(() -> MenuSelectionManager.defaultManager().setSelectedPath(new MenuElement[]{pmSuggestions, suggestions.get(0)}));
