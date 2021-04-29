@@ -245,20 +245,22 @@ public class CodeEditor extends JTextPane {
             if (pmSuggestions != null)
                 pmSuggestions.setVisible(false);
             pmSuggestions = null;
+            suggestions = null;
         } else {
             for (var t : Token.getReserved()) {
+                if (t.equals(word)) {
+                    if (pmSuggestions != null)
+                        pmSuggestions.setVisible(false);
+                    pmSuggestions = null;
+                    suggestions = null;
+                    return;
+                }
                 if (t.startsWith(word)) matched.add(t);
             }
 
             pmSuggestions = new JPopupMenu();
             suggestions = new ArrayList<>();
             for (var m : matched) {
-                if (m.equals(word)) {
-                    pmSuggestions.setVisible(false);
-                    pmSuggestions = null;
-                    suggestions = null;
-                    return;
-                }
                 var menuItem = new JMenuItem(m);
                 var wordLength = word.length();
                 menuItem.addActionListener(ee -> addSelectedWord(m, wordLength));
@@ -281,9 +283,8 @@ public class CodeEditor extends JTextPane {
             var fontMetrics = getFontMetrics(Settings.FONT);
             int fontHeight = fontMetrics.getHeight();
             int fontWidth = fontMetrics.stringWidth(" ");
-            int x = fontWidth * i;
+            int x = fontWidth * ((int) getCaretCol() - word.length());
             int y = fontHeight * ((int) getText().substring(0, getCaretPosition()).chars().filter(ch -> ch == '\n').count() + 1) + (int) (fontHeight * 0.3);
-            // TODO: to resolve position bug
             pmSuggestions.show(e.getComponent(), x, y);
 
             requestFocus();
@@ -291,13 +292,9 @@ public class CodeEditor extends JTextPane {
     }
 
     private void addSelectedWord(String word, int size) {
-        // TODO: to resolve adding bug
         var caretPosition = getCaretPosition();
         var t1 = getText().substring(0, caretPosition - size);
         var t2 = getText().substring(caretPosition);
-//        Debug.var("t1", t1);
-//        Debug.var("t2", t2);
-//        Debug.var("word", word);
         setText(t1 + word + t2);
         setCaretPosition(caretPosition + (word.length() - size));
     }
@@ -406,8 +403,9 @@ public class CodeEditor extends JTextPane {
             }
         } else if (keyCode == KeyEvent.VK_DOWN) {
             if (pmSuggestions != null && pmSuggestions.isVisible()) {
+                e.consume();
                 pmSuggestions.requestFocus();
-                MenuSelectionManager.defaultManager().setSelectedPath(new MenuElement[]{pmSuggestions, suggestions.get(0)});
+                SwingUtilities.invokeLater(() -> MenuSelectionManager.defaultManager().setSelectedPath(new MenuElement[]{pmSuggestions, suggestions.get(0)}));
             }
         }
     }
@@ -417,11 +415,8 @@ public class CodeEditor extends JTextPane {
         if (!Settings.CODING_HELP) return;
 
         var keyChar = e.getKeyChar();
-        int braceTabLevel = getTabLevel();
         var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
         var curCaretPosition = getCaretPosition();
-        var caretPad = isTab ? 1 : Settings.TAB_SIZE;
-        var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
         var t1 = getText().substring(0, getCaretPosition());
         var t2 = getText().substring(getCaretPosition());
 
@@ -482,6 +477,30 @@ public class CodeEditor extends JTextPane {
             //if (tabLevel < 0) tabLevel = 0;
         }
         return tabLevel;
+    }
+
+    public long getCaretLine() {
+        // calcula o número de linhas
+        // conta-se os caracteres '\n' até a posição atual do caret
+        return getText().substring(0, getCaretPosition()).chars().filter(ch -> ch == '\n').count() + 1;
+    }
+
+    public long getCaretCol() {
+        // calcula a coluna
+        int offset = 0;
+        try {
+            // pega o começo da linha atual
+            offset = Utilities.getRowStart(this, getCaretPosition());
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+        // subtrai da posição atual do caret sobrando apena a coluna atual
+        long tabAdjust = 0;
+        if(Settings.TAB_TYPE == Settings.TT_TAB) {
+            tabAdjust = getText().substring(offset, getCaretPosition()).chars().filter(ch -> ch == '\t').count();
+            tabAdjust *= Settings.TAB_SIZE - 1;
+        }
+        return getCaretPosition() - offset + 1 + tabAdjust;
     }
 
     public void undo() {

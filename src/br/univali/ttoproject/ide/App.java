@@ -11,8 +11,6 @@ import br.univali.ttoproject.ide.components.settings.SettingsForm;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Utilities;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -137,7 +135,7 @@ public class App extends JFrame {
         scpCodeEditor = new JScrollPane(codeEditor);
         splitPane.setLeftComponent(scpCodeEditor);
         // editor line number
-        var tln = new TextLineNumber(codeEditor);
+        var tln = new JTextLineNumber(codeEditor);
         scpCodeEditor.setRowHeaderView(tln);
         scpCodeEditor.setViewportView(codeEditor);
 
@@ -398,25 +396,8 @@ public class App extends JFrame {
     //------------------------------------------------------------------------------------------------------------------
 
     private void updateLCLabel() {
-        int caretPos = codeEditor.getCaretPosition();
-        long rows;
-        long cols;
-
-        // calcula o número de linhas
-        // conta-se os caracteres '\n' até a posição atual do caret
-        rows = codeEditor.getText().substring(0, caretPos).chars().filter(ch -> ch == '\n').count() + 1;
-
-        // calcula a coluna
-        int offset = 0;
-        try {
-            // pega o começo da linha atual
-            offset = Utilities.getRowStart(codeEditor, caretPos);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
-        // subtrai da posição atual do caret sobrando apena a coluna atual
-        cols = caretPos - offset + 1;
-
+        long rows = codeEditor.getCaretLine();
+        long cols = codeEditor.getCaretCol();
         lblLnCol.setText("Ln " + rows + ", Col " + cols);
     }
 

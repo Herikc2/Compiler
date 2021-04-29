@@ -24,7 +24,7 @@ import java.util.HashMap;
  * This class was designed to be used as a component added to the row header
  * of a JScrollPane.
  */
-public class TextLineNumber extends JPanel implements CaretListener, DocumentListener, PropertyChangeListener {
+public class JTextLineNumber extends JPanel implements CaretListener, DocumentListener, PropertyChangeListener {
     public final static float LEFT = 0.0f;
     public final static float CENTER = 0.5f;
     public final static float RIGHT = 1.0f;
@@ -59,7 +59,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
      *
      * @param component the related text component
      */
-    public TextLineNumber(JTextComponent component) {
+    public JTextLineNumber(JTextComponent component) {
         this(component, 3);
     }
 
@@ -70,7 +70,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
      * @param minimumDisplayDigits the number of digits used to calculate
      *                             the minimum width of the component
      */
-    public TextLineNumber(JTextComponent component, int minimumDisplayDigits) {
+    public JTextLineNumber(JTextComponent component, int minimumDisplayDigits) {
         this.component = component;
 
         setFont(component.getFont());
