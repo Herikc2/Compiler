@@ -83,7 +83,7 @@ public class Settings {
         }
         for(var p : propertiesName){
             if(!properties.containsKey(p)){
-                save();
+                setDefaultSettings();
                 return;
             }
         }

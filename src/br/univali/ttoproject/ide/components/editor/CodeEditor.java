@@ -263,7 +263,7 @@ public class CodeEditor extends JTextPane {
             for (var m : matched) {
                 var menuItem = new JMenuItem(m);
                 var wordLength = word.length();
-                menuItem.addActionListener(ee -> addSelectedWord(m, wordLength));
+                menuItem.addActionListener(ee -> insertSelectedWord(m, wordLength));
                 pmSuggestions.add(menuItem);
                 suggestions.add(menuItem);
             }
@@ -291,13 +291,26 @@ public class CodeEditor extends JTextPane {
         }
     }
 
-    private void addSelectedWord(String word, int size) {
+    private void insertSelectedWord(String word, int size) {
         var caretPosition = getCaretPosition();
+        var tabSize = Settings.TAB_SIZE;
+        int braceTabLevel = getTabLevel();
+        var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
+        var caretPad = isTab ? 1 : Settings.TAB_SIZE;
+        var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
+        var struct = word;
+        var offset = (word.length() - size);
         var t1 = getText().substring(0, caretPosition - size);
         var t2 = getText().substring(caretPosition);
         // TODO: add complex structures instead of just word
-        setText(t1 + word + t2);
-        setCaretPosition(caretPosition + (word.length() - size));
+        // TODO: handle tab level and tab type
+        if (word.equals("program")) {
+            ++braceTabLevel;
+            struct = "program {\n" + tab.repeat(braceTabLevel) + "\n" + tab.repeat(braceTabLevel - 1) + "}";
+            offset += 3 + caretPad;
+        }
+        setText(t1 + struct + t2);
+        setCaretPosition(caretPosition + offset);
     }
 
     private String getCurrentLine() {
@@ -318,9 +331,9 @@ public class CodeEditor extends JTextPane {
         var tabSize = Settings.TAB_SIZE;
         int braceTabLevel = getTabLevel();
         var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
-        var curCaretPosition = getCaretPosition();
         var caretPad = isTab ? 1 : Settings.TAB_SIZE;
         var tab = isTab ? "\t" : " ".repeat(Settings.TAB_SIZE);
+        var curCaretPosition = getCaretPosition();
         var t1 = getText().substring(0, getCaretPosition());
         var t2 = getText().substring(getCaretPosition());
 
@@ -497,7 +510,7 @@ public class CodeEditor extends JTextPane {
         }
         // subtrai da posição atual do caret sobrando apena a coluna atual
         long tabAdjust = 0;
-        if(Settings.TAB_TYPE == Settings.TT_TAB) {
+        if (Settings.TAB_TYPE == Settings.TT_TAB) {
             tabAdjust = getText().substring(offset, getCaretPosition()).chars().filter(ch -> ch == '\t').count();
             tabAdjust *= Settings.TAB_SIZE - 1;
         }
