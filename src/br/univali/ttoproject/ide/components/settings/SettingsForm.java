@@ -14,7 +14,16 @@ public class SettingsForm extends JDialog {
     private JButton btnRestoreDefault;
 
     public SettingsForm(JFrame parent) {
+
         super(parent, false);
+
+
+        //long tempoInicial = System.currentTimeMillis();
+
+
+
+        //System.out.println("o metodo executou em " + System.currentTimeMillis() - tempoInicial);
+
         // vars and instantiating objects
         editorSettings = new EditorSettings();
         appearanceSettings = new AppearanceSettings();
