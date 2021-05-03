@@ -3,62 +3,92 @@ package br.univali.ttoproject.ide.components;
 import br.univali.ttoproject.ide.App;
 
 import javax.swing.*;
-import java.awt.*;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class ToolBar extends JToolBar {
 
-    public ToolBar(Supplier<?>[] methods){
+    public ToolBar(Supplier<?>[] methods) {
 
-        var btnNew = new JButton("");
-        btnNew.addActionListener(e -> methods[MenuOptions.NEW.getId()].get());
-        btnNew.setIcon(new ImageIcon(App.class.getResource("/img/New File.png")));
-        add(btnNew);
+        JButton btn;
 
-        var btnOpen = new JButton("");
-        btnOpen.addActionListener(e -> methods[MenuOptions.OPEN.getId()].get());
-        btnOpen.setIcon(new ImageIcon(App.class.getResource("/img/Open Project.png")));
-        add(btnOpen);
+        btn = new JButton("");
+        btn.setToolTipText("New - Ctrl+N");
+        btn.addActionListener(e -> methods[MenuOptions.NEW.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/new.png"))));
+        add(btn);
 
-        var btnSave = new JButton("");
-        btnSave.addActionListener(e -> methods[MenuOptions.SAVE.getId()].get());
-        btnSave.setIcon(new ImageIcon(App.class.getResource("/img/Save File.png")));
-        add(btnSave);
+        btn = new JButton("");
+        btn.setToolTipText("Open - Ctrl+O");
+        btn.addActionListener(e -> methods[MenuOptions.OPEN.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/open.png"))));
+        add(btn);
 
-        var separator1 = new JSeparator();
-        separator1.setMaximumSize(new Dimension(4, 32767));
-        separator1.setOrientation(SwingConstants.VERTICAL);
-        add(separator1);
+        btn = new JButton("");
+        btn.setToolTipText("Save - Ctrl+S");
+        btn.addActionListener(e -> methods[MenuOptions.SAVE.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/save.png"))));
+        add(btn);
 
-        var btnCut = new JButton("");
-        btnCut.addActionListener(e -> methods[MenuOptions.CUT.getId()].get());
-        btnCut.setIcon(new ImageIcon(App.class.getResource("/img/Cut.PNG")));
-        add(btnCut);
+        addSeparator();
 
-        var btnCopy = new JButton("");
-        btnCopy.addActionListener(e -> methods[MenuOptions.COPY.getId()].get());
-        btnCopy.setIcon(new ImageIcon(App.class.getResource("/img/Copy.PNG")));
-        add(btnCopy);
+        btn = new JButton("");
+        btn.setToolTipText("Undo - Ctrl+Z");
+        btn.addActionListener(e -> methods[MenuOptions.UNDO.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/undo.png"))));
+        add(btn);
 
-        var btnPaste = new JButton("");
-        btnPaste.addActionListener(e -> methods[MenuOptions.PASTE.getId()].get());
-        btnPaste.setIcon(new ImageIcon(App.class.getResource("/img/Paste.png")));
-        add(btnPaste);
+        btn = new JButton("");
+        btn.setToolTipText("Redo - Ctrl+Y");
+        btn.addActionListener(e -> methods[MenuOptions.REDO.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/redo.png"))));
+        add(btn);
 
-        var separator2 = new JSeparator();
-        separator2.setOrientation(SwingConstants.VERTICAL);
-        separator2.setMaximumSize(new Dimension(4, 32767));
-        add(separator2);
+        addSeparator();
 
-        var btnBuild = new JButton("");
-        btnBuild.addActionListener(e -> methods[MenuOptions.COMPILE.getId()].get());
-        btnBuild.setIcon(new ImageIcon(App.class.getResource("/img/Cog.png")));
-        add(btnBuild);
+        btn = new JButton("");
+        btn.setToolTipText("Cut - Ctrl+X");
+        btn.addActionListener(e -> methods[MenuOptions.CUT.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/cut.png"))));
+        add(btn);
 
-        var btnRun = new JButton("");
-        btnRun.addActionListener(e -> methods[MenuOptions.RUN.getId()].get());
-        btnRun.setIcon(new ImageIcon(App.class.getResource("/img/Run .PNG")));
-        add(btnRun);
+        btn = new JButton("");
+        btn.setToolTipText("Copy - Ctrl+C");
+        btn.addActionListener(e -> methods[MenuOptions.COPY.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/copy.png"))));
+        add(btn);
+
+        btn = new JButton("");
+        btn.setToolTipText("Paste - Ctrl+V");
+        btn.addActionListener(e -> methods[MenuOptions.PASTE.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/paste.png"))));
+        add(btn);
+
+        addSeparator();
+
+        btn = new JButton("");
+        btn.setToolTipText("Compile and Run - F5");
+        btn.addActionListener(e -> methods[MenuOptions.COMPILE_RUN.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/compile_run.png"))));
+        add(btn);
+
+        btn = new JButton("");
+        btn.setToolTipText("Compile - F6");
+        btn.addActionListener(e -> methods[MenuOptions.COMPILE.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/build.png"))));
+        add(btn);
+
+        btn = new JButton("");
+        btn.setToolTipText("Run - F7");
+        btn.addActionListener(e -> methods[MenuOptions.RUN.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/run.png"))));
+        add(btn);
+
+        btn = new JButton("");
+        btn.setToolTipText("Stop - F8");
+        btn.addActionListener(e -> methods[MenuOptions.STOP.getID()].get());
+        btn.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/stop.png"))));
+        add(btn);
     }
 
 }

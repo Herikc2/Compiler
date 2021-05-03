@@ -1,0 +1,32 @@
+:- Header
+// Line comment
+/**
+ * Block comment
+ */
+
+
+// literals (char)
+'between quotes'
+"double quotes"
+
+// boolean values
+true
+false
+
+// numerical values
+999  // natural
+99.9 // real
+
+// identifiers
+foo
+foo2_
+_foo
+
+// reserved
+program
+execute
+define // etc.
+
+// special symbols
++ - * / % & | // etc.
+

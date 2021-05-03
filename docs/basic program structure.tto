@@ -1,0 +1,35 @@
+:- My program
+program {
+	/**
+	 * Variable define block
+	 */
+	define {
+		variable // Variables
+			char is literal_example .
+			boolean is bool_example[10] .
+			// identifiers cant't end with numbers or underscores
+			real is float_example, _2_float_example .
+			natural is integer_example .
+		not variable // Constants
+			char is CONST_CHAR = 'constants have to be initializated', CONST_2EX "and literals can be set with both ' and \" characters" .
+			// constants can't be array
+			boolean is CONST_BOOLT true, CONST_BOOLF false .
+			real is CONST_REAL 21574.569 .
+			natural is CONST_INT 21547 .
+	}
+	/**
+	 * Commands block
+	 */
+	execute {
+		// Porgram commands
+		set
+		get
+		put
+		verify
+		while
+		true
+		false
+	}
+}
+my_program // Program identifier
+

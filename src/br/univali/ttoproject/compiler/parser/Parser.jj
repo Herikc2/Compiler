@@ -20,14 +20,21 @@ SKIP :
 | <"\t">
 | <"\n">
 | <"\r">
-|< ":-" (~["\r", "\n"])* >
-| < "/*" > : BLOCK_COMMENT_STATE
+|< "//" (~["\r", "\n"])* >
 }
 
-<BLOCK_COMMENT_STATE> SKIP :
+SKIP: { <"/*"> : BLOCK_COMMENT_STATE}
+<BLOCK_COMMENT_STATE> SKIP: { "*/" : DEFAULT  }
+<BLOCK_COMMENT_STATE> SKIP: { < ~[] > }
+
+<*> TOKEN :
 {
-  < "*/" > : DEFAULT
-| < ~[] >
+    <EOF>
+    {
+        if(curLexState == BLOCK_COMMENT_STATE) {
+            throw new Error("Unmatched comment at line " + matchedToken.beginLine + ", column " + matchedToken.beginColumn + ".");
+        }
+    }
 }
 
 /* KEY WORDS */
@@ -38,18 +45,16 @@ TOKEN [IGNORE_CASE]:
 | <NOT: "not">
 | <VARIABLE: "variable">
 | <IS: "is">
-| <NATURAL: "natural">
-| <REAL: "real">
-| <CHAR: "char">
-| <BOOLEAN: "boolean">
+| <NATURAL_TYPE: "natural">
+| <REAL_TYPE: "real">
+| <CHAR_TYPE: "char">
+| <BOOLEAN_TYPE: "boolean">
 | <EXECUTE: "execute">
 | <SET: "set">
 | <TO: "to">
 | <GET: "get">
 | <PUT: "put">
 | <VERIFY: "verify">
-| <TRUE: "true">
-| <FALSE: "false">
 | <LOOP: "loop">
 | <WHILE: "while">
 | <DO: "do">
@@ -58,8 +63,11 @@ TOKEN [IGNORE_CASE]:
 /* SPECIAL SYMBOLS */
 TOKEN :
 {
-  <LBRACE: "{">
+  <HEADER: ":-">
+| <LBRACE: "{">
 | <RBRACE: "}">
+| <LBRACKET: "[">
+| <RBRACKET: "]">
 | <PARENTHESESL: "(">
 | <PARANTHESESR: ")">
 | <DOT: ".">
@@ -82,22 +90,28 @@ TOKEN :
 | <NOT_SYMBOL: "!">
 }
 
+TOKEN :
+{
+    <LETTER: ["a"-"z","A"-"Z"]>
+|   <DIGIT: (["0"-"9"])>
+}
+
+/* CONSTS */
+TOKEN :
+{
+    <CHAR_CONST : "\""((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\"" |
+                  "\'"((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\'">
+|   <NATURAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)?>
+|   <REAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)? (<DIGIT>)? (<DIGIT>)?  "." <DIGIT> (<DIGIT>)?>
+|   <BOOLEAN_CONST: "true"|"false">
+}
+
 /* IDENTIFIERS */
 TOKEN :
 {
-    <IDENTIFIER: <LETTER> (<LETTER>|<UNSIGNED>)+>
-|   <LETTER: ["_","a"-"z","A"-"Z"]>
-|   <UNSIGNED: (["0" - "9"])+ >
-|   <SIGNED: ("-")? (["0" - "9"])+>
-|   <REAL_UNSIGNED: <UNSIGNED>"."<UNSIGNED>>
-|   <REAL_SIGNED: <SIGNED>"."<UNSIGNED>>
-//|   <VALUE: (<LETTER>|<SIGNED>)+ >
-//|   <NOT_VARIABLE: (<NATURAL>|<REAL>|<CHAR>|<BOOLEAN>) <IDENTIFIER> <VALUE> >
-}
-
-/* LITERALS */
-TOKEN : {
-    <STRING : ("'"  (~["\n","\r"])*  "'") | ("\""  (~["\n","\r"])*  "\"")>
+    <IDENTIFIER: "_"|(("_"<NU>|<LETTER>)(<LETTER>|<DIGIT><ND>|"_"<NU>)*((<LETTER>|<DIGIT>)"_")?)>
+|   <NU: <LETTER>|<DIGIT><ND>>
+|   <ND: <LETTER>|"_">
 }
 
 <*> TOKEN : { <UNKNOWN: ~[]> }

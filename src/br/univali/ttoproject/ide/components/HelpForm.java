@@ -1,16 +1,19 @@
 package br.univali.ttoproject.ide.components;
 
+import br.univali.ttoproject.ide.components.settings.SettingsForm;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 
-public class HelpForm extends JFrame {
+public class HelpForm extends JDialog {
 
     private JPanel panelMain;
 
-    public HelpForm() {
+    public HelpForm(JFrame parent) {
+        super(parent, false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setResizable(false);
         setTitle("Help");
@@ -62,9 +65,15 @@ public class HelpForm extends JFrame {
             {
                 var okButton = new JButton("OK");
                 okButton.setActionCommand("OK");
+                okButton.addActionListener(e -> exit());
                 buttonPane.add(okButton);
                 getRootPane().setDefaultButton(okButton);
             }
         }
+    }
+
+    private void exit(){
+        setVisible(false);
+        dispose();
     }
 }

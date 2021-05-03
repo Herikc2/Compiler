@@ -8,7 +8,7 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("Keyword(%d)", id());
+            return String.format("KEYWORD(%d)", id());
         }
     },
     SpecialSymbol {
@@ -18,7 +18,7 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("SpecialSymbol(%d)", id());
+            return String.format("SPECIAL_SYMBOL(%d)", id());
         }
     },
     Identifier {
@@ -28,7 +28,7 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("Identifier(%d)", id());
+            return String.format("IDENTIFIER(%d)", id());
         }
     },
     LiteralConstant {
@@ -38,7 +38,7 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("LiteralConstant(%d)", id());
+            return String.format("LITERAL_CONSTANT(%d)", id());
         }
     },
     IntegerConstant {
@@ -48,7 +48,7 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("IntegerConstant(%d)", id());
+            return String.format("INTEGER_CONSTANT(%d)", id());
         }
     },
     RealConstant {
@@ -58,17 +58,27 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("RealConstant(%d)", id());
+            return String.format("REAL_CONSTANT(%d)", id());
         }
     },
-    Unknown {
+    BooleanConstant {
         public int id() {
             return 6;
         }
 
         @Override
         public String toString() {
-            return String.format("Unknown(%d)", id());
+            return String.format("BOOLEAN_CONSTANT(%d)", id());
+        }
+    },
+    Unknown {
+        public int id() {
+            return 7;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("UNKNOWN(%d)", id());
         }
     }
 }

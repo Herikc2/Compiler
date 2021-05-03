@@ -123,33 +123,34 @@ public class Token implements java.io.Serializable {
             case ParserConstants.NOT:
             case ParserConstants.VARIABLE:
             case ParserConstants.IS:
-            case ParserConstants.NATURAL:
-            case ParserConstants.REAL:
-            case ParserConstants.CHAR:
-            case ParserConstants.BOOLEAN:
+            case ParserConstants.NATURAL_TYPE:
+            case ParserConstants.REAL_TYPE:
+            case ParserConstants.CHAR_TYPE:
+            case ParserConstants.BOOLEAN_TYPE:
             case ParserConstants.EXECUTE:
             case ParserConstants.SET:
             case ParserConstants.TO:
             case ParserConstants.GET:
             case ParserConstants.PUT:
             case ParserConstants.VERIFY:
-            case ParserConstants.TRUE:
-            case ParserConstants.FALSE:
+            //case ParserConstants.TRUE:
+            //case ParserConstants.FALSE:
             case ParserConstants.LOOP:
             case ParserConstants.WHILE:
             case ParserConstants.DO:
                 return new CategorizedToken(TokenCategory.Keyword, ofKind, image);
             case ParserConstants.IDENTIFIER:
-            case ParserConstants.LETTER:
+            //case ParserConstants.LETTER:
                 return new CategorizedToken(TokenCategory.Identifier, ParserConstants.IDENTIFIER, image);
-            case ParserConstants.UNSIGNED:
-            case ParserConstants.SIGNED:
+            //case ParserConstants.NUMBER:
+            case ParserConstants.NATURAL_CONST:
                 return new CategorizedToken(TokenCategory.IntegerConstant, ofKind, image);
-            case ParserConstants.REAL_UNSIGNED:
-            case ParserConstants.REAL_SIGNED:
+            case ParserConstants.REAL_CONST:
                 return new CategorizedToken(TokenCategory.RealConstant, ofKind, image);
-            case ParserConstants.STRING:
+            case ParserConstants.CHAR_CONST:
                 return new CategorizedToken(TokenCategory.LiteralConstant, ofKind, image);
+            case ParserConstants.BOOLEAN_CONST:
+                return new CategorizedToken(TokenCategory.BooleanConstant, ofKind, image);
             case ParserConstants.EOF:
             case ParserConstants.LBRACE:
             case ParserConstants.RBRACE:
@@ -173,6 +174,7 @@ public class Token implements java.io.Serializable {
             case ParserConstants.AND:
             case ParserConstants.OR:
             case ParserConstants.NOT_SYMBOL:
+            case ParserConstants.HEADER:
                 return new CategorizedToken(TokenCategory.SpecialSymbol, ofKind, image);
             default:
                 return new CategorizedToken(TokenCategory.Unknown, ofKind, image);

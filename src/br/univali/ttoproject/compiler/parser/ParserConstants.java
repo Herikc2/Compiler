@@ -21,13 +21,13 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int IS = 13;
   /** RegularExpression Id. */
-  int NATURAL = 14;
+  int NATURAL_TYPE = 14;
   /** RegularExpression Id. */
-  int REAL = 15;
+  int REAL_TYPE = 15;
   /** RegularExpression Id. */
-  int CHAR = 16;
+  int CHAR_TYPE = 16;
   /** RegularExpression Id. */
-  int BOOLEAN = 17;
+  int BOOLEAN_TYPE = 17;
   /** RegularExpression Id. */
   int EXECUTE = 18;
   /** RegularExpression Id. */
@@ -41,75 +41,81 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int VERIFY = 23;
   /** RegularExpression Id. */
-  int TRUE = 24;
+  int LOOP = 24;
   /** RegularExpression Id. */
-  int FALSE = 25;
+  int WHILE = 25;
   /** RegularExpression Id. */
-  int LOOP = 26;
+  int DO = 26;
   /** RegularExpression Id. */
-  int WHILE = 27;
+  int HEADER = 27;
   /** RegularExpression Id. */
-  int DO = 28;
+  int LBRACE = 28;
   /** RegularExpression Id. */
-  int LBRACE = 29;
+  int RBRACE = 29;
   /** RegularExpression Id. */
-  int RBRACE = 30;
+  int LBRACKET = 30;
   /** RegularExpression Id. */
-  int PARENTHESESL = 31;
+  int RBRACKET = 31;
   /** RegularExpression Id. */
-  int PARANTHESESR = 32;
+  int PARENTHESESL = 32;
   /** RegularExpression Id. */
-  int DOT = 33;
+  int PARANTHESESR = 33;
   /** RegularExpression Id. */
-  int COMMA = 34;
+  int DOT = 34;
   /** RegularExpression Id. */
-  int PLUS = 35;
+  int COMMA = 35;
   /** RegularExpression Id. */
-  int MINUS = 36;
+  int PLUS = 36;
   /** RegularExpression Id. */
-  int POWER = 37;
+  int MINUS = 37;
   /** RegularExpression Id. */
-  int MULTIPLICATION = 38;
+  int POWER = 38;
   /** RegularExpression Id. */
-  int DIVISION = 39;
+  int MULTIPLICATION = 39;
   /** RegularExpression Id. */
-  int INTEGER_DIVISION = 40;
+  int DIVISION = 40;
   /** RegularExpression Id. */
-  int REST = 41;
+  int INTEGER_DIVISION = 41;
   /** RegularExpression Id. */
-  int EQUAL = 42;
+  int REST = 42;
   /** RegularExpression Id. */
-  int DIFFERENT = 43;
+  int EQUAL = 43;
   /** RegularExpression Id. */
-  int SMALLER = 44;
+  int DIFFERENT = 44;
   /** RegularExpression Id. */
-  int LARGER = 45;
+  int SMALLER = 45;
   /** RegularExpression Id. */
-  int SMALLER_EQUAL = 46;
+  int LARGER = 46;
   /** RegularExpression Id. */
-  int LARGER_EQUAL = 47;
+  int SMALLER_EQUAL = 47;
   /** RegularExpression Id. */
-  int AND = 48;
+  int LARGER_EQUAL = 48;
   /** RegularExpression Id. */
-  int OR = 49;
+  int AND = 49;
   /** RegularExpression Id. */
-  int NOT_SYMBOL = 50;
+  int OR = 50;
   /** RegularExpression Id. */
-  int IDENTIFIER = 51;
+  int NOT_SYMBOL = 51;
   /** RegularExpression Id. */
   int LETTER = 52;
   /** RegularExpression Id. */
-  int UNSIGNED = 53;
+  int DIGIT = 53;
   /** RegularExpression Id. */
-  int SIGNED = 54;
+  int CHAR_CONST = 54;
   /** RegularExpression Id. */
-  int REAL_UNSIGNED = 55;
+  int NATURAL_CONST = 55;
   /** RegularExpression Id. */
-  int REAL_SIGNED = 56;
+  int REAL_CONST = 56;
   /** RegularExpression Id. */
-  int STRING = 57;
+  int BOOLEAN_CONST = 57;
   /** RegularExpression Id. */
-  int UNKNOWN = 58;
+  int IDENTIFIER = 58;
+  /** RegularExpression Id. */
+  int NU = 59;
+  /** RegularExpression Id. */
+  int ND = 60;
+  /** RegularExpression Id. */
+  int UNKNOWN = 61;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -142,13 +148,14 @@ public interface ParserConstants {
     "\"get\"",
     "\"put\"",
     "\"verify\"",
-    "\"true\"",
-    "\"false\"",
     "\"loop\"",
     "\"while\"",
     "\"do\"",
+    "\":-\"",
     "\"{\"",
     "\"}\"",
+    "\"[\"",
+    "\"]\"",
     "\"(\"",
     "\")\"",
     "\".\"",
@@ -169,13 +176,15 @@ public interface ParserConstants {
     "\"&\"",
     "\"|\"",
     "\"!\"",
-    "<IDENTIFIER>",
     "<LETTER>",
-    "<UNSIGNED>",
-    "<SIGNED>",
-    "<REAL_UNSIGNED>",
-    "<REAL_SIGNED>",
-    "<STRING>",
+    "<DIGIT>",
+    "<CHAR_CONST>",
+    "<NATURAL_CONST>",
+    "<REAL_CONST>",
+    "<BOOLEAN_CONST>",
+    "<IDENTIFIER>",
+    "<NU>",
+    "<ND>",
     "<UNKNOWN>",
   };
 
