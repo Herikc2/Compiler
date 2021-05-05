@@ -1,12 +1,12 @@
-<program>               ::= <header> 'program' '{' <define> <execute> '}' <program-identifier>
+<program>               ::= <header> program { <define> <execute> } <program-identifier>
 
-<header>                ::= ':-' <printable> \n
+<header>                ::= :- <printable> \n
                          |  ε
 
 <program-identifier>    ::= <identifier>
                          |  ε
 
-<define>                ::= 'define' '{' <variable-sel> '}'
+<define>                ::= define { <variable-sel> }
                          |  ε
 
 <variable-sel>          ::= <not-variable> <variable-sel-1>
@@ -19,46 +19,44 @@
 <variable-sel-2>        ::= <not-variable>
                          |  ε
 
-<execute>               ::= 'execute' <command-block>
+<execute>               ::= execute <command-block>
 
-<not-variable>          ::= 'not' 'variable' <not-variable-decl> <not-variable-sel>
+<not-variable>          ::= not variable <not-variable-decl> <not-variable-sel>
 
 <not-variable-sel>      ::= <not-variable-decl> <not-variable-sel>
                          |  ε
 
-<not-variable-decl>     ::= <type> 'is' <identifier-list-value> '.'
+<not-variable-decl>     ::= <type> is <identifier-list-value> .
 
-<variable>              ::= 'variable' <variable-decl> <variable-sel>
+<variable>              ::= variable <variable-decl> <variable-sel>
 
 <variable-sel>          ::= <variable-decl> <variable-sel>
                          |  ε
 
-<variable-decl>         ::= <type> 'is' <identifier-list> '.'
+<variable-decl>         ::= <type> is <identifier-list> .
 
-<type>                  ::= 'natural'
-                         |  'real'
-                         |  'char'
-                         |  'boolean'
+<type>                  ::= natural
+                         |  real
+                         |  char
+                         |  boolean
 
 <identifier-list-value> ::= <identifier> <value> <identifier-list-value-1>
 
-<identifier-list-value-1> ::= ',' <identifier-list-value>
+<identifier-list-value-1> ::= , <identifier-list-value>
                            |  ε
 
-<identifier-list>       ::= <identifier> <identifier-list-1>
+<identifier-list>       ::= <identifier> <index> <identifier-list-1>
 
-<identifier-list-1>     ::= ',' <identifier-list>
-                         |  '[' <natural> ']'
-                         |  '[' <natural> ']' ',' <identifier-list>
+<identifier-list-1>     ::= ,  <identifier-list>
                          |  ε
 
-<set>                   ::= 'set' <expression> 'to' <identifier-list>
+<set>                   ::= set <expression> to <identifier-list>
 
-<get>                   ::= 'get' '{' <identifier-list> '}'
+<get>                   ::= get { <identifier-list> }
 
-<put>                   ::= 'put' '{' <identifier-list> '}'
+<put>                   ::= put { <identifier-list> }
 
-<verify>                ::= 'verify' <expression> <false-true-sel>
+<verify>                ::= verify <expression> <false-true-sel>
 
 <false-true-sel>        ::= <is-true> <false-true-sel-1>
                          |  <is-false> <false-true-sel-2>
@@ -69,20 +67,20 @@
 <false-true-sel-2>      ::= <is-true>
                          |  ε
 
-<is-true>               ::= 'is' 'true' <command-block>
+<is-true>               ::= is true <command-block>
 
-<is-false>              ::= 'is' 'false' <command-block>
+<is-false>              ::= is false <command-block>
 
-<loop>                  ::= 'loop' <command-block> 'while' <expression> is 'true'
+<loop>                  ::= loop <command-block> while <expression> is true
 
-<while>                 ::= 'while' <expression> 'is' 'true' 'do' <command-block>
+<while>                 ::= while <expression> is true do <command-block>
 
-<command-block>         ::= '{' <command> <command-list> '}'
+<command-block>         ::= { <command> <command-list> }
 
 <command-list>          ::= <command> <command-list>
                          |  ε
 
-<command>               ::= <command-sel> '.'
+<command>               ::= <command-sel> .
 
 <command-sel>           ::= <set>
                          |  <get>
@@ -91,13 +89,49 @@
                          |  <loop>
                          |  <while>
 
-<expression>            ::=  <arith-logical> <expression-l>
+<expression>            ::= <expr-arith-logical> <expression-sel>
+
+<expression-sel>        ::= == <expr-arith-logical>
+                         |  != <expr-arith-logical>
+                         |  < <expr-arith-logical>
+                         |  > <expr-arith-logical>
+                         |  <= <expr-arith-logical>
+                         |  >= <expr-arith-logical>
+                         |  ε
+
+<expr-arith-logical>    ::= <term2> <less-priority>
+
+<less-priority>         ::= + <term2> <less-priority>
+                         |  - <term2> <less-priority>
+                         |  | <term2> <less-priority>
+                         |  ε
+
+<term2>                 ::= <term1> <mid-priority>
+
+<mid-priority>          ::= * <term1> <mid-priority>
+                         |  / <term1> <mid-priority>
+                         |  % <term1> <mid-priority>
+                         |  %% <term1> <mid-priority>
+                         |  & <term1> <mid-priority>
+                         |  ε
+
+<term1>                 ::= <element> <great-priority>
+
+<great-priority>        ::= ** <element> <great-priority>
+                         |  ε
+
+<element>               ::= identificador <index>
+                         |  <value>
+                         |  ( <expression> )
+                         |  ! ( <expression> )
+
+<index>                 ::= [ <natural> ]
+                         |  ε
 
 <value>                 ::= <natural>
                          |  <real>
                          |  <char>
                          |  <boolean>
-
 
 /* ------------------------------------------------------------------------------------------------------------------- */
 
@@ -144,6 +178,4 @@ Vt = {
     (
     )
     .
-    '
-    "
 }
