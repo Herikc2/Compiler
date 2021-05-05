@@ -1,6 +1,9 @@
-<program>               ::= <header> 'program' '{' <define> <execute> '}'
+<program>               ::= <header> 'program' '{' <define> <execute> '}' <program-identifier>
 
-<header>                ::= ':-' <printable-sel> \n
+<header>                ::= ':-' <printable> \n
+                         |  ε
+
+<program-identifier>    ::= <identifier>
                          |  ε
 
 <define>                ::= 'define' '{' <variable-sel> '}'
@@ -74,17 +77,6 @@
 
 <while>                 ::= 'while' <expression> 'is' 'true' 'do' <command-block>
 
-<identifier>            ::= '_' <identifier-sel-u>
-                         |  <letter> <identifier-sel>
-
-<identifier-sel-u>      ::= <letter> <identifier-sel>
-                         |  <digit> <letter> <identifier-sel>
-
-<identifier-sel>        ::= <letter> <identifier-sel>
-                         |  <digit> <letter> <identifier-sel>
-                         |  '_' <identifier-sel-u>
-                         |  ε
-
 <command-block>         ::= '{' <command> <command-list> '}'
 
 <command-list>          ::= <command> <command-list>
@@ -99,42 +91,12 @@
                          |  <loop>
                          |  <while>
 
-/* COMPLETAR */
-<expression>            ::= 
+<expression>            ::=  <arith-logical> <expression-l>
 
 <value>                 ::= <natural>
                          |  <real>
                          |  <char>
                          |  <boolean>
-
-<natural>               ::= <digit> <digit-sel> <digit-sel>
-
-<real>                  ::= <digit> <digit-sel> <digit-sel> <digit-sel> <digit-sel> '.' <digit> <digit-sel>
-
-<digit-sel>             ::= <digit>
-                         |  ε
-
-<boolean>               ::= 'true'
-                         |  'false'
-
-<char>                  ::= '\'' <printable-sel> '\''
-                         |  '"' <printable-sel> '"'
-
-<printable>             ::= <digit>
-                         |  <letter>
-                         |  <symbol>
-
-<printable-sel>         ::= <printable> <printable-sel>
-                         |  ε
-
-<digit>                 ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-
-<letter>                ::= 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'
-                         |  'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
-
-<symbol>                ::= ' ' | '!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@'
-                         |  '[' | '\\'| ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~' | 'Ç' | 'é' | 'â' | 'à' | 'ç' | 'ê' | 'è' | 'ì' | 'É' | 'ô' | 'ò'
-                         |  'ù' | 'á' | 'í' | 'ó' | 'ú' | 'Á' | 'Â' | 'À' | 'ã' | 'Ã' | 'Ê' | 'È' | 'Í' | 'Ì' | 'Ó' | 'Ô' | 'Ò' | 'Õ' | 'Ú' | 'Ù'
 
 
 /* ------------------------------------------------------------------------------------------------------------------- */
