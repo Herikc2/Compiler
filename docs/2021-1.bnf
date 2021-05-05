@@ -1,8 +1,5 @@
 <program>               ::= <header> program { <define> <execute> } <program-identifier>
 
-<header>                ::= :- <printable> \n
-                         |  ε
-
 <program-identifier>    ::= <identifier>
                          |  ε
 

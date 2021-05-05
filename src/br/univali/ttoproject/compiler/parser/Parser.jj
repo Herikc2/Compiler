@@ -20,7 +20,7 @@ SKIP :
 | <"\t">
 | <"\n">
 | <"\r">
-|< "//" (~["\r", "\n"])* >
+| <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
 }
 
 SKIP: { <"/*"> : BLOCK_COMMENT_STATE}
@@ -63,7 +63,7 @@ TOKEN [IGNORE_CASE]:
 /* SPECIAL SYMBOLS */
 TOKEN :
 {
-  <HEADER: ":-">
+  <HEADERSYMBOL: ":-">
 | <LBRACE: "{">
 | <RBRACE: "}">
 | <LBRACKET: "[">
@@ -90,28 +90,41 @@ TOKEN :
 | <NOT_SYMBOL: "!">
 }
 
-TOKEN :
-{
-    <LETTER: ["a"-"z","A"-"Z"]>
-|   <DIGIT: (["0"-"9"])>
-}
-
 /* CONSTS */
 TOKEN :
 {
-    <CHAR_CONST : "\""((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\"" |
-                  "\'"((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))*"\'">
+    <CHAR_CONST: "\"" ((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))* "\""
+               | "\'" ((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))* "\'">
 |   <NATURAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)?>
 |   <REAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)? (<DIGIT>)? (<DIGIT>)?  "." <DIGIT> (<DIGIT>)?>
-|   <BOOLEAN_CONST: "true"|"false">
+|   <BOOLEAN_CONST: "true" | "false">
 }
 
-/* IDENTIFIERS */
 TOKEN :
 {
-    <IDENTIFIER: "_"|(("_"<NU>|<LETTER>)(<LETTER>|<DIGIT><ND>|"_"<NU>)*((<LETTER>|<DIGIT>)"_")?)>
+    <LETTER: ["a"-"z","A"-"Z"]>
+|   <DIGIT: ["0"-"9"]>
+}
+
+TOKEN :
+{
+    <HEADER: <HEADERSYMBOL> (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+|   <IDENTIFIER: "_"|(("_"<NU>|<LETTER>)(<LETTER>|<DIGIT><ND>|"_"<NU>)*((<LETTER>|<DIGIT>)"_")?)>
 |   <NU: <LETTER>|<DIGIT><ND>>
 |   <ND: <LETTER>|"_">
 }
 
 <*> TOKEN : { <UNKNOWN: ~[]> }
+
+String Program() :
+{ String result = ""; }
+{
+  (<HEADER>)? <PROGRAM> <LBRACE> Test() <RBRACE> (<IDENTIFIER>)? <EOF>
+  { return result; }
+}
+
+void Test() :
+{}
+{
+    (<IDENTIFIER>)?
+}

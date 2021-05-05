@@ -335,7 +335,8 @@ public class App extends JFrame {
         //if (!mSave()) return false;
 
         compiled = true;
-        var strLog = new Compiler().build(new StringReader(codeEditor.getText()));
+        //var strLog = new Compiler().build(new StringReader(codeEditor.getText()));
+        var strLog = new Compiler().parse(new StringReader(codeEditor.getText()));
         log.setText(strLog);
 
         // temporariamente sendo impresso no console

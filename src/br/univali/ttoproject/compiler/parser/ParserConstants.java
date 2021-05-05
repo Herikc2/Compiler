@@ -47,7 +47,7 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int DO = 26;
   /** RegularExpression Id. */
-  int HEADER = 27;
+  int HEADERSYMBOL = 27;
   /** RegularExpression Id. */
   int LBRACE = 28;
   /** RegularExpression Id. */
@@ -97,25 +97,27 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int NOT_SYMBOL = 51;
   /** RegularExpression Id. */
-  int LETTER = 52;
+  int CHAR_CONST = 52;
   /** RegularExpression Id. */
-  int DIGIT = 53;
+  int NATURAL_CONST = 53;
   /** RegularExpression Id. */
-  int CHAR_CONST = 54;
+  int REAL_CONST = 54;
   /** RegularExpression Id. */
-  int NATURAL_CONST = 55;
+  int BOOLEAN_CONST = 55;
   /** RegularExpression Id. */
-  int REAL_CONST = 56;
+  int LETTER = 56;
   /** RegularExpression Id. */
-  int BOOLEAN_CONST = 57;
+  int DIGIT = 57;
   /** RegularExpression Id. */
-  int IDENTIFIER = 58;
+  int HEADER = 58;
   /** RegularExpression Id. */
-  int NU = 59;
+  int IDENTIFIER = 59;
   /** RegularExpression Id. */
-  int ND = 60;
+  int NU = 60;
   /** RegularExpression Id. */
-  int UNKNOWN = 61;
+  int ND = 61;
+  /** RegularExpression Id. */
+  int UNKNOWN = 62;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -176,12 +178,13 @@ public interface ParserConstants {
     "\"&\"",
     "\"|\"",
     "\"!\"",
-    "<LETTER>",
-    "<DIGIT>",
     "<CHAR_CONST>",
     "<NATURAL_CONST>",
     "<REAL_CONST>",
     "<BOOLEAN_CONST>",
+    "<LETTER>",
+    "<DIGIT>",
+    "<HEADER>",
     "<IDENTIFIER>",
     "<NU>",
     "<ND>",
