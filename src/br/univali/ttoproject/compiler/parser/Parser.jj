@@ -118,22 +118,55 @@ TOKEN :
 
 <*> TOKEN : { <UNKNOWN: ~[]> }
 
+
+
 void Program() :
 {}
 {
-    (<HEADER>)? <PROGRAM> <LBRACE> Define() Execute() <RBRACE> (<IDENTIFIER>)? <EOF>
+    HeaderSel() <PROGRAM> <LBRACE> Define() Execute() <RBRACE> IdentifierSel() <EOF>
+}
+
+void HeaderSel() :
+{}
+{
+    <HEADER>
+|   Epsilon()
+}
+
+void IdentifierSel() :
+{}
+{
+    <IDENTIFIER>
+|   Epsilon()
 }
 
 void Define() :
 {}
 {
-    (<DEFINE> <LBRACE> VariableSel() <RBRACE>)?
+    <DEFINE> <LBRACE> VariableBlock() <RBRACE>
+|   Epsilon()
 }
 
-void VariableSel() :
+void VariableBlock() :
 {}
 {
-    (NotVariable() (Variable())?) | (Variable() (NotVariable())?)
+    NotVariable() VariableSel1()
+|   Variable() VariableSel2()
+|   Epsilon()
+}
+
+void VariableSel1() :
+{}
+{
+    Variable()
+|   Epsilon()
+}
+
+void VariableSel2() :
+{}
+{
+    NotVariable()
+|   Epsilon()
 }
 
 void Execute() :
@@ -145,19 +178,65 @@ void Execute() :
 void NotVariable() :
 {}
 {
-    <NOT> <VARIABLE> (Type() <IS> <IDENTIFIER> Value() (<COMMA> <IDENTIFIER> Value())* <DOT>)+
+    <NOT> <VARIABLE>  NotVariableDecl() NotVariableSel()
+}
+
+void NotVariableSel() :
+{}
+{
+    NotVariableDecl() NotVariableSel()
+|   Epsilon()
+}
+
+void NotVariableDecl() :
+{}
+{
+    Type() <IS> IdentifierListValue()
+}
+
+void IdentifierListValue() :
+{}
+{
+    <IDENTIFIER> Value() IdentifierListValue1()
+}
+
+void IdentifierListValue1() :
+{}
+{
+    <COMMA> IdentifierListValue()
+|   Epsilon()
 }
 
 void Variable() :
 {}
 {
-    <VARIABLE> (Type() <IS> IdentifierList() <DOT>)+
+    <VARIABLE> VariableDecl() VariableSel()
+}
+
+void VariableSel() :
+{}
+{
+    VariableDecl() VariableSel()
+|   Epsilon()
+}
+
+void VariableDecl() :
+{}
+{
+    Type() <IS> IdentifierList() <DOT>
 }
 
 void IdentifierList() :
 {}
 {
-    <IDENTIFIER> Index() (<COMMA> <IDENTIFIER> Index())*
+    <IDENTIFIER> Index() IdentifierList1()
+}
+
+void IdentifierList1() :
+{}
+{
+    <COMMA> IdentifierList()
+|   Epsilon()
 }
 
 void Set() :
@@ -181,7 +260,28 @@ void Put() :
 void Verify() :
 {}
 {
-    <VERIFY> Expression() <IS> (TrueBlock() (FalseBlock())? | FalseBlock() (TrueBlock())?)
+    <VERIFY> Expression() <IS> FalseTrueSel()
+}
+
+void FalseTrueSel() :
+{}
+{
+    TrueBlock() FalseTrueSel1()
+|   FalseBlock() FalseTrueSel2()
+}
+
+void FalseTrueSel1() :
+{}
+{
+    FalseBlock()
+|   Epsilon()
+}
+
+void FalseTrueSel2() :
+{}
+{
+    TrueBlock()
+|   Epsilon()
 }
 
 void TrueBlock() :
@@ -211,13 +311,31 @@ void While() :
 void CommandBlock() :
 {}
 {
-    Command() (Command())*
+    <LBRACE> Command() CommandList() <RBRACE>
+}
+
+void CommandList() :
+{}
+{
+    Command() CommandList()
+|   Epsilon()
 }
 
 void Command() :
 {}
 {
-    (Set() | Get() | Put() | Verify() | Loop() | While()) <DOT>
+    CommandSel() <DOT>
+}
+
+void CommandSel() :
+{}
+{
+    Set()
+|   Get()
+|   Put()
+|   Verify()
+|   Loop()
+|   While()
 }
 
 void Expression() :

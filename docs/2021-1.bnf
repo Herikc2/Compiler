@@ -1,134 +1,137 @@
-<program>               ::= <header> program { <define> <execute> } <program-identifier>
+<program>                  ::= <header-sel> program { <define> <execute> } <identifier-sel>
 
-<program-identifier>    ::= <identifier>
-                         |  ε
+<header-sel>               ::= <header>
+                            |  ε
 
-<define>                ::= define { <variable-sel> }
-                         |  ε
+<identifier-sel>           ::= <identifier>
+                            |  ε
 
-<variable-sel>          ::= <not-variable> <variable-sel-1>
-                         |  <variable> <variable-sel-2>
-                         |  ε
+<define>                   ::= define { <variable-block> }
+                            |  ε
 
-<variable-sel-1>        ::= <variable>
-                         |  ε
+<variable-block>           ::= <not-variable> <variable-sel-1>
+                            |  <variable> <variable-sel-2>
+                            |  ε
 
-<variable-sel-2>        ::= <not-variable>
-                         |  ε
+<variable-sel-1>           ::= <variable>
+                            |  ε
 
-<execute>               ::= execute <command-block>
+<variable-sel-2>           ::= <not-variable>
+                            |  ε
 
-<not-variable>          ::= not variable <not-variable-decl> <not-variable-sel>
+<execute>                  ::= execute <command-block>
 
-<not-variable-sel>      ::= <not-variable-decl> <not-variable-sel>
-                         |  ε
+<not-variable>             ::= not variable <not-variable-decl> <not-variable-sel>
 
-<not-variable-decl>     ::= <type> is <identifier-list-value> .
+<not-variable-sel>         ::= <not-variable-decl> <not-variable-sel>
+                            |  ε
 
-<variable>              ::= variable <variable-decl> <variable-sel>
+<not-variable-decl>        ::= <type> is <identifier-list-value> .
 
-<variable-sel>          ::= <variable-decl> <variable-sel>
-                         |  ε
+<identifier-list-value>    ::= <identifier> <value> <identifier-list-value-1>
 
-<variable-decl>         ::= <type> is <identifier-list> .
+<identifier-list-value-1>  ::= , <identifier-list-value>
+                            |  ε
 
-<identifier-list-value> ::= <identifier> <value> <identifier-list-value-1>
+<variable>                 ::= variable <variable-decl> <variable-sel>
 
-<identifier-list-value-1> ::= , <identifier-list-value>
-                           |  ε
+<variable-sel>             ::= <variable-decl> <variable-sel>
+                            |  ε
 
-<identifier-list>       ::= <identifier> <index> <identifier-list-1>
+<variable-decl>            ::= <type> is <identifier-list> .
 
-<identifier-list-1>     ::= ,  <identifier-list>
-                         |  ε
+<identifier-list>          ::= <identifier> <index> <identifier-list-1>
 
-<set>                   ::= set <expression> to <identifier-list>
+<identifier-list-1>        ::= ,  <identifier-list>
+                            |  ε
 
-<get>                   ::= get { <identifier-list> }
+<set>                      ::= set <expression> to <identifier-list>
 
-<put>                   ::= put { <identifier-list> }
+<get>                      ::= get { <identifier-list> }
 
-<verify>                ::= verify <expression> <false-true-sel>
+<put>                      ::= put { <identifier-list> }
 
-<false-true-sel>        ::= <is-true> <false-true-sel-1>
-                         |  <is-false> <false-true-sel-2>
+<verify>                   ::= verify <expression> is <false-true-sel>
 
-<false-true-sel-1>      ::= <is-false>
-                         |  ε
+<false-true-sel>           ::= <true-block> <false-true-sel-1>
+                            |  <false-block> <false-true-sel-2>
 
-<false-true-sel-2>      ::= <is-true>
-                         |  ε
+<false-true-sel-1>         ::= <false-block>
+                            |  ε
 
-<is-true>               ::= is true <command-block>
+<false-true-sel-2>         ::= <true-block>
+                            |  ε
 
-<is-false>              ::= is false <command-block>
+<true-block>               ::= true <command-block>
 
-<loop>                  ::= loop <command-block> while <expression> is true
+<false-block>              ::= false <command-block>
 
-<while>                 ::= while <expression> is true do <command-block>
+<loop>                     ::= loop <command-block> while <expression> is true
 
-<command-block>         ::= { <command> <command-list> }
+<while>                    ::= while <expression> is true do <command-block>
 
-<command-list>          ::= <command> <command-list>
-                         |  ε
+<command-block>            ::= { <command> <command-list> }
 
-<command>               ::= <command-sel> .
+<command-list>             ::= <command> <command-list>
+                            |  ε
 
-<command-sel>           ::= <set>
-                         |  <get>
-                         |  <put>
-                         |  <verify>
-                         |  <loop>
-                         |  <while>
+<command>                  ::= <command-sel> .
 
-<expression>            ::= <expr-arith-logical> <expression-sel>
+<command-sel>              ::= <set>
+                            |  <get>
+                            |  <put>
+                            |  <verify>
+                            |  <loop>
+                            |  <while>
 
-<expression-sel>        ::= == <expr-arith-logical>
-                         |  != <expr-arith-logical>
-                         |  < <expr-arith-logical>
-                         |  > <expr-arith-logical>
-                         |  <= <expr-arith-logical>
-                         |  >= <expr-arith-logical>
-                         |  ε
+<expression>               ::= <expr-arith-logical> <expression-sel>
 
-<expr-arith-logical>    ::= <term2> <less-priority>
+<expression-sel>           ::= == <expr-arith-logical>
+                            |  != <expr-arith-logical>
+                            |  < <expr-arith-logical>
+                            |  > <expr-arith-logical>
+                            |  <= <expr-arith-logical>
+                            |  >= <expr-arith-logical>
+                            |  ε
 
-<less-priority>         ::= + <term2> <less-priority>
-                         |  - <term2> <less-priority>
-                         |  | <term2> <less-priority>
-                         |  ε
+<expr-arith-logical>       ::= <term2> <less-priority>
 
-<term2>                 ::= <term1> <mid-priority>
+<less-priority>            ::= + <term2> <less-priority>
+                            |  - <term2> <less-priority>
+                            |  | <term2> <less-priority>
+                            |  ε
 
-<mid-priority>          ::= * <term1> <mid-priority>
-                         |  / <term1> <mid-priority>
-                         |  % <term1> <mid-priority>
-                         |  %% <term1> <mid-priority>
-                         |  & <term1> <mid-priority>
-                         |  ε
+<term2>                    ::= <term1> <mid-priority>
 
-<term1>                 ::= <element> <great-priority>
+<mid-priority>             ::= * <term1> <mid-priority>
+                            |  / <term1> <mid-priority>
+                            |  % <term1> <mid-priority>
+                            |  %% <term1> <mid-priority>
+                            |  & <term1> <mid-priority>
+                            |  ε
 
-<great-priority>        ::= ** <element> <great-priority>
-                         |  ε
+<term1>                    ::= <element> <great-priority>
 
-<element>               ::= <identifier> <index>
-                         |  <value>
-                         |  ( <expression> )
-                         |  ! ( <expression> )
+<great-priority>           ::= ** <element> <great-priority>
+                            |  ε
 
-<index>                 ::= [ <natural> ]
-                         |  ε
+<element>                  ::= <identifier> <index>
+                            |  <value>
+                            |  ( <expression> )
+                            |  ! ( <expression> )
 
-<value>                 ::= <natural>
-                         |  <real>
-                         |  <char>
-                         |  <boolean>
+<index>                    ::= [ <natural> ]
+                            |  ε
 
-<type>                  ::= <natural-type>
-                         |  <real-type>
-                         |  <char-type>
-                         |  <boolean-type>
+<value>                    ::= <natural>
+                            |  <real>
+                            |  <char>
+                            |  <boolean>
+
+<type>                     ::= <natural-type>
+                            |  <real-type>
+                            |  <char-type>
+                            |  <boolean-type>
 
 /* ------------------------------------------------------------------------------------------------------------------- */
 

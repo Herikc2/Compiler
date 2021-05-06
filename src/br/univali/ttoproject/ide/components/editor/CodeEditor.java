@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Stack;
 
 public class CodeEditor extends JTextPane {
@@ -235,12 +236,14 @@ public class CodeEditor extends JTextPane {
         int i;
         var word = "";
         var matched = new ArrayList<String>();
+
         for (i = curLine.length() - 1; i >= 0; i--) {
             if (Token.isSkip(curLine.charAt(i)) || i == 0) {
                 word = curLine.substring(i).trim();
                 break;
             }
         }
+
         if (word.isEmpty()) {
             if (pmSuggestions != null)
                 pmSuggestions.setVisible(false);
@@ -248,14 +251,19 @@ public class CodeEditor extends JTextPane {
             suggestions = null;
         } else {
             for (var t : Token.getReserved()) {
-                if (t.equals(word)) {
+                if (t.equalsIgnoreCase(word)) {
                     if (pmSuggestions != null)
                         pmSuggestions.setVisible(false);
                     pmSuggestions = null;
                     suggestions = null;
                     return;
                 }
-                if (t.startsWith(word)) matched.add(t);
+                if (t.startsWith(word.toLowerCase(Locale.ROOT))) {
+                    if (t.equals("not")) {
+                        matched.add("not variable");
+                    }
+                    matched.add(t);
+                }
             }
 
             pmSuggestions = new JPopupMenu();
@@ -302,12 +310,37 @@ public class CodeEditor extends JTextPane {
         var offset = (word.length() - size);
         var t1 = getText().substring(0, caretPosition - size);
         var t2 = getText().substring(caretPosition);
-        // TODO: add complex structures instead of just word
-        // TODO: handle tab level and tab type
-        if (word.equals("program")) {
-            ++braceTabLevel;
-            struct = "program {\n" + tab.repeat(braceTabLevel) + "\n" + tab.repeat(braceTabLevel - 1) + "}";
-            offset += 3 + caretPad;
+        switch (word) {
+            case "program", "define", "execute" -> {
+                ++braceTabLevel;
+                struct = word + " {\n" + tab.repeat(braceTabLevel) + "\n" + tab.repeat(braceTabLevel - 1) + "}";
+                offset += 3 + (caretPad * braceTabLevel);
+            }
+            case "not variable", "variable" -> {
+                ++braceTabLevel;
+                struct = word + "\n" + tab.repeat(braceTabLevel);
+                offset += 1 + (caretPad * braceTabLevel);
+            }
+            case "get", "put" -> {
+                ++braceTabLevel;
+                struct = word + " {  } .";
+                offset += 3;
+            }
+            case "loop" -> {
+                ++braceTabLevel;
+                struct = word + " {\n" + tab.repeat(braceTabLevel) + "\n" + tab.repeat(braceTabLevel - 1) + "} while  is true .";
+                offset += 12 + (caretPad * braceTabLevel) + (caretPad * (braceTabLevel - 1));
+            }
+            case "while" -> {
+                ++braceTabLevel;
+                struct = word + "  is true do {\n" + tab.repeat(braceTabLevel) + "\n" + tab.repeat(braceTabLevel - 1) + "} .";
+                offset += caretPad * braceTabLevel;
+            }
+            case "set" -> {
+                ++braceTabLevel;
+                struct = word + "  to  .";
+                offset += caretPad * braceTabLevel;
+            }
         }
         setText(t1 + struct + t2);
         setCaretPosition(caretPosition + offset);
@@ -471,7 +504,7 @@ public class CodeEditor extends JTextPane {
                     t1 += " ";
                     pad++;
                 }
-                setText(t1 + "{ " + " } ." + t2);
+                setText(t1 + "{  } ." + t2);
                 setCaretPosition(curCaretPosition + pad);
             }
         }
