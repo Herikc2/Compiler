@@ -154,8 +154,8 @@ public class Token implements java.io.Serializable {
             case ParserConstants.EOF:
             case ParserConstants.LBRACE:
             case ParserConstants.RBRACE:
-            case ParserConstants.PARENTHESESL:
-            case ParserConstants.PARANTHESESR:
+            case ParserConstants.LPARENTHESES:
+            case ParserConstants.RPARANTHESES:
             case ParserConstants.DOT:
             case ParserConstants.COMMA:
             case ParserConstants.PLUS:
@@ -168,9 +168,9 @@ public class Token implements java.io.Serializable {
             case ParserConstants.EQUAL:
             case ParserConstants.DIFFERENT:
             case ParserConstants.SMALLER:
-            case ParserConstants.LARGER:
+            case ParserConstants.GREATER:
             case ParserConstants.SMALLER_EQUAL:
-            case ParserConstants.LARGER_EQUAL:
+            case ParserConstants.GREATER_EQUAL:
             case ParserConstants.AND:
             case ParserConstants.OR:
             case ParserConstants.NOT_SYMBOL:

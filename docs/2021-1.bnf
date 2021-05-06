@@ -32,11 +32,6 @@
 
 <variable-decl>         ::= <type> is <identifier-list> .
 
-<type>                  ::= natural
-                         |  real
-                         |  char
-                         |  boolean
-
 <identifier-list-value> ::= <identifier> <value> <identifier-list-value-1>
 
 <identifier-list-value-1> ::= , <identifier-list-value>
@@ -117,7 +112,7 @@
 <great-priority>        ::= ** <element> <great-priority>
                          |  ε
 
-<element>               ::= identificador <index>
+<element>               ::= <identifier> <index>
                          |  <value>
                          |  ( <expression> )
                          |  ! ( <expression> )
@@ -129,6 +124,11 @@
                          |  <real>
                          |  <char>
                          |  <boolean>
+
+<type>                  ::= <natural-type>
+                         |  <real-type>
+                         |  <char-type>
+                         |  <boolean-type>
 
 /* ------------------------------------------------------------------------------------------------------------------- */
 

@@ -16,10 +16,10 @@ PARSER_END(Parser)
 
 SKIP :
 {
-  <" ">
-| <"\t">
-| <"\n">
-| <"\r">
+  " "
+| "\t"
+| "\n"
+| "\r"
 | <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
 }
 
@@ -58,18 +58,20 @@ TOKEN [IGNORE_CASE]:
 | <LOOP: "loop">
 | <WHILE: "while">
 | <DO: "do">
+| <TRUE: "true">
+| <FALSE: "false">
 }
 
 /* SPECIAL SYMBOLS */
 TOKEN :
 {
-  <HEADERSYMBOL: ":-">
+  <HEADER_SYMBOL: ":-">
 | <LBRACE: "{">
 | <RBRACE: "}">
 | <LBRACKET: "[">
 | <RBRACKET: "]">
-| <PARENTHESESL: "(">
-| <PARANTHESESR: ")">
+| <LPARENTHESES: "(">
+| <RPARANTHESES: ")">
 | <DOT: ".">
 | <COMMA: ",">
 | <PLUS: "+">
@@ -82,9 +84,9 @@ TOKEN :
 | <EQUAL: "==">
 | <DIFFERENT: "!=">
 | <SMALLER: "<">
-| <LARGER: ">">
+| <GREATER: ">">
 | <SMALLER_EQUAL: "<=">
-| <LARGER_EQUAL: ">=">
+| <GREATER_EQUAL: ">=">
 | <AND: "&">
 | <OR: "|">
 | <NOT_SYMBOL: "!">
@@ -97,7 +99,7 @@ TOKEN :
                | "\'" ((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))* "\'">
 |   <NATURAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)?>
 |   <REAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)? (<DIGIT>)? (<DIGIT>)?  "." <DIGIT> (<DIGIT>)?>
-|   <BOOLEAN_CONST: "true" | "false">
+|   <BOOLEAN_CONST: <TRUE> | <FALSE>>
 }
 
 TOKEN :
@@ -108,23 +110,208 @@ TOKEN :
 
 TOKEN :
 {
-    <HEADER: <HEADERSYMBOL> (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
-|   <IDENTIFIER: "_"|(("_"<NU>|<LETTER>)(<LETTER>|<DIGIT><ND>|"_"<NU>)*((<LETTER>|<DIGIT>)"_")?)>
+    <HEADER: <HEADER_SYMBOL> (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+|   <IDENTIFIER: "_"|(("_"<NU>|<LETTER>)(<NU>|"_"<NU>)* (<LETTER>|<DIGIT>("_"|<LETTER>)|<LETTER>"_"))>
 |   <NU: <LETTER>|<DIGIT><ND>>
 |   <ND: <LETTER>|"_">
 }
 
 <*> TOKEN : { <UNKNOWN: ~[]> }
 
-String Program() :
-{ String result = ""; }
-{
-  (<HEADER>)? <PROGRAM> <LBRACE> Test() <RBRACE> (<IDENTIFIER>)? <EOF>
-  { return result; }
-}
-
-void Test() :
+void Program() :
 {}
 {
-    (<IDENTIFIER>)?
+    (<HEADER>)? <PROGRAM> <LBRACE> Define() Execute() <RBRACE> (<IDENTIFIER>)? <EOF>
+}
+
+void Define() :
+{}
+{
+    (<DEFINE> <LBRACE> VariableSel() <RBRACE>)?
+}
+
+void VariableSel() :
+{}
+{
+    (NotVariable() (Variable())?) | (Variable() (NotVariable())?)
+}
+
+void Execute() :
+{}
+{
+    <EXECUTE> CommandBlock()
+}
+
+void NotVariable() :
+{}
+{
+    <NOT> <VARIABLE> (Type() <IS> <IDENTIFIER> Value() (<COMMA> <IDENTIFIER> Value())* <DOT>)+
+}
+
+void Variable() :
+{}
+{
+    <VARIABLE> (Type() <IS> IdentifierList() <DOT>)+
+}
+
+void IdentifierList() :
+{}
+{
+    <IDENTIFIER> Index() (<COMMA> <IDENTIFIER> Index())*
+}
+
+void Set() :
+{}
+{
+    <SET> Expression() <TO> IdentifierList()
+}
+
+void Get() :
+{}
+{
+    <GET> <LBRACE> IdentifierList() <RBRACE>
+}
+
+void Put() :
+{}
+{
+    <PUT> <LBRACE> IdentifierList() <RBRACE>
+}
+
+void Verify() :
+{}
+{
+    <VERIFY> Expression() <IS> (TrueBlock() (FalseBlock())? | FalseBlock() (TrueBlock())?)
+}
+
+void TrueBlock() :
+{}
+{
+    <TRUE> CommandBlock()
+}
+
+void FalseBlock() :
+{}
+{
+    <FALSE> CommandBlock()
+}
+
+void Loop() :
+{}
+{
+    <LOOP> CommandBlock() <WHILE> Expression() <IS> <TRUE>
+}
+
+void While() :
+{}
+{
+    <WHILE> Expression() <IS> <TRUE> <DO> CommandBlock()
+}
+
+void CommandBlock() :
+{}
+{
+    Command() (Command())*
+}
+
+void Command() :
+{}
+{
+    (Set() | Get() | Put() | Verify() | Loop() | While()) <DOT>
+}
+
+void Expression() :
+{}
+{
+    ExprArithLogic() ExpressionSel()
+}
+
+void ExpressionSel() :
+{}
+{
+    <EQUAL> ExprArithLogic()
+|   <DIFFERENT> ExprArithLogic()
+|   <SMALLER> ExprArithLogic()
+|   <GREATER> ExprArithLogic()
+|   <SMALLER_EQUAL> ExprArithLogic()
+|   <GREATER_EQUAL> ExprArithLogic()
+|   <DIFFERENT> ExprArithLogic()
+|   Epsilon()
+}
+
+void ExprArithLogic() :
+{}
+{
+    Term2() LessPriority()
+}
+
+void LessPriority() :
+{}
+{
+    <PLUS> Term2() LessPriority()
+|   <MINUS> Term2() LessPriority()
+|   <OR> Term2() LessPriority()
+|   Epsilon()
+}
+
+void Term2() :
+{}
+{
+    Term1() MidPriority()
+}
+
+void MidPriority() :
+{}
+{
+    <MULTIPLICATION> Term1() MidPriority()
+|   <DIVISION> Term1() MidPriority()
+|   <INTEGER_DIVISION> Term1() MidPriority()
+|   <REST> Term1() MidPriority()
+|   <AND> Term1() MidPriority()
+|   Epsilon()
+}
+
+void Term1() :
+{}
+{
+    Element() GreatPriority()
+}
+
+void GreatPriority() :
+{}
+{
+    <POWER> Element() GreatPriority()
+|   Epsilon()
+}
+
+void Element() :
+{}
+{
+    <IDENTIFIER> Index()
+|   Value()
+|   <LPARENTHESES> Expression() <RPARANTHESES>
+|   <NOT> <LPARENTHESES> Expression() <RPARANTHESES>
+}
+
+void Index() :
+{}
+{
+    (<LBRACKET> <NATURAL_CONST> <RBRACKET>)?
+}
+
+void Value() :
+{}
+{
+    <CHAR_CONST> | <NATURAL_CONST> | <REAL_CONST> | <BOOLEAN_CONST>
+}
+
+void Type() :
+{}
+{
+    <CHAR_TYPE> | <NATURAL_TYPE> | <REAL_TYPE> | <BOOLEAN_TYPE>
+}
+
+void Epsilon() : {}
+{
+     {}
 }

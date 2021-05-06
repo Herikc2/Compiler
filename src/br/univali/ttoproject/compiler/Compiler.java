@@ -31,6 +31,10 @@ public class Compiler {
             parser.Program();
         } catch (ParseException e) {
             messages = e.getMessage();
+            return messages;
+            //e.printStackTrace();
+        } finally {
+            messages = "Compiled with success.";
         }
         return messages;
     }
