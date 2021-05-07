@@ -78,14 +78,15 @@ public class Compiler {
         return messages;
     }
 
-    public void parser() {
+    public String parser() {
         try {
             parser.Start();
         } catch (ParseException e) {
             //messages += e.getMessage();
-            //return messages;
+            //return e.getMessage();
             //e.printStackTrace();
         }
+        return "sucesso!";
     }
 
     public String build(Reader reader) {

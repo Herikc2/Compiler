@@ -49,7 +49,10 @@
 
 <get>                      ::= get { <identifier-list> }
 
-<put>                      ::= put { <identifier-list> }
+<put>                      ::= put { <put-list> }
+
+<put-list>                 ::= <identifier-list>
+                            |  <value>
 
 <verify>                   ::= verify <expression> is <false-true-sel>
 

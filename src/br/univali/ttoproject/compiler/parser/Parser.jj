@@ -121,46 +121,50 @@ TOKEN :
 <*> TOKEN : { <UNKNOWN: ~[" ","\t","\n","\r"]> }
 
 
+
 void Start() :
 {}
 {
-    Program()
+    Program() <EOF>
 }
 
 void Program() :
 {}
 {
-    HeaderSel() T(PROGRAM) <LBRACE> Define() Execute() <RBRACE> IdentifierSel() <EOF>
+    HeaderSel() T(PROGRAM) T(LBRACE) Define() Execute() T(RBRACE) IdentifierSel()
 }
 
 JAVACODE
 void T(int tk) {
     token = getNextToken();
-    if (token.kind != tk) {
-        ParseException e = generateParseException();
-        errorMessages += e.toString();
-        //getNextToken();
+    System.out.println("cur tk: " + token.image + " " + token.kind);
+    while (token.kind != tk && token != null && token.kind != EOF ){
+        errorMessages += "Deu merda! " + token.image + " \n";
+
+        System.out.println("cur tk: " + token.image + " " + token.kind);
+
+        token = getNextToken();
     }
 }
 
 void HeaderSel() :
 {}
 {
-    <HEADER_COMMENT>
+    T(HEADER_COMMENT)
 |   Epsilon()
 }
 
 void IdentifierSel() :
 {}
 {
-    <IDENTIFIER>
+    T(IDENTIFIER)
 |   Epsilon()
 }
 
 void Define() :
 {}
 {
-    <DEFINE> <LBRACE> VariableBlock() <RBRACE>
+    T(DEFINE) T(LBRACE) VariableBlock() T(RBRACE)
 |   Epsilon()
 }
 
@@ -189,13 +193,13 @@ void VariableSel2() :
 void Execute() :
 {}
 {
-    <EXECUTE> CommandBlock()
+    T(EXECUTE) CommandBlock()
 }
 
 void NotVariable() :
 {}
 {
-    <NOT> <VARIABLE>  NotVariableDecl() NotVariableSel()
+    T(NOT) T(VARIABLE)  NotVariableDecl() NotVariableSel()
 }
 
 void NotVariableSel() :
@@ -208,26 +212,26 @@ void NotVariableSel() :
 void NotVariableDecl() :
 {}
 {
-    Type() <IS> IdentifierListValue()
+    Type() T(IS) IdentifierListValue()
 }
 
 void IdentifierListValue() :
 {}
 {
-    <IDENTIFIER> Value() IdentifierListValue1()
+    T(IDENTIFIER) Value() IdentifierListValue1()
 }
 
 void IdentifierListValue1() :
 {}
 {
-    <COMMA> IdentifierListValue()
+    T(COMMA) IdentifierListValue()
 |   Epsilon()
 }
 
 void Variable() :
 {}
 {
-    <VARIABLE> VariableDecl() VariableSel()
+    T(VARIABLE) VariableDecl() VariableSel()
 }
 
 void VariableSel() :
@@ -240,44 +244,51 @@ void VariableSel() :
 void VariableDecl() :
 {}
 {
-    Type() <IS> IdentifierList() <DOT>
+    Type() T(IS) IdentifierList() T(DOT)
 }
 
 void IdentifierList() :
 {}
 {
-    <IDENTIFIER> Index() IdentifierList1()
+    T(IDENTIFIER) Index() IdentifierList1()
 }
 
 void IdentifierList1() :
 {}
 {
-    <COMMA> IdentifierList()
+    T(COMMA) IdentifierList()
 |   Epsilon()
 }
 
 void Set() :
 {}
 {
-    <SET> Expression() <TO> IdentifierList()
+    T(SET) Expression() T(TO) IdentifierList()
 }
 
 void Get() :
 {}
 {
-    <GET> <LBRACE> IdentifierList() <RBRACE>
+    T(GET) T(LBRACE) IdentifierList() T(RBRACE)
 }
 
 void Put() :
 {}
 {
-    <PUT> <LBRACE> IdentifierList() <RBRACE>
+    T(PUT) T(LBRACE) PutList() T(RBRACE)
+}
+
+void PutList() :
+{}
+{
+    IdentifierList()
+|   Value()
 }
 
 void Verify() :
 {}
 {
-    <VERIFY> Expression() <IS> FalseTrueSel()
+    T(VERIFY) Expression() T(IS) FalseTrueSel()
 }
 
 void FalseTrueSel() :
@@ -304,31 +315,31 @@ void FalseTrueSel2() :
 void TrueBlock() :
 {}
 {
-    <TRUE> CommandBlock()
+    T(TRUE) CommandBlock()
 }
 
 void FalseBlock() :
 {}
 {
-    <FALSE> CommandBlock()
+    T(FALSE) CommandBlock()
 }
 
 void Loop() :
 {}
 {
-    <LOOP> CommandBlock() <WHILE> Expression() <IS> <TRUE>
+    T(LOOP) CommandBlock() T(WHILE) Expression() T(IS) T(TRUE)
 }
 
 void While() :
 {}
 {
-    <WHILE> Expression() <IS> <TRUE> <DO> CommandBlock()
+    T(WHILE) Expression() T(IS) T(TRUE) T(DO) CommandBlock()
 }
 
 void CommandBlock() :
 {}
 {
-    <LBRACE> Command() CommandList() <RBRACE>
+    T(LBRACE) Command() CommandList() T(RBRACE)
 }
 
 void CommandList() :
@@ -341,7 +352,7 @@ void CommandList() :
 void Command() :
 {}
 {
-    CommandSel() <DOT>
+    CommandSel() T(DOT)
 }
 
 void CommandSel() :
@@ -364,12 +375,12 @@ void Expression() :
 void ExpressionSel() :
 {}
 {
-    <EQUAL> ExprArithLogic()
-|   <DIFFERENT> ExprArithLogic()
-|   <SMALLER> ExprArithLogic()
-|   <GREATER> ExprArithLogic()
-|   <SMALLER_EQUAL> ExprArithLogic()
-|   <GREATER_EQUAL> ExprArithLogic()
+    T(EQUAL) ExprArithLogic()
+|   T(DIFFERENT) ExprArithLogic()
+|   T(SMALLER) ExprArithLogic()
+|   T(GREATER) ExprArithLogic()
+|   T(SMALLER_EQUAL) ExprArithLogic()
+|   T(GREATER_EQUAL) ExprArithLogic()
 |   Epsilon()
 }
 
@@ -382,9 +393,9 @@ void ExprArithLogic() :
 void LessPriority() :
 {}
 {
-    <PLUS> Term2() LessPriority()
-|   <MINUS> Term2() LessPriority()
-|   <OR> Term2() LessPriority()
+    T(PLUS) Term2() LessPriority()
+|   T(MINUS) Term2() LessPriority()
+|   T(OR) Term2() LessPriority()
 |   Epsilon()
 }
 
@@ -397,11 +408,11 @@ void Term2() :
 void MidPriority() :
 {}
 {
-    <MULTIPLICATION> Term1() MidPriority()
-|   <DIVISION> Term1() MidPriority()
-|   <INTEGER_DIVISION> Term1() MidPriority()
-|   <REST> Term1() MidPriority()
-|   <AND> Term1() MidPriority()
+    T(MULTIPLICATION) Term1() MidPriority()
+|   T(DIVISION) Term1() MidPriority()
+|   T(INTEGER_DIVISION) Term1() MidPriority()
+|   T(REST) Term1() MidPriority()
+|   T(AND) Term1() MidPriority()
 |   Epsilon()
 }
 
@@ -414,35 +425,35 @@ void Term1() :
 void GreatPriority() :
 {}
 {
-    <POWER> Element() GreatPriority()
+    T(POWER) Element() GreatPriority()
 |   Epsilon()
 }
 
 void Element() :
 {}
 {
-    <IDENTIFIER> Index()
+    T(IDENTIFIER) Index()
 |   Value()
-|   <LPARENTHESES> Expression() <RPARANTHESES>
-|   <NOT> <LPARENTHESES> Expression() <RPARANTHESES>
+|   T(LPARENTHESES) Expression() T(RPARANTHESES)
+|   T(NOT) T(LPARENTHESES) Expression() T(RPARANTHESES)
 }
 
 void Index() :
 {}
 {
-    (<LBRACKET> <NATURAL_CONST> <RBRACKET>)?
+    (T(LBRACKET) T(NATURAL_CONST) T(RBRACKET))?
 }
 
 void Value() :
 {}
 {
-    <CHAR_CONST> | <NATURAL_CONST> | <REAL_CONST> | <BOOLEAN_CONST>
+    T(CHAR_CONST) | T(NATURAL_CONST) | T(REAL_CONST) | T(BOOLEAN_CONST)
 }
 
 void Type() :
 {}
 {
-    <CHAR_TYPE> | <NATURAL_TYPE> | <REAL_TYPE> | <BOOLEAN_TYPE>
+    T(CHAR_TYPE) | T(NATURAL_TYPE) | T(REAL_TYPE) | T(BOOLEAN_TYPE)
 }
 
 void Epsilon() : {}
