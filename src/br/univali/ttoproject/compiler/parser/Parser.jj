@@ -9,6 +9,7 @@ PARSER_BEGIN(Parser)
 package br.univali.ttoproject.compiler.parser;
 
 public class Parser {
+    public String errorMessages = "";
 }
 
 PARSER_END(Parser)
@@ -92,8 +93,8 @@ TOKEN :
 /* CONSTS */
 TOKEN :
 {
-    <CHAR_CONST: "\"" (~["\"","\\","\n","\r"] | <STR_SPEC>)* "\""
-               | "\'" (~["\'","\\","\n","\r"] | <STR_SPEC>)* "\'">
+    <CHAR_CONST: "\"" (~["\"","\\","\n","\r"] | "\\"(["n","t","b","r","\\","'","\""]))* "\""
+               | "\'" (~["\'","\\","\n","\r"] | "\\"(["n","t","b","r","\\","'","\""]))* "\'">
 |   <NATURAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)?>
 |   <REAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)? (<DIGIT>)? (<DIGIT>)?  "." <DIGIT> (<DIGIT>)?>
 |   <BOOLEAN_CONST: <TRUE> | <FALSE>>
@@ -111,9 +112,8 @@ TOKEN :
 /* LITERALS */
 TOKEN :
 {
-    <STR_SPEC: "\\"(["n","t","b","r","\\","'","\""])>
-|   <LITERAL: (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
-|   <IDENTIFIER: "_"|(("_"<NU>|<LETTER>)(<NU>|"_"<NU>)* (<LETTER>|<DIGIT>("_"|<LETTER>)|<LETTER>"_"))>
+    <HEADER_COMMENT: <HEADER> (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+|   <IDENTIFIER: ("_"|<LETTER>)|(("_"<NU>|<LETTER>)(<NU>|"_"<NU>)* (<LETTER>|<DIGIT>("_"|<LETTER>)|<LETTER>"_"))>
 |   <NU: <LETTER>|<DIGIT><ND>>
 |   <ND: <LETTER>|"_">
 }
@@ -121,24 +121,32 @@ TOKEN :
 <*> TOKEN : { <UNKNOWN: ~[" ","\t","\n","\r"]> }
 
 
-String Start() :
-{String e = "";}
+void Start() :
+{}
 {
-    e = Program()
-    {return e;}
+    Program()
 }
 
-String Program() :
-{String e = "";}
+void Program() :
+{}
 {
-    HeaderSel() <PROGRAM> <LBRACE> Define() Execute() <RBRACE> IdentifierSel() <EOF>
-    {return e;}
+    HeaderSel() T(PROGRAM) <LBRACE> Define() Execute() <RBRACE> IdentifierSel() <EOF>
+}
+
+JAVACODE
+void T(int tk) {
+    token = getNextToken();
+    if (token.kind != tk) {
+        ParseException e = generateParseException();
+        errorMessages += e.toString();
+        //getNextToken();
+    }
 }
 
 void HeaderSel() :
 {}
 {
-    <HEADER> <LITERAL>
+    <HEADER_COMMENT>
 |   Epsilon()
 }
 
@@ -149,12 +157,11 @@ void IdentifierSel() :
 |   Epsilon()
 }
 
-String Define() :
-{String e = "";}
+void Define() :
+{}
 {
     <DEFINE> <LBRACE> VariableBlock() <RBRACE>
 |   Epsilon()
-    {return e;}
 }
 
 void VariableBlock() :

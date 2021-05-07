@@ -55,12 +55,11 @@ public class Compiler {
 
     public String compile(String code){
         parser = new Parser(new StringReader(code));
-        String messages = "";
 
-        messages += lexer(code);
-        messages += parser();
+        //parser.errorMessages += lexer(code);
+        parser();
 
-        return messages;
+        return parser.errorMessages;
     }
 
     public String lexer(String code) {
@@ -79,19 +78,14 @@ public class Compiler {
         return messages;
     }
 
-    public String parser() {
-        String messages = "";
+    public void parser() {
         try {
-            messages += parser.Start();
+            parser.Start();
         } catch (ParseException e) {
             //messages += e.getMessage();
             //return messages;
             //e.printStackTrace();
-        } finally {
-            if(messages.isEmpty())
-                messages = "Compiled with success.";
         }
-        return messages;
     }
 
     public String build(Reader reader) {
