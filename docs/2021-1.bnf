@@ -1,6 +1,6 @@
 <program>                  ::= <header-sel> program { <define> <execute> } <identifier-sel>
 
-<header-sel>               ::= <header>
+<header-sel>               ::= <header> <literal>
                             |  ε
 
 <identifier-sel>           ::= <identifier>

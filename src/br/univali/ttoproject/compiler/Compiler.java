@@ -7,6 +7,7 @@ import br.univali.ttoproject.compiler.parser.ParserConstants;
 
 import java.io.FileNotFoundException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,17 +53,43 @@ public class Compiler {
                 + ". The following character '" + token.image + "' is invalid.\n";
     }
 
-    public String parse(Reader reader) {
-        parser = new Parser(reader);
+    public String compile(String code){
+        parser = new Parser(new StringReader(code));
+        String messages = "";
+
+        messages += lexer(code);
+        messages += parser();
+
+        return messages;
+    }
+
+    public String lexer(String code) {
+        String messages = "";
+
+        var lp = new Parser(new StringReader(code));
+
+        CategorizedToken token = (CategorizedToken) lp.getNextToken();
+        while (token.kind != ParserConstants.EOF) {
+            if(token.isUnknownKind()){
+                messages += buildLexicalErrorMessage(token);
+            }
+            token = (CategorizedToken) lp.getNextToken();
+        }
+
+        return messages;
+    }
+
+    public String parser() {
         String messages = "";
         try {
-            parser.Program();
+            messages += parser.Start();
         } catch (ParseException e) {
-            messages = e.getMessage();
-            return messages;
+            //messages += e.getMessage();
+            //return messages;
             //e.printStackTrace();
         } finally {
-            messages = "Compiled with success.";
+            if(messages.isEmpty())
+                messages = "Compiled with success.";
         }
         return messages;
     }

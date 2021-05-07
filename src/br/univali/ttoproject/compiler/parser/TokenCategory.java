@@ -8,7 +8,7 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("KEYWORD(%d)", id());
+            return String.format("keyword (%d)", id());
         }
     },
     SpecialSymbol {
@@ -18,7 +18,7 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("SPECIAL_SYMBOL(%d)", id());
+            return String.format("special symbol (%d)", id());
         }
     },
     Identifier {
@@ -28,27 +28,27 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("IDENTIFIER(%d)", id());
+            return String.format("identifier (%d)", id());
         }
     },
-    LiteralConstant {
+    CharConstant {
         public int id() {
             return 3;
         }
 
         @Override
         public String toString() {
-            return String.format("LITERAL_CONSTANT(%d)", id());
+            return String.format("LITERAL_CONSTANT (%d)", id());
         }
     },
-    IntegerConstant {
+    NaturalConstant {
         public int id() {
             return 4;
         }
 
         @Override
         public String toString() {
-            return String.format("INTEGER_CONSTANT(%d)", id());
+            return String.format("natual const (%d)", id());
         }
     },
     RealConstant {
@@ -58,7 +58,7 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("REAL_CONSTANT(%d)", id());
+            return String.format("real const (%d)", id());
         }
     },
     BooleanConstant {
@@ -68,7 +68,7 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("BOOLEAN_CONSTANT(%d)", id());
+            return String.format("boolean const (%d)", id());
         }
     },
     Unknown {
@@ -78,7 +78,7 @@ public enum TokenCategory {
 
         @Override
         public String toString() {
-            return String.format("UNKNOWN(%d)", id());
+            return String.format("unknown (%d)", id());
         }
     }
 }

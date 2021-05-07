@@ -47,81 +47,83 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int DO = 26;
   /** RegularExpression Id. */
-  int TRUE = 27;
+  int HEADER = 27;
   /** RegularExpression Id. */
-  int FALSE = 28;
+  int LBRACE = 28;
   /** RegularExpression Id. */
-  int HEADER_SYMBOL = 29;
+  int RBRACE = 29;
   /** RegularExpression Id. */
-  int LBRACE = 30;
+  int LBRACKET = 30;
   /** RegularExpression Id. */
-  int RBRACE = 31;
+  int RBRACKET = 31;
   /** RegularExpression Id. */
-  int LBRACKET = 32;
+  int LPARENTHESES = 32;
   /** RegularExpression Id. */
-  int RBRACKET = 33;
+  int RPARANTHESES = 33;
   /** RegularExpression Id. */
-  int LPARENTHESES = 34;
+  int DOT = 34;
   /** RegularExpression Id. */
-  int RPARANTHESES = 35;
+  int COMMA = 35;
   /** RegularExpression Id. */
-  int DOT = 36;
+  int PLUS = 36;
   /** RegularExpression Id. */
-  int COMMA = 37;
+  int MINUS = 37;
   /** RegularExpression Id. */
-  int PLUS = 38;
+  int POWER = 38;
   /** RegularExpression Id. */
-  int MINUS = 39;
+  int MULTIPLICATION = 39;
   /** RegularExpression Id. */
-  int POWER = 40;
+  int DIVISION = 40;
   /** RegularExpression Id. */
-  int MULTIPLICATION = 41;
+  int INTEGER_DIVISION = 41;
   /** RegularExpression Id. */
-  int DIVISION = 42;
+  int REST = 42;
   /** RegularExpression Id. */
-  int INTEGER_DIVISION = 43;
+  int EQUAL = 43;
   /** RegularExpression Id. */
-  int REST = 44;
+  int DIFFERENT = 44;
   /** RegularExpression Id. */
-  int EQUAL = 45;
+  int SMALLER = 45;
   /** RegularExpression Id. */
-  int DIFFERENT = 46;
+  int GREATER = 46;
   /** RegularExpression Id. */
-  int SMALLER = 47;
+  int SMALLER_EQUAL = 47;
   /** RegularExpression Id. */
-  int GREATER = 48;
+  int GREATER_EQUAL = 48;
   /** RegularExpression Id. */
-  int SMALLER_EQUAL = 49;
+  int AND = 49;
   /** RegularExpression Id. */
-  int GREATER_EQUAL = 50;
+  int OR = 50;
   /** RegularExpression Id. */
-  int AND = 51;
+  int NOT_SYMBOL = 51;
   /** RegularExpression Id. */
-  int OR = 52;
+  int CHAR_CONST = 52;
   /** RegularExpression Id. */
-  int NOT_SYMBOL = 53;
+  int NATURAL_CONST = 53;
   /** RegularExpression Id. */
-  int CHAR_CONST = 54;
+  int REAL_CONST = 54;
   /** RegularExpression Id. */
-  int NATURAL_CONST = 55;
+  int BOOLEAN_CONST = 55;
   /** RegularExpression Id. */
-  int REAL_CONST = 56;
+  int LETTER = 56;
   /** RegularExpression Id. */
-  int BOOLEAN_CONST = 57;
+  int DIGIT = 57;
   /** RegularExpression Id. */
-  int LETTER = 58;
+  int TRUE = 58;
   /** RegularExpression Id. */
-  int DIGIT = 59;
+  int FALSE = 59;
   /** RegularExpression Id. */
-  int HEADER = 60;
+  int STR_SPEC = 60;
   /** RegularExpression Id. */
-  int IDENTIFIER = 61;
+  int LITERAL = 61;
   /** RegularExpression Id. */
-  int NU = 62;
+  int IDENTIFIER = 62;
   /** RegularExpression Id. */
-  int ND = 63;
+  int NU = 63;
   /** RegularExpression Id. */
-  int UNKNOWN = 64;
+  int ND = 64;
+  /** RegularExpression Id. */
+  int UNKNOWN = 65;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -157,8 +159,6 @@ public interface ParserConstants {
     "\"loop\"",
     "\"while\"",
     "\"do\"",
-    "\"true\"",
-    "\"false\"",
     "\":-\"",
     "\"{\"",
     "\"}\"",
@@ -190,7 +190,10 @@ public interface ParserConstants {
     "<BOOLEAN_CONST>",
     "<LETTER>",
     "<DIGIT>",
-    "<HEADER>",
+    "\"true\"",
+    "\"false\"",
+    "<STR_SPEC>",
+    "<LITERAL>",
     "<IDENTIFIER>",
     "<NU>",
     "<ND>",

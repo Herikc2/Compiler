@@ -9,7 +9,6 @@ PARSER_BEGIN(Parser)
 package br.univali.ttoproject.compiler.parser;
 
 public class Parser {
-
 }
 
 PARSER_END(Parser)
@@ -23,7 +22,7 @@ SKIP :
 | <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
 }
 
-SKIP: { <"/*"> : BLOCK_COMMENT_STATE}
+SKIP: { "/*" : BLOCK_COMMENT_STATE}
 <BLOCK_COMMENT_STATE> SKIP: { "*/" : DEFAULT  }
 <BLOCK_COMMENT_STATE> SKIP: { < ~[] > }
 
@@ -31,7 +30,7 @@ SKIP: { <"/*"> : BLOCK_COMMENT_STATE}
 {
     <EOF>
     {
-        if(curLexState == BLOCK_COMMENT_STATE) {
+        if (curLexState == BLOCK_COMMENT_STATE) {
             throw new Error("Unmatched comment at line " + matchedToken.beginLine + ", column " + matchedToken.beginColumn + ".");
         }
     }
@@ -40,96 +39,106 @@ SKIP: { <"/*"> : BLOCK_COMMENT_STATE}
 /* KEY WORDS */
 TOKEN [IGNORE_CASE]:
 {
-  <PROGRAM: "program">
-| <DEFINE: "define">
-| <NOT: "not">
-| <VARIABLE: "variable">
-| <IS: "is">
-| <NATURAL_TYPE: "natural">
-| <REAL_TYPE: "real">
-| <CHAR_TYPE: "char">
-| <BOOLEAN_TYPE: "boolean">
-| <EXECUTE: "execute">
-| <SET: "set">
-| <TO: "to">
-| <GET: "get">
-| <PUT: "put">
-| <VERIFY: "verify">
-| <LOOP: "loop">
-| <WHILE: "while">
-| <DO: "do">
-| <TRUE: "true">
-| <FALSE: "false">
+    <PROGRAM: "program">
+|   <DEFINE: "define">
+|   <NOT: "not">
+|   <VARIABLE: "variable">
+|   <IS: "is">
+|   <NATURAL_TYPE: "natural">
+|   <REAL_TYPE: "real">
+|   <CHAR_TYPE: "char">
+|   <BOOLEAN_TYPE: "boolean">
+|   <EXECUTE: "execute">
+|   <SET: "set">
+|   <TO: "to">
+|   <GET: "get">
+|   <PUT: "put">
+|   <VERIFY: "verify">
+|   <LOOP: "loop">
+|   <WHILE: "while">
+|   <DO: "do">
 }
 
 /* SPECIAL SYMBOLS */
 TOKEN :
 {
-  <HEADER_SYMBOL: ":-">
-| <LBRACE: "{">
-| <RBRACE: "}">
-| <LBRACKET: "[">
-| <RBRACKET: "]">
-| <LPARENTHESES: "(">
-| <RPARANTHESES: ")">
-| <DOT: ".">
-| <COMMA: ",">
-| <PLUS: "+">
-| <MINUS: "-">
-| <POWER: "**">
-| <MULTIPLICATION: "*">
-| <DIVISION: "/">
-| <INTEGER_DIVISION: "%">
-| <REST: "%%">
-| <EQUAL: "==">
-| <DIFFERENT: "!=">
-| <SMALLER: "<">
-| <GREATER: ">">
-| <SMALLER_EQUAL: "<=">
-| <GREATER_EQUAL: ">=">
-| <AND: "&">
-| <OR: "|">
-| <NOT_SYMBOL: "!">
+    <HEADER: ":-">
+|   <LBRACE: "{">
+|   <RBRACE: "}">
+|   <LBRACKET: "[">
+|   <RBRACKET: "]">
+|   <LPARENTHESES: "(">
+|   <RPARANTHESES: ")">
+|   <DOT: ".">
+|   <COMMA: ",">
+|   <PLUS: "+">
+|   <MINUS: "-">
+|   <POWER: "**">
+|   <MULTIPLICATION: "*">
+|   <DIVISION: "/">
+|   <INTEGER_DIVISION: "%">
+|   <REST: "%%">
+|   <EQUAL: "==">
+|   <DIFFERENT: "!=">
+|   <SMALLER: "<">
+|   <GREATER: ">">
+|   <SMALLER_EQUAL: "<=">
+|   <GREATER_EQUAL: ">=">
+|   <AND: "&">
+|   <OR: "|">
+|   <NOT_SYMBOL: "!">
 }
 
 /* CONSTS */
 TOKEN :
 {
-    <CHAR_CONST: "\"" ((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))* "\""
-               | "\'" ((~["\"","\\","\n","\r"])|("\\"(["n","t","v","b","r","f","a","\\","?","'","\""])))* "\'">
+    <CHAR_CONST: "\"" (~["\"","\\","\n","\r"] | <STR_SPEC>)* "\""
+               | "\'" (~["\'","\\","\n","\r"] | <STR_SPEC>)* "\'">
 |   <NATURAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)?>
 |   <REAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)? (<DIGIT>)? (<DIGIT>)?  "." <DIGIT> (<DIGIT>)?>
 |   <BOOLEAN_CONST: <TRUE> | <FALSE>>
 }
 
+/* RAW */
 TOKEN :
 {
     <LETTER: ["a"-"z","A"-"Z"]>
 |   <DIGIT: ["0"-"9"]>
+|   <TRUE: "true">
+|   <FALSE: "false">
 }
 
+/* LITERALS */
 TOKEN :
 {
-    <HEADER: <HEADER_SYMBOL> (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+    <STR_SPEC: "\\"(["n","t","b","r","\\","'","\""])>
+|   <LITERAL: (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
 |   <IDENTIFIER: "_"|(("_"<NU>|<LETTER>)(<NU>|"_"<NU>)* (<LETTER>|<DIGIT>("_"|<LETTER>)|<LETTER>"_"))>
 |   <NU: <LETTER>|<DIGIT><ND>>
 |   <ND: <LETTER>|"_">
 }
 
-<*> TOKEN : { <UNKNOWN: ~[]> }
+<*> TOKEN : { <UNKNOWN: ~[" ","\t","\n","\r"]> }
 
 
+String Start() :
+{String e = "";}
+{
+    e = Program()
+    {return e;}
+}
 
-void Program() :
-{}
+String Program() :
+{String e = "";}
 {
     HeaderSel() <PROGRAM> <LBRACE> Define() Execute() <RBRACE> IdentifierSel() <EOF>
+    {return e;}
 }
 
 void HeaderSel() :
 {}
 {
-    <HEADER>
+    <HEADER> <LITERAL>
 |   Epsilon()
 }
 
@@ -140,11 +149,12 @@ void IdentifierSel() :
 |   Epsilon()
 }
 
-void Define() :
-{}
+String Define() :
+{String e = "";}
 {
     <DEFINE> <LBRACE> VariableBlock() <RBRACE>
 |   Epsilon()
+    {return e;}
 }
 
 void VariableBlock() :
@@ -353,7 +363,6 @@ void ExpressionSel() :
 |   <GREATER> ExprArithLogic()
 |   <SMALLER_EQUAL> ExprArithLogic()
 |   <GREATER_EQUAL> ExprArithLogic()
-|   <DIFFERENT> ExprArithLogic()
 |   Epsilon()
 }
 

@@ -4,7 +4,19 @@ package br.univali.ttoproject.compiler.parser;
 
 public class Parser implements ParserConstants {
 
-  final public void Program() throws ParseException {
+  final public String Start() throws ParseException {String e = "";
+    try {
+      e = Program();
+    } catch (ParseException err) {
+e = "Token '" + token.image + "' encountered at line " + token.beginLine + ", col " + token.beginColumn
+                 + "\n\tExpected: 'program'\n";
+        token = getNextToken();
+    }
+{if ("" != null) return e;}
+    throw new Error("Missing return statement in function");
+}
+
+  final public String Program() throws ParseException {String e = "";
     HeaderSel();
     jj_consume_token(PROGRAM);
     jj_consume_token(LBRACE);
@@ -13,12 +25,15 @@ public class Parser implements ParserConstants {
     jj_consume_token(RBRACE);
     IdentifierSel();
     jj_consume_token(0);
+{if ("" != null) return e;}
+    throw new Error("Missing return statement in function");
 }
 
   final public void HeaderSel() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case HEADER:{
       jj_consume_token(HEADER);
+      jj_consume_token(LITERAL);
       break;
       }
     default:
@@ -39,7 +54,7 @@ public class Parser implements ParserConstants {
     }
 }
 
-  final public void Define() throws ParseException {
+  final public String Define() throws ParseException {String e = "";
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case DEFINE:{
       jj_consume_token(DEFINE);
@@ -51,7 +66,9 @@ public class Parser implements ParserConstants {
     default:
       jj_la1[2] = jj_gen;
       Epsilon();
+{if ("" != null) return e;}
     }
+    throw new Error("Missing return statement in function");
 }
 
   final public void VariableBlock() throws ParseException {
@@ -616,10 +633,10 @@ public class Parser implements ParserConstants {
 	   jj_la1_init_2();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x0,0x0,0x400,0x1800,0x1000,0x800,0x3c000,0x0,0x3c000,0x0,0x18000000,0x10000000,0x8000000,0x3e80000,0x3e80000,0x0,0x0,0x0,0x0,0x800,0x0,0x0,0x3c000,};
+	   jj_la1_0 = new int[] {0x8000000,0x0,0x400,0x1800,0x1000,0x800,0x3c000,0x0,0x3c000,0x0,0x0,0x0,0x0,0x3e80000,0x3e80000,0x0,0x0,0x0,0x0,0x800,0x40000000,0x0,0x3c000,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x10000000,0x20000000,0x0,0x0,0x0,0x0,0x0,0x20,0x0,0x20,0x0,0x0,0x0,0x0,0x0,0x7e000,0x1000c0,0x81e00,0x100,0x23c00004,0x1,0x3c00000,0x0,};
+	   jj_la1_1 = new int[] {0x0,0x40000000,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x8,0xc000000,0x8000000,0x4000000,0x0,0x0,0x1f800,0x40030,0x20780,0x40,0x40f00001,0x0,0xf00000,0x0,};
 	}
 	private static void jj_la1_init_2() {
 	   jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
@@ -747,7 +764,7 @@ public class Parser implements ParserConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[65];
+	 boolean[] la1tokens = new boolean[66];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
@@ -767,7 +784,7 @@ public class Parser implements ParserConstants {
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 65; i++) {
+	 for (int i = 0; i < 66; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;
