@@ -131,19 +131,26 @@ void Start() :
 void Program() :
 {}
 {
-    HeaderSel() T(PROGRAM) T(LBRACE) Define() Execute() T(RBRACE) IdentifierSel()
+    HeaderSel() T(PROGRAM) T(LBRACE) Define() Execute() T(RBRACE) IdentifierSel() <EOF>
 }
 
 JAVACODE
 void T(int tk) {
     token = getNextToken();
+
     System.out.println("cur tk: " + token.image + " " + token.kind);
+
     while (token.kind != tk && token != null && token.kind != EOF ){
         errorMessages += "Deu merda! " + token.image + " \n";
 
         System.out.println("cur tk: " + token.image + " " + token.kind);
 
         token = getNextToken();
+    }
+
+    if(token.kind == EOF){
+        System.out.println("teste");
+        System.exit(0);
     }
 }
 

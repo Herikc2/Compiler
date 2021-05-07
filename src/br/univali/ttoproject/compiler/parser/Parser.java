@@ -18,16 +18,28 @@ public class Parser implements ParserConstants {
     Execute();
     T(RBRACE);
     IdentifierSel();
+    jj_consume_token(0);
 }
 
   void T(int tk) throws ParseException {token = getNextToken();
+    if(token.image == "}"){
+        while(true){
+            System.out.println("cur tk: " + token.image + " " + token.kind);
+        }
+    }
     System.out.println("cur tk: " + token.image + " " + token.kind);
+
     while (token.kind != tk && token != null && token.kind != EOF ){
         errorMessages += "Deu merda! " + token.image + " \n";
 
         System.out.println("cur tk: " + token.image + " " + token.kind);
 
         token = getNextToken();
+    }
+
+    if(token.kind == EOF){
+        System.out.println("teste");
+        System.exit(0);
     }
   }
 
