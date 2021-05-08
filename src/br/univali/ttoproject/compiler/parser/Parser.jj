@@ -287,7 +287,7 @@ void IdentifierList() :
         <IDENTIFIER> Index() IdentifierList1()
     } catch (ParseException e) {
         errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'identifier ...'.\n";
+                       + "Expected an identifier.\n";
         token = getNextToken();
     }
 }
@@ -338,8 +338,14 @@ void Put() :
 void PutList() :
 {}
 {
-    IdentifierList()
-|   Value()
+    try {
+        IdentifierList()
+    |   Value()
+    } catch (ParseException e) {
+        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                       + "Expected an identifier or a constant.\n";
+        token = getNextToken();
+    }
 }
 
 void Verify() :
@@ -406,7 +412,7 @@ void Loop() :
         <LOOP> CommandBlock() T(WHILE) Expression() T(IS) T(TRUE)
     } catch (ParseException e) {
         errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'false ...'.\n";
+                       + "Expected: 'loop ...'.\n";
         token = getNextToken();
     }
 }
@@ -430,7 +436,7 @@ void CommandBlock() :
         <LBRACE> Command() CommandList() T(RBRACE)
     } catch (ParseException e) {
         errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: '{ ...'.\n";
+                       + "Expected a command.\n";
         token = getNextToken();
     }
 }
@@ -546,19 +552,31 @@ void Index() :
 void Value() :
 {}
 {
-    <CHAR_CONST>
-|   <NATURAL_CONST>
-|   <REAL_CONST>
-|   <BOOLEAN_CONST>
+    try {
+        <CHAR_CONST>
+    |   <NATURAL_CONST>
+    |   <REAL_CONST>
+    |   <BOOLEAN_CONST>
+    } catch (ParseException e) {
+        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                       + "Expected a constant.\n";
+        token = getNextToken();
+    }
 }
 
 void Type() :
 {}
 {
-    <CHAR_TYPE>
-|   <NATURAL_TYPE>
-|   <REAL_TYPE>
-|   <BOOLEAN_TYPE>
+    try {
+        <CHAR_TYPE>
+    |   <NATURAL_TYPE>
+    |   <REAL_TYPE>
+    |   <BOOLEAN_TYPE>
+    } catch (ParseException e) {
+        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                       + "Expected: 'char', 'natural', 'real' or 'boolean'.\n";
+        token = getNextToken();
+    }
 }
 
 void Epsilon() : {}
