@@ -27,13 +27,13 @@ public class Compiler {
      *     OBS: A análise sintática NÃO deve ser interrompida no primeiro erro sintático.
      *     [X] Entrada: lista (arquivo ou estrutura de dados lista) de tokens com suas respectivas categorias (números)
      *                  de acordo com a tabela de símbolos terminais específica para a linguagem (saída do analisador léxico).
-     *     [ ] Saída: mensagem indicando que o programa está sintaticamente correto (programa compilado com sucesso)
+     *     [X] Saída: mensagem indicando que o programa está sintaticamente correto (programa compilado com sucesso)
      *                OU
-     *                mensagens de erro indicando a ocorrência de erro(s) léxico(s) ou sintático. Neste caso, indicar a
+     *     [ ] Saída: mensagens de erro indicando a ocorrência de erro(s) léxico(s) ou sintático. Neste caso, indicar a
      *                linha onde ocorreu o erro e o tipo de erro encontrado fazendo um diagnóstico de boa qualidade,
      *                ou seja, emitindo uma mensagem adequada, tal como palavra reservada inválida, constante literal
      *                não finalizada, expressão aritmética inválida, encontrado . esperado ;, etc...
-     *     [ ] Mensagens: Personalizar as mensagens de erro fornecidas pelo JavaCC
+     *     [X] Mensagens: Personalizar as mensagens de erro fornecidas pelo JavaCC
      *
      * [ ] Entregar:
      *     [ ] Documento PDF contendo a GLC da linguagem 2021.1 (na notação BNF, transcrever do JavaCC) e as mensagens
@@ -59,6 +59,9 @@ public class Compiler {
         parser.errorMessages += lexer(code);
         parser();
 
+        if (parser.errorMessages.isEmpty()){
+            return "Program successfully compiled.";
+        }
         return parser.errorMessages;
     }
 
@@ -81,7 +84,7 @@ public class Compiler {
         return messages;
     }
 
-    public String parser() {
+    public void parser() {
         try {
             parser.Start();
         } catch (ParseException e) {
@@ -89,7 +92,6 @@ public class Compiler {
             //return e.getMessage();
             //e.printStackTrace();
         }
-        return "sucesso!";
     }
 
     public String build(Reader reader) {

@@ -13,16 +13,28 @@ public class Parser implements ParserConstants {
     HeaderSel();
     try {
       jj_consume_token(PROGRAM);
-      jj_consume_token(LBRACE);
-      Define();
-      Execute();
-      jj_consume_token(RBRACE);
-      IdentifierSel();
     } catch (ParseException e) {
-        token = getNextToken();
         errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                        + "Expected: 'program ...'.\u005cn";
+        token = getNextToken();
     }
+    try {
+      jj_consume_token(LBRACE);
+    } catch (ParseException e) {
+        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                       + "Expected: '{ ...'.\u005cn";
+        token = getNextToken();
+    }
+    Define();
+    Execute();
+    try {
+      jj_consume_token(RBRACE);
+    } catch (ParseException e) {
+        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                       + "Expected: '} ...'.\u005cn";
+        token = getNextToken();
+    }
+    IdentifierSel();
   }
 
   final public void HeaderSel() throws ParseException {
@@ -104,9 +116,10 @@ public class Parser implements ParserConstants {
       jj_consume_token(EXECUTE);
       CommandBlock();
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'execute ...'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'execute ...'.\u005cn";
     }
   }
 
@@ -117,9 +130,10 @@ public class Parser implements ParserConstants {
       NotVariableDecl();
       NotVariableSel();
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'not variable ...'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'not variable ...'.\u005cn";
     }
   }
 
@@ -150,9 +164,10 @@ public class Parser implements ParserConstants {
       Value();
       IdentifierListValue1();
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected an identifier.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected an identifier.\u005cn";
     }
   }
 
@@ -174,9 +189,10 @@ public class Parser implements ParserConstants {
       VariableDecl();
       VariableSel();
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'variable ...'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'variable ...'.\u005cn";
     }
   }
 
@@ -208,9 +224,10 @@ public class Parser implements ParserConstants {
       Index();
       IdentifierList1();
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected an identifier.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected an identifier.\u005cn";
     }
   }
 
@@ -233,9 +250,10 @@ public class Parser implements ParserConstants {
       jj_consume_token(TO);
       IdentifierList();
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'set ...'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'set ...'.\u005cn";
     }
   }
 
@@ -246,9 +264,10 @@ public class Parser implements ParserConstants {
       IdentifierList();
       jj_consume_token(RBRACE);
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'get ...'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'get ...'.\u005cn";
     }
   }
 
@@ -259,9 +278,10 @@ public class Parser implements ParserConstants {
       PutList();
       jj_consume_token(RBRACE);
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'put ...'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'put ...'.\u005cn";
     }
   }
 
@@ -283,9 +303,10 @@ public class Parser implements ParserConstants {
         throw new ParseException();
       }
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected an identifier or a constant.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected an identifier or a constant.\u005cn";
     }
   }
 
@@ -296,9 +317,10 @@ public class Parser implements ParserConstants {
       jj_consume_token(IS);
       FalseTrueSel();
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'verify ...'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'verify ...'.\u005cn";
     }
   }
 
@@ -346,9 +368,10 @@ public class Parser implements ParserConstants {
       jj_consume_token(TRUE);
       CommandBlock();
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'true ...'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'true ...'.\u005cn";
     }
   }
 
@@ -357,9 +380,10 @@ public class Parser implements ParserConstants {
       jj_consume_token(FALSE);
       CommandBlock();
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'false ...'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'false ...'.\u005cn";
     }
   }
 
@@ -372,9 +396,10 @@ public class Parser implements ParserConstants {
       jj_consume_token(IS);
       jj_consume_token(TRUE);
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'loop ...'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'loop ...'.\u005cn";
     }
   }
 
@@ -387,9 +412,10 @@ public class Parser implements ParserConstants {
       jj_consume_token(DO);
       CommandBlock();
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'while ...'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'while ...'.\u005cn";
     }
   }
 
@@ -400,9 +426,10 @@ public class Parser implements ParserConstants {
       CommandList();
       jj_consume_token(RBRACE);
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected a command.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected a command.\u005cn";
     }
   }
 
@@ -460,8 +487,9 @@ public class Parser implements ParserConstants {
       ExprArithLogic();
       ExpressionSel();
     } catch (ParseException e) {
-        errorMessages += "Invalid expression encountered at line " + token.beginLine + ", column " + token.beginColumn + ".\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Invalid expression encountered at line " + token.beginLine + ", column " + token.beginColumn + ".\u005cn";
     }
   }
 
@@ -645,9 +673,10 @@ public class Parser implements ParserConstants {
         throw new ParseException();
       }
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected a constant.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected a constant.\u005cn";
     }
   }
 
@@ -672,9 +701,10 @@ public class Parser implements ParserConstants {
         throw new ParseException();
       }
     } catch (ParseException e) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                       + "Expected: 'char', 'natural', 'real' or 'boolean'.\u005cn";
         token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'char', 'natural', 'real' or 'boolean'.\u005cn";
     }
   }
 
