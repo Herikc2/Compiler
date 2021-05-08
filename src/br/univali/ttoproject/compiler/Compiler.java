@@ -56,7 +56,7 @@ public class Compiler {
     public String compile(String code){
         parser = new Parser(new StringReader(code));
 
-        //parser.errorMessages += lexer(code);
+        parser.errorMessages += lexer(code);
         parser();
 
         return parser.errorMessages;
@@ -71,6 +71,9 @@ public class Compiler {
         while (token.kind != ParserConstants.EOF) {
             if(token.isUnknownKind()){
                 messages += buildLexicalErrorMessage(token);
+            } else {
+                // DEBUG DO TOKEN
+                //messages += token.toString();
             }
             token = (CategorizedToken) lp.getNextToken();
         }
