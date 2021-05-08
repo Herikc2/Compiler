@@ -5,39 +5,24 @@ public class Parser implements ParserConstants {
     public String errorMessages = "";
 
   final public void Start() throws ParseException {
-    try {
-      Program();
-      jj_consume_token(0);
-    } catch (ParseException e) {
-
-    }
-  }
-
-  void T(int tk) throws ParseException {
-    token = getNextToken();
-    //System.out.println("cur tk: " + token.image + " " + token.kind);
-
-    while (token != null && token.kind != tk && token.kind != EOF) {
-        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + "\u005cn";
-
-        //System.out.println("[while] cur tk: " + token.image + " " + token.kind);
-
-        token = getNextToken();
-    }
-
-    if (token.kind == EOF) {
-        throw new ParseException();
-    }
+    Program();
+    jj_consume_token(0);
   }
 
   final public void Program() throws ParseException {
     HeaderSel();
-    T(PROGRAM);
-    T(LBRACE);
-    Define();
-    Execute();
-    T(RBRACE);
-    IdentifierSel();
+    try {
+      jj_consume_token(PROGRAM);
+      jj_consume_token(LBRACE);
+      Define();
+      Execute();
+      jj_consume_token(RBRACE);
+      IdentifierSel();
+    } catch (ParseException e) {
+        token = getNextToken();
+        errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                       + "Expected: 'program ...'.\u005cn";
+    }
   }
 
   final public void HeaderSel() throws ParseException {
@@ -66,9 +51,9 @@ public class Parser implements ParserConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case DEFINE:
       jj_consume_token(DEFINE);
-      T(LBRACE);
+      jj_consume_token(LBRACE);
       VariableBlock();
-      T(RBRACE);
+      jj_consume_token(RBRACE);
       break;
     default:
       jj_la1[2] = jj_gen;
@@ -128,7 +113,7 @@ public class Parser implements ParserConstants {
   final public void NotVariable() throws ParseException {
     try {
       jj_consume_token(NOT);
-      T(VARIABLE);
+      jj_consume_token(VARIABLE);
       NotVariableDecl();
       NotVariableSel();
     } catch (ParseException e) {
@@ -155,7 +140,7 @@ public class Parser implements ParserConstants {
 
   final public void NotVariableDecl() throws ParseException {
     Type();
-    T(IS);
+    jj_consume_token(IS);
     IdentifierListValue();
   }
 
@@ -212,9 +197,9 @@ public class Parser implements ParserConstants {
 
   final public void VariableDecl() throws ParseException {
     Type();
-    T(IS);
+    jj_consume_token(IS);
     IdentifierList();
-    T(DOT);
+    jj_consume_token(DOT);
   }
 
   final public void IdentifierList() throws ParseException {
@@ -245,7 +230,7 @@ public class Parser implements ParserConstants {
     try {
       jj_consume_token(SET);
       Expression();
-      T(TO);
+      jj_consume_token(TO);
       IdentifierList();
     } catch (ParseException e) {
         errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
@@ -257,9 +242,9 @@ public class Parser implements ParserConstants {
   final public void Get() throws ParseException {
     try {
       jj_consume_token(GET);
-      T(LBRACE);
+      jj_consume_token(LBRACE);
       IdentifierList();
-      T(RBRACE);
+      jj_consume_token(RBRACE);
     } catch (ParseException e) {
         errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                        + "Expected: 'get ...'.\u005cn";
@@ -270,9 +255,9 @@ public class Parser implements ParserConstants {
   final public void Put() throws ParseException {
     try {
       jj_consume_token(PUT);
-      T(LBRACE);
+      jj_consume_token(LBRACE);
       PutList();
-      T(RBRACE);
+      jj_consume_token(RBRACE);
     } catch (ParseException e) {
         errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                        + "Expected: 'put ...'.\u005cn";
@@ -308,7 +293,7 @@ public class Parser implements ParserConstants {
     try {
       jj_consume_token(VERIFY);
       Expression();
-      T(IS);
+      jj_consume_token(IS);
       FalseTrueSel();
     } catch (ParseException e) {
         errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
@@ -382,10 +367,10 @@ public class Parser implements ParserConstants {
     try {
       jj_consume_token(LOOP);
       CommandBlock();
-      T(WHILE);
+      jj_consume_token(WHILE);
       Expression();
-      T(IS);
-      T(TRUE);
+      jj_consume_token(IS);
+      jj_consume_token(TRUE);
     } catch (ParseException e) {
         errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                        + "Expected: 'loop ...'.\u005cn";
@@ -397,9 +382,9 @@ public class Parser implements ParserConstants {
     try {
       jj_consume_token(WHILE);
       Expression();
-      T(IS);
-      T(TRUE);
-      T(DO);
+      jj_consume_token(IS);
+      jj_consume_token(TRUE);
+      jj_consume_token(DO);
       CommandBlock();
     } catch (ParseException e) {
         errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
@@ -413,7 +398,7 @@ public class Parser implements ParserConstants {
       jj_consume_token(LBRACE);
       Command();
       CommandList();
-      T(RBRACE);
+      jj_consume_token(RBRACE);
     } catch (ParseException e) {
         errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                        + "Expected a command.\u005cn";
@@ -440,7 +425,7 @@ public class Parser implements ParserConstants {
 
   final public void Command() throws ParseException {
     CommandSel();
-    T(DOT);
+    jj_consume_token(DOT);
   }
 
   final public void CommandSel() throws ParseException {
@@ -611,13 +596,13 @@ public class Parser implements ParserConstants {
     case LPARENTHESES:
       jj_consume_token(LPARENTHESES);
       Expression();
-      T(RPARANTHESES);
+      jj_consume_token(RPARANTHESES);
       break;
     case NOT:
       jj_consume_token(NOT);
-      T(LPARENTHESES);
+      jj_consume_token(LPARENTHESES);
       Expression();
-      T(RPARANTHESES);
+      jj_consume_token(RPARANTHESES);
       break;
     default:
       jj_la1[20] = jj_gen;
@@ -630,8 +615,8 @@ public class Parser implements ParserConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case LBRACKET:
       jj_consume_token(LBRACKET);
-      T(NATURAL_CONST);
-      T(RBRACKET);
+      jj_consume_token(NATURAL_CONST);
+      jj_consume_token(RBRACKET);
       break;
     default:
       jj_la1[21] = jj_gen;
