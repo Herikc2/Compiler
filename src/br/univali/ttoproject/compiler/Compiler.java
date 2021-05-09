@@ -54,23 +54,26 @@ public class Compiler {
     }
 
     public String compile(String code){
+        var messages = "";
+
         parser = new Parser(new StringReader(code));
-
-        parser.errorMessages += lexer(code);
+        messages += lexer(code);
+        parser.ReInit(new StringReader(code));
         parser();
+        messages += parser.errorMessages;
 
-        if (parser.errorMessages.isEmpty()){
+        if (messages.isEmpty()){
             return "Program successfully compiled.";
         }
-        return parser.errorMessages;
+        return messages;
     }
 
     public String lexer(String code) {
         String messages = "";
 
-        var lp = new Parser(new StringReader(code));
+        //var lp = new Parser(new StringReader(code));
 
-        CategorizedToken token = (CategorizedToken) lp.getNextToken();
+        CategorizedToken token = (CategorizedToken) parser.getNextToken();
         while (token.kind != ParserConstants.EOF) {
             if(token.isUnknownKind()){
                 messages += buildLexicalErrorMessage(token);
@@ -78,7 +81,7 @@ public class Compiler {
                 // DEBUG DO TOKEN
                 //messages += token.toString();
             }
-            token = (CategorizedToken) lp.getNextToken();
+            token = (CategorizedToken) parser.getNextToken();
         }
 
         return messages;
