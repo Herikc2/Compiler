@@ -18,7 +18,7 @@ public class Parser implements ParserConstants {
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'program ...'.\n";
+                           + "Expected: 'program'.\n";
     }
     try {
       jj_consume_token(LBRACE);
@@ -26,7 +26,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: '{ ...'.\n";
+                           + "Expected: '{'.\n";
     }
     Define();
     Execute();
@@ -129,7 +129,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'execute ...'.\n";
+                           + "Expected: 'execute'.\n";
     }
     CommandBlock();
 }
@@ -141,7 +141,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'not ...'.\n";
+                           + "Expected: 'not'.\n";
     }
     try {
       jj_consume_token(VARIABLE);
@@ -149,7 +149,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'variable ...'.\n";
+                           + "Expected: 'variable'.\n";
     }
     NotVariableDecl();
     NotVariableSel();
@@ -179,7 +179,7 @@ token = getNextToken();
 token = getNextToken();
          if (token.kind != EOF)
              errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                            + "Expected: 'is ...'.\n";
+                            + "Expected: 'is'.\n";
     }
     IdentifierListValue();
 }
@@ -217,7 +217,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'variable ...'.\n";
+                           + "Expected: 'variable'.\n";
     }
     VariableDecl();
     VariableSel();
@@ -247,7 +247,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'is ...'.\n";
+                           + "Expected: 'is'.\n";
     }
     IdentifierList();
     try {
@@ -293,7 +293,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'set ...'.\n";
+                           + "Expected: 'set'.\n";
     }
     Expression();
     try {
@@ -302,7 +302,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'to ...'.\n";
+                           + "Expected: 'to'.\n";
     }
     IdentifierList();
 }
@@ -314,7 +314,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'get ...'.\n";
+                           + "Expected: 'get'.\n";
     }
     try {
       jj_consume_token(LBRACE);
@@ -322,7 +322,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: '{ ...'.\n";
+                           + "Expected: '{'.\n";
     }
     IdentifierList();
     try {
@@ -342,7 +342,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'put ...'.\n";
+                           + "Expected: 'put'.\n";
     }
     try {
       jj_consume_token(LBRACE);
@@ -350,7 +350,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: '{ ...'.\n";
+                           + "Expected: '{'.\n";
     }
     PutList();
     try {
@@ -391,7 +391,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'verify ...'.\n";
+                           + "Expected: 'verify'.\n";
     }
     Expression();
     try {
@@ -400,7 +400,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'is ...'.\n";
+                           + "Expected: 'is'.\n";
     }
     FalseTrueSel();
 }
@@ -455,7 +455,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'true ...'.\n";
+                           + "Expected: 'true'.\n";
     }
     CommandBlock();
 }
@@ -467,7 +467,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'false ...'.\n";
+                           + "Expected: 'false'.\n";
     }
     CommandBlock();
 }
@@ -479,7 +479,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'loop ...'.\n";
+                           + "Expected: 'loop'.\n";
     }
     CommandBlock();
     try {
@@ -488,7 +488,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'while ...'.\n";
+                           + "Expected: 'while'.\n";
     }
     Expression();
     try {
@@ -497,7 +497,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'is ...'.\n";
+                           + "Expected: 'is'.\n";
     }
     try {
       jj_consume_token(TRUE);
@@ -505,7 +505,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'true ...'.\n";
+                           + "Expected: 'true'.\n";
     }
 }
 
@@ -516,7 +516,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'while ...'.\n";
+                           + "Expected: 'while'.\n";
     }
     Expression();
     try {
@@ -525,7 +525,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'is ...'.\n";
+                           + "Expected: 'is'.\n";
     }
     try {
       jj_consume_token(TRUE);
@@ -533,7 +533,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'true ...'.\n";
+                           + "Expected: 'true'.\n";
     }
     try {
       jj_consume_token(DO);
@@ -541,7 +541,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'do ...'.\n";
+                           + "Expected: 'do'.\n";
     }
     CommandBlock();
 }
@@ -553,7 +553,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: '{ ...'.\n";
+                           + "Expected: '{'.\n";
     }
     try {
       Command();
@@ -860,7 +860,7 @@ token = getNextToken();
 token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected a constant.\n";
+                           + "Expected a constant value (char, natural, real or boolean).\n";
     }
 }
 

@@ -76,7 +76,7 @@ public class Compiler {
                 messages += buildLexicalErrorMessage(token);
             } else {
                 // DEBUG DO TOKEN
-                messages += token.toString();
+                //messages += token.toString();
             }
             token = (CategorizedToken) lp.getNextToken();
         }

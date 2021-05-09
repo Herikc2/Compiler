@@ -137,7 +137,7 @@ void Program() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'program ...'.\n";
+                           + "Expected: 'program'.\n";
     }
     try {
         <LBRACE>
@@ -145,7 +145,7 @@ void Program() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: '{ ...'.\n";
+                           + "Expected: '{'.\n";
     }
     Define() Execute()
     try {
@@ -211,7 +211,7 @@ void Execute() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'execute ...'.\n";
+                           + "Expected: 'execute'.\n";
     }
     CommandBlock()
 }
@@ -225,7 +225,7 @@ void NotVariable() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'not ...'.\n";
+                           + "Expected: 'not'.\n";
     }
 
     try {
@@ -234,7 +234,7 @@ void NotVariable() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'variable ...'.\n";
+                           + "Expected: 'variable'.\n";
     }
     NotVariableDecl() NotVariableSel()
 }
@@ -256,7 +256,7 @@ void NotVariableDecl() :
          token = getNextToken();
          if (token.kind != EOF)
              errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                            + "Expected: 'is ...'.\n";
+                            + "Expected: 'is'.\n";
      }
      IdentifierListValue()
 }
@@ -291,7 +291,7 @@ void Variable() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'variable ...'.\n";
+                           + "Expected: 'variable'.\n";
     }
     VariableDecl() VariableSel()
 }
@@ -313,7 +313,7 @@ void VariableDecl() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'is ...'.\n";
+                           + "Expected: 'is'.\n";
     }
      IdentifierList()
     try {
@@ -356,7 +356,7 @@ void Set() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'set ...'.\n";
+                           + "Expected: 'set'.\n";
     }
     Expression()
     try {
@@ -365,7 +365,7 @@ void Set() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'to ...'.\n";
+                           + "Expected: 'to'.\n";
     }
     IdentifierList()
 }
@@ -379,7 +379,7 @@ void Get() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'get ...'.\n";
+                           + "Expected: 'get'.\n";
     }
     try {
         <LBRACE>
@@ -387,7 +387,7 @@ void Get() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: '{ ...'.\n";
+                           + "Expected: '{'.\n";
     }
     IdentifierList()
     try {
@@ -409,7 +409,7 @@ void Put() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'put ...'.\n";
+                           + "Expected: 'put'.\n";
     }
     try {
         <LBRACE>
@@ -417,7 +417,7 @@ void Put() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: '{ ...'.\n";
+                           + "Expected: '{'.\n";
     }
     PutList()
     try {
@@ -446,7 +446,7 @@ void Verify() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'verify ...'.\n";
+                           + "Expected: 'verify'.\n";
     }
     Expression()
     try {
@@ -455,7 +455,7 @@ void Verify() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'is ...'.\n";
+                           + "Expected: 'is'.\n";
     }
     FalseTrueSel()
 }
@@ -490,7 +490,7 @@ void TrueBlock() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'true ...'.\n";
+                           + "Expected: 'true'.\n";
     }
     CommandBlock()
 }
@@ -504,7 +504,7 @@ void FalseBlock() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'false ...'.\n";
+                           + "Expected: 'false'.\n";
     }
     CommandBlock()
 }
@@ -518,7 +518,7 @@ void Loop() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'loop ...'.\n";
+                           + "Expected: 'loop'.\n";
     }
     CommandBlock()
     try {
@@ -527,7 +527,7 @@ void Loop() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'while ...'.\n";
+                           + "Expected: 'while'.\n";
     }
     Expression()
     try {
@@ -536,7 +536,7 @@ void Loop() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'is ...'.\n";
+                           + "Expected: 'is'.\n";
     }
     try {
         <TRUE>
@@ -544,7 +544,7 @@ void Loop() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'true ...'.\n";
+                           + "Expected: 'true'.\n";
     }
 }
 
@@ -557,7 +557,7 @@ void While() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'while ...'.\n";
+                           + "Expected: 'while'.\n";
     }
     Expression()
     try {
@@ -566,7 +566,7 @@ void While() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'is ...'.\n";
+                           + "Expected: 'is'.\n";
     }
     try {
         <TRUE>
@@ -574,7 +574,7 @@ void While() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'true ...'.\n";
+                           + "Expected: 'true'.\n";
     }
     try {
         <DO>
@@ -582,7 +582,7 @@ void While() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: 'do ...'.\n";
+                           + "Expected: 'do'.\n";
     }
     CommandBlock()
 }
@@ -596,7 +596,7 @@ void CommandBlock() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected: '{ ...'.\n";
+                           + "Expected: '{'.\n";
     }
     try {
         Command() CommandList()
@@ -746,7 +746,7 @@ void Value() :
         token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
-                           + "Expected a constant.\n";
+                           + "Expected a constant value (char, natural, real or boolean).\n";
     }
 }
 
