@@ -372,7 +372,8 @@ token = getNextToken();
     case CHAR_CONST:
     case NATURAL_CONST:
     case REAL_CONST:
-    case BOOLEAN_CONST:{
+    case TRUE:
+    case FALSE:{
       Value();
       break;
       }
@@ -788,7 +789,8 @@ token = getNextToken();
     case CHAR_CONST:
     case NATURAL_CONST:
     case REAL_CONST:
-    case BOOLEAN_CONST:{
+    case TRUE:
+    case FALSE:{
       Value();
       break;
       }
@@ -841,8 +843,12 @@ token = getNextToken();
         jj_consume_token(REAL_CONST);
         break;
         }
-      case BOOLEAN_CONST:{
-        jj_consume_token(BOOLEAN_CONST);
+      case TRUE:{
+        jj_consume_token(TRUE);
+        break;
+        }
+      case FALSE:{
+        jj_consume_token(FALSE);
         break;
         }
       default:
@@ -891,6 +897,7 @@ token = getNextToken();
 }
 
   final public void Epsilon() throws ParseException {
+
 }
 
   /** Generated Token Manager. */
@@ -905,20 +912,15 @@ token = getNextToken();
   final private int[] jj_la1 = new int[24];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
-  static private int[] jj_la1_2;
   static {
 	   jj_la1_init_0();
 	   jj_la1_init_1();
-	   jj_la1_init_2();
 	}
 	private static void jj_la1_init_0() {
 	   jj_la1_0 = new int[] {0x0,0x0,0x400,0x1800,0x1000,0x800,0x3c000,0x0,0x3c000,0x0,0x0,0x0,0x0,0x0,0x3e80000,0x3e80000,0x0,0x0,0x0,0x0,0x800,0x40000000,0x0,0x3c000,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x10000000,0x20000000,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x8,0x20f00000,0xc000000,0x8000000,0x4000000,0x0,0x0,0x1f800,0x40030,0x20780,0x40,0x20f00001,0x0,0xf00000,0x0,};
-	}
-	private static void jj_la1_init_2() {
-	   jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+	   jj_la1_1 = new int[] {0x8000000,0x10000000,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x8,0x11f00000,0x1800000,0x1000000,0x800000,0x0,0x0,0x1f800,0x40030,0x20780,0x40,0x11f00001,0x0,0x1f00000,0x0,};
 	}
 
   /** Constructor with InputStream. */
@@ -1043,7 +1045,7 @@ token = getNextToken();
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[65];
+	 boolean[] la1tokens = new boolean[64];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
@@ -1057,13 +1059,10 @@ token = getNextToken();
 		   if ((jj_la1_1[i] & (1<<j)) != 0) {
 			 la1tokens[32+j] = true;
 		   }
-		   if ((jj_la1_2[i] & (1<<j)) != 0) {
-			 la1tokens[64+j] = true;
-		   }
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 65; i++) {
+	 for (int i = 0; i < 64; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

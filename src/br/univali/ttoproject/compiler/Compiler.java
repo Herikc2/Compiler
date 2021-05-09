@@ -19,7 +19,7 @@ public class Compiler {
      *
      * [X] Corrigir Léxico
      * [X] Corrigir Interface
-     * [ ] Implementar Parser
+     * [X] Implementar Parser
      *     OBS: Será levada em consideração a qualidade das mensagens de erro (portanto, personalizar as mensagens de
      *          erro fornecidas pelo JavaCC)
      *     OBS: Realizar o tratamento de erros sintáticos conforme orientações do capítulo 5 da obra referenciada no
@@ -29,7 +29,7 @@ public class Compiler {
      *                  de acordo com a tabela de símbolos terminais específica para a linguagem (saída do analisador léxico).
      *     [X] Saída: mensagem indicando que o programa está sintaticamente correto (programa compilado com sucesso)
      *                OU
-     *     [ ] Saída: mensagens de erro indicando a ocorrência de erro(s) léxico(s) ou sintático. Neste caso, indicar a
+     *     [X] Saída: mensagens de erro indicando a ocorrência de erro(s) léxico(s) ou sintático. Neste caso, indicar a
      *                linha onde ocorreu o erro e o tipo de erro encontrado fazendo um diagnóstico de boa qualidade,
      *                ou seja, emitindo uma mensagem adequada, tal como palavra reservada inválida, constante literal
      *                não finalizada, expressão aritmética inválida, encontrado . esperado ;, etc...
@@ -76,7 +76,7 @@ public class Compiler {
                 messages += buildLexicalErrorMessage(token);
             } else {
                 // DEBUG DO TOKEN
-                //messages += token.toString();
+                messages += token.toString();
             }
             token = (CategorizedToken) lp.getNextToken();
         }

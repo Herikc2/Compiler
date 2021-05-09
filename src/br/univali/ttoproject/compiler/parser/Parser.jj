@@ -97,7 +97,8 @@ TOKEN :
                | "\'" (~["\'","\\","\n","\r"] | "\\"(["n","t","b","r","\\","'","\""]))* "\'">
 |   <NATURAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)?>
 |   <REAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)? (<DIGIT>)? (<DIGIT>)?  "." <DIGIT> (<DIGIT>)?>
-|   <BOOLEAN_CONST: <TRUE> | <FALSE>>
+|   <TRUE: "true">
+|   <FALSE: "false">
 }
 
 /* RAW */
@@ -105,8 +106,6 @@ TOKEN :
 {
     <LETTER: ["a"-"z","A"-"Z"]>
 |   <DIGIT: ["0"-"9"]>
-|   <TRUE: "true">
-|   <FALSE: "false">
 }
 
 /* LITERALS */
@@ -741,7 +740,8 @@ void Value() :
         <CHAR_CONST>
     |   <NATURAL_CONST>
     |   <REAL_CONST>
-    |   <BOOLEAN_CONST>
+    |   <TRUE>
+    |   <FALSE>
     } catch (ParseException e) {
         token = getNextToken();
         if (token.kind != EOF)
