@@ -333,13 +333,17 @@ public class App extends JFrame {
             return false;
         }
 
+        if (running) return false;
+
         // salva o arquivo antes de compilar
         //if (!mSave()) return false;
 
-        compiled = true;
-        tabIO.setSelectedIndex(0);
+        tabIO.setSelectedIndex(1);
         //var strLog = new Compiler().build(new StringReader(codeEditor.getText()));
-        program = new Compiler().compile(codeEditor.getText(), log, tabIO);
+        program = new Compiler().compile(codeEditor.getText(), log);
+        if (program != null){
+            compiled = true;
+        }
 
         return true;
     }
@@ -347,13 +351,14 @@ public class App extends JFrame {
     public boolean mRun() {
         // verifica se existe algo compilado
         if (!compiled) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Please, compile your file before running.",
-                    "Warning",
-                    JOptionPane.WARNING_MESSAGE);
+//            JOptionPane.showMessageDialog(
+//                    this,
+//                    "Please, compile your file before running.",
+//                    "Warning",
+//                    JOptionPane.WARNING_MESSAGE);
             return false;
         }
+        tabIO.setSelectedIndex(0);
         running = true;
         virtualMachine = new VirtualMachine(console, program);
         new Thread(() -> {
@@ -361,6 +366,7 @@ public class App extends JFrame {
             //noinspection StatementWithEmptyBody
             while (!virtualMachine.isFinished());
             console.addContent("\nProcess finished");
+            running = false;
         }).start();
 
         return true;
@@ -368,9 +374,10 @@ public class App extends JFrame {
 
     public boolean mStop() {
         if (running) {
+            running = false;
             resetBuildVars();
             virtualMachine.stop();
-
+            console.addContent(" without success");
             return true;
         }
 
