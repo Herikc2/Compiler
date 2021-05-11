@@ -19,7 +19,7 @@ public class Compiler {
      *
      * [X] Corrigir Léxico
      * [X] Corrigir Interface
-     * [ ] Implementar Parser
+     * [X] Implementar Parser
      *     OBS: Será levada em consideração a qualidade das mensagens de erro (portanto, personalizar as mensagens de
      *          erro fornecidas pelo JavaCC)
      *     OBS: Realizar o tratamento de erros sintáticos conforme orientações do capítulo 5 da obra referenciada no
@@ -27,13 +27,13 @@ public class Compiler {
      *     OBS: A análise sintática NÃO deve ser interrompida no primeiro erro sintático.
      *     [X] Entrada: lista (arquivo ou estrutura de dados lista) de tokens com suas respectivas categorias (números)
      *                  de acordo com a tabela de símbolos terminais específica para a linguagem (saída do analisador léxico).
-     *     [ ] Saída: mensagem indicando que o programa está sintaticamente correto (programa compilado com sucesso)
+     *     [X] Saída: mensagem indicando que o programa está sintaticamente correto (programa compilado com sucesso)
      *                OU
-     *                mensagens de erro indicando a ocorrência de erro(s) léxico(s) ou sintático. Neste caso, indicar a
+     *     [X] Saída: mensagens de erro indicando a ocorrência de erro(s) léxico(s) ou sintático. Neste caso, indicar a
      *                linha onde ocorreu o erro e o tipo de erro encontrado fazendo um diagnóstico de boa qualidade,
      *                ou seja, emitindo uma mensagem adequada, tal como palavra reservada inválida, constante literal
      *                não finalizada, expressão aritmética inválida, encontrado . esperado ;, etc...
-     *     [ ] Mensagens: Personalizar as mensagens de erro fornecidas pelo JavaCC
+     *     [X] Mensagens: Personalizar as mensagens de erro fornecidas pelo JavaCC
      *
      * [ ] Entregar:
      *     [ ] Documento PDF contendo a GLC da linguagem 2021.1 (na notação BNF, transcrever do JavaCC) e as mensagens
@@ -54,31 +54,40 @@ public class Compiler {
     }
 
     public String compile(String code){
+        var messages = "";
+
         parser = new Parser(new StringReader(code));
-
-        //parser.errorMessages += lexer(code);
+        messages += lexer(code);
+        parser.ReInit(new StringReader(code));
         parser();
+        messages += parser.errorMessages;
 
-        return parser.errorMessages;
+        if (messages.isEmpty()){
+            return "Program successfully compiled.";
+        }
+        return messages;
     }
 
     public String lexer(String code) {
         String messages = "";
 
-        var lp = new Parser(new StringReader(code));
+        //var lp = new Parser(new StringReader(code));
 
-        CategorizedToken token = (CategorizedToken) lp.getNextToken();
+        CategorizedToken token = (CategorizedToken) parser.getNextToken();
         while (token.kind != ParserConstants.EOF) {
             if(token.isUnknownKind()){
                 messages += buildLexicalErrorMessage(token);
+            } else {
+                // DEBUG DO TOKEN
+                //messages += token.toString();
             }
-            token = (CategorizedToken) lp.getNextToken();
+            token = (CategorizedToken) parser.getNextToken();
         }
 
         return messages;
     }
 
-    public String parser() {
+    public void parser() {
         try {
             parser.Start();
         } catch (ParseException e) {
@@ -86,7 +95,6 @@ public class Compiler {
             //return e.getMessage();
             //e.printStackTrace();
         }
-        return "sucesso!";
     }
 
     public String build(Reader reader) {

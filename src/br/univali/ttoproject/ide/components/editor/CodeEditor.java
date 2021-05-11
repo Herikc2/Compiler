@@ -29,29 +29,15 @@ public class CodeEditor extends JTextPane {
         undoStates = new Stack<>();
         redoStates = new Stack<>();
         setEditorKit(new TabSizeEditorKit());
-        setTabSize(4);
+        setTabSize(Settings.TAB_SIZE);
         setFont(Settings.FONT);
         addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                handleKeyPressed(e);
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                handleKeyReleased(e);
-            }
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-                handleKeyTyped(e);
-            }
+            @Override public void keyPressed(KeyEvent e) { handleKeyPressed(e); }
+            @Override public void keyReleased(KeyEvent e) { handleKeyReleased(e); }
+            @Override public void keyTyped(KeyEvent e) { handleKeyTyped(e); }
         });
         addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                handleMouseClicked(e);
-            }
+            @Override public void mouseClicked(MouseEvent e) { handleMouseClicked(e); }
         });
 
     }
@@ -301,7 +287,6 @@ public class CodeEditor extends JTextPane {
 
     private void insertSelectedWord(String word, int size) {
         var caretPosition = getCaretPosition();
-        var tabSize = Settings.TAB_SIZE;
         int braceTabLevel = getTabLevel();
         var isTab = Settings.TAB_TYPE == Settings.TT_TAB;
         var caretPad = isTab ? 1 : Settings.TAB_SIZE;
@@ -334,12 +319,17 @@ public class CodeEditor extends JTextPane {
             case "while" -> {
                 ++braceTabLevel;
                 struct = word + "  is true do {\n" + tab.repeat(braceTabLevel) + "\n" + tab.repeat(braceTabLevel - 1) + "} .";
-                offset += caretPad * braceTabLevel;
+                offset += 1;
+            }
+            case "verify" -> {
+                ++braceTabLevel;
+                struct = word + " \n" + tab.repeat(braceTabLevel) + "is true {\n" + tab.repeat(braceTabLevel + 1) + "\n" + tab.repeat(braceTabLevel) + "}\n" + tab.repeat(braceTabLevel) + "is false {\n" + tab.repeat(braceTabLevel + 1) + "\n" + tab.repeat(braceTabLevel) + "} .";
+                offset += 1;
             }
             case "set" -> {
                 ++braceTabLevel;
                 struct = word + "  to  .";
-                offset += caretPad * braceTabLevel;
+                offset += 1;
             }
         }
         setText(t1 + struct + t2);

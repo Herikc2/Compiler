@@ -12,218 +12,678 @@ public class Parser implements ParserConstants {
 
   final public void Program() throws ParseException {
     HeaderSel();
-    T(PROGRAM);
-    T(LBRACE);
+    try {
+      jj_consume_token(PROGRAM);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'program'.\n";
+    }
+    try {
+      jj_consume_token(LBRACE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '{'.\n";
+    }
     Define();
     Execute();
-    T(RBRACE);
+    try {
+      jj_consume_token(RBRACE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '}'.\n";
+    }
     IdentifierSel();
 }
 
-  void T(int tk) throws ParseException {token = getNextToken();
-    System.out.println("cur tk: " + token.image + " " + token.kind);
-    while (token.kind != tk && token != null && token.kind != EOF ){
-        errorMessages += "Deu merda! " + token.image + " \n";
-
-        System.out.println("cur tk: " + token.image + " " + token.kind);
-
-        token = getNextToken();
-    }
-  }
-
   final public void HeaderSel() throws ParseException {
-    T(HEADER_COMMENT);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case HEADER_COMMENT:{
+      jj_consume_token(HEADER_COMMENT);
+      break;
+      }
+    default:
+      jj_la1[0] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void IdentifierSel() throws ParseException {
-    T(IDENTIFIER);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case IDENTIFIER:{
+      jj_consume_token(IDENTIFIER);
+      break;
+      }
+    default:
+      jj_la1[1] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void Define() throws ParseException {
-    T(DEFINE);
-    T(LBRACE);
-    VariableBlock();
-    T(RBRACE);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case DEFINE:{
+      jj_consume_token(DEFINE);
+      jj_consume_token(LBRACE);
+      VariableBlock();
+      jj_consume_token(RBRACE);
+      break;
+      }
+    default:
+      jj_la1[2] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void VariableBlock() throws ParseException {
-    NotVariable();
-    VariableSel1();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case NOT:{
+      NotVariable();
+      VariableSel1();
+      break;
+      }
+    case VARIABLE:{
+      Variable();
+      VariableSel2();
+      break;
+      }
+    default:
+      jj_la1[3] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void VariableSel1() throws ParseException {
-    Variable();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case VARIABLE:{
+      Variable();
+      break;
+      }
+    default:
+      jj_la1[4] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void VariableSel2() throws ParseException {
-    NotVariable();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case NOT:{
+      NotVariable();
+      break;
+      }
+    default:
+      jj_la1[5] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void Execute() throws ParseException {
-    T(EXECUTE);
+    try {
+      jj_consume_token(EXECUTE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'execute'.\n";
+    }
     CommandBlock();
 }
 
   final public void NotVariable() throws ParseException {
-    T(NOT);
-    T(VARIABLE);
+    try {
+      jj_consume_token(NOT);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'not'.\n";
+    }
+    try {
+      jj_consume_token(VARIABLE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'variable'.\n";
+    }
     NotVariableDecl();
     NotVariableSel();
 }
 
   final public void NotVariableSel() throws ParseException {
-    NotVariableDecl();
-    NotVariableSel();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case NATURAL_TYPE:
+    case REAL_TYPE:
+    case CHAR_TYPE:
+    case BOOLEAN_TYPE:{
+      NotVariableDecl();
+      NotVariableSel();
+      break;
+      }
+    default:
+      jj_la1[6] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void NotVariableDecl() throws ParseException {
     Type();
-    T(IS);
+    try {
+      jj_consume_token(IS);
+    } catch (ParseException e) {
+token = getNextToken();
+         if (token.kind != EOF)
+             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                            + "Expected: 'is'.\n";
+    }
     IdentifierListValue();
 }
 
   final public void IdentifierListValue() throws ParseException {
-    T(IDENTIFIER);
+    try {
+      jj_consume_token(IDENTIFIER);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected an identifier.\n";
+    }
     Value();
     IdentifierListValue1();
 }
 
   final public void IdentifierListValue1() throws ParseException {
-    T(COMMA);
-    IdentifierListValue();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case COMMA:{
+      jj_consume_token(COMMA);
+      IdentifierListValue();
+      break;
+      }
+    default:
+      jj_la1[7] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void Variable() throws ParseException {
-    T(VARIABLE);
+    try {
+      jj_consume_token(VARIABLE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'variable'.\n";
+    }
     VariableDecl();
     VariableSel();
 }
 
   final public void VariableSel() throws ParseException {
-    VariableDecl();
-    VariableSel();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case NATURAL_TYPE:
+    case REAL_TYPE:
+    case CHAR_TYPE:
+    case BOOLEAN_TYPE:{
+      VariableDecl();
+      VariableSel();
+      break;
+      }
+    default:
+      jj_la1[8] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void VariableDecl() throws ParseException {
     Type();
-    T(IS);
+    try {
+      jj_consume_token(IS);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'is'.\n";
+    }
     IdentifierList();
-    T(DOT);
+    try {
+      jj_consume_token(DOT);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '.'.\n";
+    }
 }
 
   final public void IdentifierList() throws ParseException {
-    T(IDENTIFIER);
+    try {
+      jj_consume_token(IDENTIFIER);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected an identifier.\n";
+    }
     Index();
     IdentifierList1();
 }
 
   final public void IdentifierList1() throws ParseException {
-    T(COMMA);
-    IdentifierList();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case COMMA:{
+      jj_consume_token(COMMA);
+      IdentifierList();
+      break;
+      }
+    default:
+      jj_la1[9] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void Set() throws ParseException {
-    T(SET);
+    try {
+      jj_consume_token(SET);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'set'.\n";
+    }
     Expression();
-    T(TO);
+    try {
+      jj_consume_token(TO);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'to'.\n";
+    }
     IdentifierList();
 }
 
   final public void Get() throws ParseException {
-    T(GET);
-    T(LBRACE);
+    try {
+      jj_consume_token(GET);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'get'.\n";
+    }
+    try {
+      jj_consume_token(LBRACE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '{'.\n";
+    }
     IdentifierList();
-    T(RBRACE);
+    try {
+      jj_consume_token(RBRACE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '}'.\n";
+    }
 }
 
   final public void Put() throws ParseException {
-    T(PUT);
-    T(LBRACE);
+    try {
+      jj_consume_token(PUT);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'put'.\n";
+    }
+    try {
+      jj_consume_token(LBRACE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '{'.\n";
+    }
     PutList();
-    T(RBRACE);
+    try {
+      jj_consume_token(RBRACE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '}'.\n";
+    }
 }
 
   final public void PutList() throws ParseException {
-    IdentifierList();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case IDENTIFIER:{
+      IdentifierList();
+      break;
+      }
+    case CHAR_CONST:
+    case NATURAL_CONST:
+    case REAL_CONST:
+    case TRUE:
+    case FALSE:{
+      Value();
+      break;
+      }
+    default:
+      jj_la1[10] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
 }
 
   final public void Verify() throws ParseException {
-    T(VERIFY);
+    try {
+      jj_consume_token(VERIFY);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'verify'.\n";
+    }
     Expression();
-    T(IS);
+    try {
+      jj_consume_token(IS);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'is'.\n";
+    }
     FalseTrueSel();
 }
 
   final public void FalseTrueSel() throws ParseException {
-    TrueBlock();
-    FalseTrueSel1();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case TRUE:{
+      TrueBlock();
+      FalseTrueSel1();
+      break;
+      }
+    case FALSE:{
+      FalseBlock();
+      FalseTrueSel2();
+      break;
+      }
+    default:
+      jj_la1[11] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
 }
 
   final public void FalseTrueSel1() throws ParseException {
-    FalseBlock();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case FALSE:{
+      FalseBlock();
+      break;
+      }
+    default:
+      jj_la1[12] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void FalseTrueSel2() throws ParseException {
-    TrueBlock();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case TRUE:{
+      TrueBlock();
+      break;
+      }
+    default:
+      jj_la1[13] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void TrueBlock() throws ParseException {
-    T(TRUE);
+    try {
+      jj_consume_token(TRUE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'true'.\n";
+    }
     CommandBlock();
 }
 
   final public void FalseBlock() throws ParseException {
-    T(FALSE);
+    try {
+      jj_consume_token(FALSE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'false'.\n";
+    }
     CommandBlock();
 }
 
   final public void Loop() throws ParseException {
-    T(LOOP);
+    try {
+      jj_consume_token(LOOP);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'loop'.\n";
+    }
     CommandBlock();
-    T(WHILE);
+    try {
+      jj_consume_token(WHILE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'while'.\n";
+    }
     Expression();
-    T(IS);
-    T(TRUE);
+    try {
+      jj_consume_token(IS);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'is'.\n";
+    }
+    try {
+      jj_consume_token(TRUE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'true'.\n";
+    }
 }
 
   final public void While() throws ParseException {
-    T(WHILE);
+    try {
+      jj_consume_token(WHILE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'while'.\n";
+    }
     Expression();
-    T(IS);
-    T(TRUE);
-    T(DO);
+    try {
+      jj_consume_token(IS);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'is'.\n";
+    }
+    try {
+      jj_consume_token(TRUE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'true'.\n";
+    }
+    try {
+      jj_consume_token(DO);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'do'.\n";
+    }
     CommandBlock();
 }
 
   final public void CommandBlock() throws ParseException {
-    T(LBRACE);
-    Command();
-    CommandList();
-    T(RBRACE);
+    try {
+      jj_consume_token(LBRACE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '{'.\n";
+    }
+    try {
+      Command();
+      CommandList();
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected a command.\n";
+    }
+    try {
+      jj_consume_token(RBRACE);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '}'.\n";
+    }
 }
 
   final public void CommandList() throws ParseException {
-    Command();
-    CommandList();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case SET:
+    case GET:
+    case PUT:
+    case VERIFY:
+    case LOOP:
+    case WHILE:{
+      Command();
+      CommandList();
+      break;
+      }
+    default:
+      jj_la1[14] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void Command() throws ParseException {
     CommandSel();
-    T(DOT);
+    try {
+      jj_consume_token(DOT);
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '.'.\n";
+    }
 }
 
   final public void CommandSel() throws ParseException {
-    Set();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case SET:{
+      Set();
+      break;
+      }
+    case GET:{
+      Get();
+      break;
+      }
+    case PUT:{
+      Put();
+      break;
+      }
+    case VERIFY:{
+      Verify();
+      break;
+      }
+    case LOOP:{
+      Loop();
+      break;
+      }
+    case WHILE:{
+      While();
+      break;
+      }
+    default:
+      jj_la1[15] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
 }
 
   final public void Expression() throws ParseException {
-    ExprArithLogic();
-    ExpressionSel();
+    try {
+      ExprArithLogic();
+      ExpressionSel();
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Invalid expression encountered at line " + token.beginLine + ", column " + token.beginColumn + ".\n";
+    }
 }
 
   final public void ExpressionSel() throws ParseException {
-    T(EQUAL);
-    ExprArithLogic();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case EQUAL:{
+      jj_consume_token(EQUAL);
+      ExprArithLogic();
+      break;
+      }
+    case DIFFERENT:{
+      jj_consume_token(DIFFERENT);
+      ExprArithLogic();
+      break;
+      }
+    case SMALLER:{
+      jj_consume_token(SMALLER);
+      ExprArithLogic();
+      break;
+      }
+    case GREATER:{
+      jj_consume_token(GREATER);
+      ExprArithLogic();
+      break;
+      }
+    case SMALLER_EQUAL:{
+      jj_consume_token(SMALLER_EQUAL);
+      ExprArithLogic();
+      break;
+      }
+    case GREATER_EQUAL:{
+      jj_consume_token(GREATER_EQUAL);
+      ExprArithLogic();
+      break;
+      }
+    default:
+      jj_la1[16] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void ExprArithLogic() throws ParseException {
@@ -232,9 +692,29 @@ public class Parser implements ParserConstants {
 }
 
   final public void LessPriority() throws ParseException {
-    T(PLUS);
-    Term2();
-    LessPriority();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case PLUS:{
+      jj_consume_token(PLUS);
+      Term2();
+      LessPriority();
+      break;
+      }
+    case MINUS:{
+      jj_consume_token(MINUS);
+      Term2();
+      LessPriority();
+      break;
+      }
+    case OR:{
+      jj_consume_token(OR);
+      Term2();
+      LessPriority();
+      break;
+      }
+    default:
+      jj_la1[17] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void Term2() throws ParseException {
@@ -243,9 +723,41 @@ public class Parser implements ParserConstants {
 }
 
   final public void MidPriority() throws ParseException {
-    T(MULTIPLICATION);
-    Term1();
-    MidPriority();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case MULTIPLICATION:{
+      jj_consume_token(MULTIPLICATION);
+      Term1();
+      MidPriority();
+      break;
+      }
+    case DIVISION:{
+      jj_consume_token(DIVISION);
+      Term1();
+      MidPriority();
+      break;
+      }
+    case INTEGER_DIVISION:{
+      jj_consume_token(INTEGER_DIVISION);
+      Term1();
+      MidPriority();
+      break;
+      }
+    case REST:{
+      jj_consume_token(REST);
+      Term1();
+      MidPriority();
+      break;
+      }
+    case AND:{
+      jj_consume_token(AND);
+      Term1();
+      MidPriority();
+      break;
+      }
+    default:
+      jj_la1[18] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void Term1() throws ParseException {
@@ -254,28 +766,134 @@ public class Parser implements ParserConstants {
 }
 
   final public void GreatPriority() throws ParseException {
-    T(POWER);
-    Element();
-    GreatPriority();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case POWER:{
+      jj_consume_token(POWER);
+      Element();
+      GreatPriority();
+      break;
+      }
+    default:
+      jj_la1[19] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void Element() throws ParseException {
-    T(IDENTIFIER);
-    Index();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case IDENTIFIER:{
+      jj_consume_token(IDENTIFIER);
+      Index();
+      break;
+      }
+    case CHAR_CONST:
+    case NATURAL_CONST:
+    case REAL_CONST:
+    case TRUE:
+    case FALSE:{
+      Value();
+      break;
+      }
+    case LPARENTHESES:{
+      jj_consume_token(LPARENTHESES);
+      Expression();
+      jj_consume_token(RPARANTHESES);
+      break;
+      }
+    case NOT:{
+      jj_consume_token(NOT);
+      jj_consume_token(LPARENTHESES);
+      Expression();
+      jj_consume_token(RPARANTHESES);
+      break;
+      }
+    default:
+      jj_la1[20] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
 }
 
   final public void Index() throws ParseException {
-    T(LBRACKET);
-    T(NATURAL_CONST);
-    T(RBRACKET);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case LBRACKET:{
+      jj_consume_token(LBRACKET);
+      jj_consume_token(NATURAL_CONST);
+      jj_consume_token(RBRACKET);
+      break;
+      }
+    default:
+      jj_la1[21] = jj_gen;
+      Epsilon();
+    }
 }
 
   final public void Value() throws ParseException {
-    T(CHAR_CONST);
+    try {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case CHAR_CONST:{
+        jj_consume_token(CHAR_CONST);
+        break;
+        }
+      case NATURAL_CONST:{
+        jj_consume_token(NATURAL_CONST);
+        break;
+        }
+      case REAL_CONST:{
+        jj_consume_token(REAL_CONST);
+        break;
+        }
+      case TRUE:{
+        jj_consume_token(TRUE);
+        break;
+        }
+      case FALSE:{
+        jj_consume_token(FALSE);
+        break;
+        }
+      default:
+        jj_la1[22] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected a constant value (char, natural, real or boolean).\n";
+    }
 }
 
   final public void Type() throws ParseException {
-    T(CHAR_TYPE);
+    try {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case CHAR_TYPE:{
+        jj_consume_token(CHAR_TYPE);
+        break;
+        }
+      case NATURAL_TYPE:{
+        jj_consume_token(NATURAL_TYPE);
+        break;
+        }
+      case REAL_TYPE:{
+        jj_consume_token(REAL_TYPE);
+        break;
+        }
+      case BOOLEAN_TYPE:{
+        jj_consume_token(BOOLEAN_TYPE);
+        break;
+        }
+      default:
+        jj_la1[23] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } catch (ParseException e) {
+token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'char', 'natural', 'real' or 'boolean'.\n";
+    }
 }
 
   final public void Epsilon() throws ParseException {
@@ -291,23 +909,18 @@ public class Parser implements ParserConstants {
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[0];
+  final private int[] jj_la1 = new int[24];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
-  static private int[] jj_la1_2;
   static {
 	   jj_la1_init_0();
 	   jj_la1_init_1();
-	   jj_la1_init_2();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {};
+	   jj_la1_0 = new int[] {0x0,0x0,0x400,0x1800,0x1000,0x800,0x3c000,0x0,0x3c000,0x0,0x0,0x0,0x0,0x0,0x3e80000,0x3e80000,0x0,0x0,0x0,0x0,0x800,0x40000000,0x0,0x3c000,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {};
-	}
-	private static void jj_la1_init_2() {
-	   jj_la1_2 = new int[] {};
+	   jj_la1_1 = new int[] {0x8000000,0x10000000,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x8,0x11f00000,0x1800000,0x1000000,0x800000,0x0,0x0,0x1f800,0x40030,0x20780,0x40,0x11f00001,0x0,0x1f00000,0x0,};
 	}
 
   /** Constructor with InputStream. */
@@ -321,6 +934,7 @@ public class Parser implements ParserConstants {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -334,7 +948,7 @@ public class Parser implements ParserConstants {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 0; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -344,6 +958,7 @@ public class Parser implements ParserConstants {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -361,6 +976,7 @@ public class Parser implements ParserConstants {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -369,6 +985,7 @@ public class Parser implements ParserConstants {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -377,6 +994,7 @@ public class Parser implements ParserConstants {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -427,12 +1045,12 @@ public class Parser implements ParserConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[65];
+	 boolean[] la1tokens = new boolean[64];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
 	 }
-	 for (int i = 0; i < 0; i++) {
+	 for (int i = 0; i < 24; i++) {
 	   if (jj_la1[i] == jj_gen) {
 		 for (int j = 0; j < 32; j++) {
 		   if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -441,13 +1059,10 @@ public class Parser implements ParserConstants {
 		   if ((jj_la1_1[i] & (1<<j)) != 0) {
 			 la1tokens[32+j] = true;
 		   }
-		   if ((jj_la1_2[i] & (1<<j)) != 0) {
-			 la1tokens[64+j] = true;
-		   }
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 65; i++) {
+	 for (int i = 0; i < 64; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

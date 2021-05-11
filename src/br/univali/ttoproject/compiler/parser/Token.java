@@ -145,7 +145,8 @@ public class Token implements java.io.Serializable {
                 return new CategorizedToken(TokenCategory.RealConstant, ofKind, image);
             case ParserConstants.CHAR_CONST:
                 return new CategorizedToken(TokenCategory.CharConstant, ofKind, image);
-            case ParserConstants.BOOLEAN_CONST:
+            case ParserConstants.TRUE:
+            case ParserConstants.FALSE:
                 return new CategorizedToken(TokenCategory.BooleanConstant, ofKind, image);
             case ParserConstants.EOF:
             case ParserConstants.LBRACE:
