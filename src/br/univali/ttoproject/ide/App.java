@@ -1,13 +1,13 @@
 package br.univali.ttoproject.ide;
 
 import br.univali.ttoproject.compiler.Compiler;
-import br.univali.ttoproject.compiler.Program;
 import br.univali.ttoproject.ide.components.Console;
 import br.univali.ttoproject.ide.components.MenuBar;
 import br.univali.ttoproject.ide.components.*;
 import br.univali.ttoproject.ide.components.editor.CodeEditor;
 import br.univali.ttoproject.ide.components.settings.Settings;
 import br.univali.ttoproject.ide.components.settings.SettingsForm;
+import br.univali.ttoproject.vm.Instruction;
 import br.univali.ttoproject.vm.VirtualMachine;
 
 import javax.swing.*;
@@ -41,7 +41,8 @@ public class App extends JFrame {
     private FileTTO file;
     private ArrayList<String> recentFiles;
 
-    private VirtualMachine program;
+    private VirtualMachine virtualMachine;
+    private ArrayList<Instruction<Integer, Object>> program;
 
     private boolean newFile = true;
     private boolean savedFile = true;
@@ -336,12 +337,9 @@ public class App extends JFrame {
         //if (!mSave()) return false;
 
         compiled = true;
+        tabIO.setSelectedIndex(0);
         //var strLog = new Compiler().build(new StringReader(codeEditor.getText()));
-        var strLog = new Compiler().compile(codeEditor.getText());
-        log.setText(strLog);
-
-        // temporariamente sendo impresso no console
-        console.setText(strLog);
+        program = new Compiler().compile(codeEditor.getText(), log, tabIO);
 
         return true;
     }
@@ -357,14 +355,13 @@ public class App extends JFrame {
             return false;
         }
         running = true;
-
-//        program = new TestProgram(console);
-//        new Thread(() -> {
-//            program.run();
-//            //noinspection StatementWithEmptyBody
-//            while (!program.isFinished());
-//            console.addContent("\nProcess finished");
-//        }).start();
+        virtualMachine = new VirtualMachine(console, program);
+        new Thread(() -> {
+            virtualMachine.run();
+            //noinspection StatementWithEmptyBody
+            while (!virtualMachine.isFinished());
+            console.addContent("\nProcess finished");
+        }).start();
 
         return true;
     }
@@ -372,9 +369,12 @@ public class App extends JFrame {
     public boolean mStop() {
         if (running) {
             resetBuildVars();
+            virtualMachine.stop();
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     public boolean mAbout() {

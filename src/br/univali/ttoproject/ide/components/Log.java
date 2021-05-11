@@ -5,11 +5,20 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class Log extends JTextArea {
+
     public Log(){
         setEditable(false);
         addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) { handleMouseClicked(e); }
         });
+    }
+
+    public void addContent(String content) {
+        setText(getText() + content);
+    }
+
+    public void reset() {
+        setText("");
     }
 
     private void handleMouseClicked(MouseEvent event){

@@ -4,7 +4,11 @@ import br.univali.ttoproject.compiler.parser.CategorizedToken;
 import br.univali.ttoproject.compiler.parser.ParseException;
 import br.univali.ttoproject.compiler.parser.Parser;
 import br.univali.ttoproject.compiler.parser.ParserConstants;
+import br.univali.ttoproject.ide.components.Log;
+import br.univali.ttoproject.vm.Instruction;
+import br.univali.ttoproject.vm.VMConstants;
 
+import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -53,19 +57,34 @@ public class Compiler {
                 + ". The following character '" + token.image + "' is invalid.\n";
     }
 
-    public String compile(String code){
+    public ArrayList<Instruction<Integer, Object>> compile(String code, Log log, JTabbedPane tab){
         var messages = "";
 
+        // debug
+        ArrayList<Instruction<Integer, Object>> program = new ArrayList<>();
+        program.add(new Instruction<>(VMConstants.LDS, "Digite: "));
+        program.add(new Instruction<>(VMConstants.WRT, 0));
+        program.add(new Instruction<>(VMConstants.REA, 2));
+        program.add(new Instruction<>(VMConstants.WRT, 0));
+        // debug
+
+        // vai mudar
         parser = new Parser(new StringReader(code));
         messages += lexer(code);
         parser.ReInit(new StringReader(code));
         parser();
         messages += parser.errorMessages;
+        // ------
 
         if (messages.isEmpty()){
-            return "Program successfully compiled.";
+            log.setText("Program successfully compiled.");
+        } else {
+            log.setText(messages);
+            tab.setSelectedIndex(1);
+            log.requestFocus();
         }
-        return messages;
+
+        return program;
     }
 
     public String lexer(String code) {
