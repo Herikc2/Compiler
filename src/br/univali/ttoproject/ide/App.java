@@ -358,6 +358,8 @@ public class App extends JFrame {
 //                    JOptionPane.WARNING_MESSAGE);
             return false;
         }
+        if (running) return false;
+
         tabIO.setSelectedIndex(0);
         running = true;
         virtualMachine = new VirtualMachine(console, program);

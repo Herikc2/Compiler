@@ -52,6 +52,8 @@ public class Compiler {
         } else {
             log.setText(message);
             log.requestFocus();
+
+            return null;
         }
 
         return program;
