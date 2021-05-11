@@ -47,7 +47,6 @@ public class VirtualMachine implements Runnable {
 
     public void stop() {
         thread.interrupt();
-        console.addContent("Program interrupted.");
         finished = true;
     }
 

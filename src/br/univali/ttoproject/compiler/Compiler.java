@@ -18,34 +18,6 @@ import java.util.stream.Collectors;
 
 public class Compiler {
 
-    /*
-     * TODO: Trabalho 4
-     *
-     * [X] Corrigir Léxico
-     * [X] Corrigir Interface
-     * [X] Implementar Parser
-     *     OBS: Será levada em consideração a qualidade das mensagens de erro (portanto, personalizar as mensagens de
-     *          erro fornecidas pelo JavaCC)
-     *     OBS: Realizar o tratamento de erros sintáticos conforme orientações do capítulo 5 da obra referenciada no
-     *          plano de ensino Como construir um compilador utilizando ferramentas Java, de Márcio Eduardo Delamaro.
-     *     OBS: A análise sintática NÃO deve ser interrompida no primeiro erro sintático.
-     *     [X] Entrada: lista (arquivo ou estrutura de dados lista) de tokens com suas respectivas categorias (números)
-     *                  de acordo com a tabela de símbolos terminais específica para a linguagem (saída do analisador léxico).
-     *     [X] Saída: mensagem indicando que o programa está sintaticamente correto (programa compilado com sucesso)
-     *                OU
-     *     [X] Saída: mensagens de erro indicando a ocorrência de erro(s) léxico(s) ou sintático. Neste caso, indicar a
-     *                linha onde ocorreu o erro e o tipo de erro encontrado fazendo um diagnóstico de boa qualidade,
-     *                ou seja, emitindo uma mensagem adequada, tal como palavra reservada inválida, constante literal
-     *                não finalizada, expressão aritmética inválida, encontrado . esperado ;, etc...
-     *     [X] Mensagens: Personalizar as mensagens de erro fornecidas pelo JavaCC
-     *
-     * [ ] Entregar:
-     *     [ ] Documento PDF contendo a GLC da linguagem 2021.1 (na notação BNF, transcrever do JavaCC) e as mensagens
-     *         de erros léxico e sintáticos
-     *     [ ] Cópias do programa fonte (tdo o projeto) e do programa executável (gerar o .JAR) postados no ambiente.
-     *     [ ] COMPACTAR os arquivos com o número da equipe (conforme a correção do analisador léxico)
-     */
-
     private Parser parser;
 
     public Compiler() {
@@ -57,8 +29,8 @@ public class Compiler {
                 + ". The following character '" + token.image + "' is invalid.\n";
     }
 
-    public ArrayList<Instruction<Integer, Object>> compile(String code, Log log, JTabbedPane tab){
-        var messages = "";
+    public ArrayList<Instruction<Integer, Object>> compile(String code, Log log){
+        var message = "";
 
         // debug
         ArrayList<Instruction<Integer, Object>> program = new ArrayList<>();
@@ -68,19 +40,17 @@ public class Compiler {
         program.add(new Instruction<>(VMConstants.WRT, 0));
         // debug
 
-        // vai mudar
         parser = new Parser(new StringReader(code));
-        messages += lexer(code);
-        parser.ReInit(new StringReader(code));
-        parser();
-        messages += parser.errorMessages;
-        // ------
+        try {
+            parser.Start();
+        } catch (ParseException e) {
+            message += e.getMessage();
+        }
 
-        if (messages.isEmpty()){
+        if (message.isEmpty()){
             log.setText("Program successfully compiled.");
         } else {
-            log.setText(messages);
-            tab.setSelectedIndex(1);
+            log.setText(message);
             log.requestFocus();
         }
 
