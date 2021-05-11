@@ -35,9 +35,13 @@ public class Compiler {
         // debug
         ArrayList<Instruction<Integer, Object>> program = new ArrayList<>();
         program.add(new Instruction<>(VMConstants.LDS, "Digite: "));
-        program.add(new Instruction<>(VMConstants.WRT, 0));
-        program.add(new Instruction<>(VMConstants.REA, 2));
-        program.add(new Instruction<>(VMConstants.WRT, 0));
+        program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+        program.add(new Instruction<>(VMConstants.REA, VMConstants.CHAR));
+        program.add(new Instruction<>(VMConstants.LDS, "Bem vindo, "));
+        program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+        program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+        program.add(new Instruction<>(VMConstants.LDS, "."));
+        program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
         // debug
 
         parser = new Parser(new StringReader(code));

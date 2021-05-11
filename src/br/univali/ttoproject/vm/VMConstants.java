@@ -37,6 +37,9 @@ public class VMConstants {
     public static final int REA = 27;
     public static final int WRT = 28;
 
+    // null param
+    public static final int NULL_PARAM = 0;
+
     // types
     public static final int NATURAL = 0;
     public static final int REAL    = 1;
