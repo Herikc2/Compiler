@@ -29,7 +29,7 @@ public enum MenuOptions {
         this.ID = id;
     }
 
-    public int getID() {
+    public final int getID() {
         return ID;
     }
 }

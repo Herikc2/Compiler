@@ -8,6 +8,7 @@ import br.univali.ttoproject.ide.components.*;
 import br.univali.ttoproject.ide.components.editor.CodeEditor;
 import br.univali.ttoproject.ide.components.settings.Settings;
 import br.univali.ttoproject.ide.components.settings.SettingsForm;
+import br.univali.ttoproject.vm.VirtualMachine;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -40,7 +41,7 @@ public class App extends JFrame {
     private FileTTO file;
     private ArrayList<String> recentFiles;
 
-    private Program program;
+    private VirtualMachine program;
 
     private boolean newFile = true;
     private boolean savedFile = true;
