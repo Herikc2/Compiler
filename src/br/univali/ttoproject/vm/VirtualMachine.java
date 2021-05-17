@@ -17,6 +17,7 @@ public class VirtualMachine implements Runnable {
     private int top;
 
     private volatile boolean finished = false;
+    private volatile boolean stopped = false;
 
     public VirtualMachine(Console console, ArrayList<Instruction<Integer, Object>> program) {
         stack = new Object[8];
@@ -48,6 +49,7 @@ public class VirtualMachine implements Runnable {
     public void stop() {
         thread.interrupt();
         finished = true;
+        stopped = true;
     }
 
     private void eval(Instruction<Integer, Object> inst) throws Exception {
@@ -68,7 +70,7 @@ public class VirtualMachine implements Runnable {
             case VMConstants.STR -> str((int) inst.getRight());
             case VMConstants.AND -> and();
             case VMConstants.NOT -> not();
-            case VMConstants.OR  -> or();
+            case VMConstants.OR -> or();
             case VMConstants.BGE -> bge();
             case VMConstants.BGR -> bgr();
             case VMConstants.DIF -> dif();
@@ -81,7 +83,7 @@ public class VirtualMachine implements Runnable {
             case VMConstants.STP -> stp();
             case VMConstants.REA -> rea((int) inst.getRight());
             case VMConstants.WRT -> wrt();
-            default              -> throw new Exception("Operation error.\n");
+            default -> throw new Exception("Operation error.\n");
         }
     }
 
@@ -311,8 +313,8 @@ public class VirtualMachine implements Runnable {
         try {
             switch (param) {
                 case VMConstants.NATURAL -> stack[top] = Integer.parseInt(consoleInput);
-                case VMConstants.REAL    -> stack[top] = Float.parseFloat(consoleInput);
-                case VMConstants.CHAR    -> stack[top] = consoleInput;
+                case VMConstants.REAL -> stack[top] = Float.parseFloat(consoleInput);
+                case VMConstants.CHAR -> stack[top] = consoleInput;
                 case VMConstants.BOOLEAN -> stack[top] = Boolean.parseBoolean(consoleInput);
             }
         } catch (Exception e) {
@@ -341,5 +343,9 @@ public class VirtualMachine implements Runnable {
 
     public boolean isFinished() {
         return finished;
+    }
+
+    public boolean isStopped() {
+        return stopped;
     }
 }

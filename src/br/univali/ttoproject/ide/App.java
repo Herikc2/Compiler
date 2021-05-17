@@ -187,7 +187,7 @@ public class App extends JFrame {
         // pega o caminho do arquivo a ser aberto
         var fullPath = getFilePath(false);
         if (fullPath.equals("")) return false;
-        if(!new FileTTO(fullPath).exists()){
+        if (!new FileTTO(fullPath).exists()) {
             JOptionPane.showMessageDialog(
                     this,
                     "The path " + fullPath + " is not valid.",
@@ -339,9 +339,10 @@ public class App extends JFrame {
         //if (!mSave()) return false;
 
         tabIO.setSelectedIndex(1);
+        codeEditor.requestFocus();
         //var strLog = new Compiler().build(new StringReader(codeEditor.getText()));
         program = new Compiler().compile(codeEditor.getText(), log);
-        if (program != null){
+        if (program != null) {
             compiled = true;
         }
 
@@ -359,6 +360,7 @@ public class App extends JFrame {
             return false;
         }
         if (running) return false;
+        if (program == null) return false;
 
         tabIO.setSelectedIndex(0);
         running = true;
@@ -366,8 +368,11 @@ public class App extends JFrame {
         new Thread(() -> {
             virtualMachine.run();
             //noinspection StatementWithEmptyBody
-            while (!virtualMachine.isFinished());
-            console.addContent("\nProcess finished");
+            while (!virtualMachine.isFinished()) ;
+            if (!virtualMachine.isStopped()) {
+                console.stopDataEntry();
+                console.addContent("\nProcess finished.");
+            }
             running = false;
         }).start();
 
@@ -376,10 +381,11 @@ public class App extends JFrame {
 
     public boolean mStop() {
         if (running) {
+            virtualMachine.stop();
             running = false;
             resetBuildVars();
-            virtualMachine.stop();
-            console.addContent(" without success");
+            program = null;
+            console.addContent("\nProcess finished without success.");
             return true;
         }
 
@@ -437,11 +443,11 @@ public class App extends JFrame {
         return false;
     }
 
-    public void updateRecentMenu(){
-        ((MenuBar)getJMenuBar()).setOpenRecentMenu(createRecentMenu());
+    public void updateRecentMenu() {
+        ((MenuBar) getJMenuBar()).setOpenRecentMenu(createRecentMenu());
     }
 
-    public JMenu createRecentMenu(){
+    public JMenu createRecentMenu() {
         var recentMenu = new JMenu("Open Recent");
         if (recentFiles.isEmpty()) {
             var menuItem = new JMenuItem("No recent files...");
@@ -460,7 +466,7 @@ public class App extends JFrame {
 
         recentFiles.remove(path);
 
-        if (!new FileTTO(path).exists()){
+        if (!new FileTTO(path).exists()) {
             JOptionPane.showMessageDialog(
                     this,
                     "File not found at " + path + ".",

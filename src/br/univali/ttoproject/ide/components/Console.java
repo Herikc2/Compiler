@@ -29,7 +29,7 @@ public class Console extends JTextArea {
     }
 
     public void addContent(String content) {
-        setText(getText() + content);
+        append(content);
         setCaretPosition(getText().length());
     }
 
@@ -47,7 +47,7 @@ public class Console extends JTextArea {
         input = "";
     }
 
-    private void stopDataEntry() {
+    public void stopDataEntry() {
         allowConsoleInput = false;
     }
 

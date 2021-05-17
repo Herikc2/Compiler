@@ -6,9 +6,7 @@ import br.univali.ttoproject.compiler.parser.Parser;
 import br.univali.ttoproject.compiler.parser.ParserConstants;
 import br.univali.ttoproject.ide.components.Log;
 import br.univali.ttoproject.vm.Instruction;
-import br.univali.ttoproject.vm.VMConstants;
 
-import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -29,32 +27,32 @@ public class Compiler {
                 + ". The following character '" + token.image + "' is invalid.\n";
     }
 
-    public ArrayList<Instruction<Integer, Object>> compile(String code, Log log){
-        var message = "";
-
-        // debug
+    public ArrayList<Instruction<Integer, Object>> compile(String code, Log log) {
+        var messages = "";
         ArrayList<Instruction<Integer, Object>> program = new ArrayList<>();
-        program.add(new Instruction<>(VMConstants.LDS, "Digite: "));
-        program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
-        program.add(new Instruction<>(VMConstants.REA, VMConstants.CHAR));
-        program.add(new Instruction<>(VMConstants.LDS, "Bem vindo, "));
-        program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
-        program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
-        program.add(new Instruction<>(VMConstants.LDS, "."));
-        program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
-        // debug
 
         parser = new Parser(new StringReader(code));
-        try {
-            parser.Start();
-        } catch (ParseException e) {
-            message += e.getMessage();
-        }
+        messages += lexer();
+        parser.ReInit(new StringReader(code));
+        parser();
+        messages += parser.errorMessages;
 
-        if (message.isEmpty()){
+        if (messages.isEmpty()) {
             log.setText("Program successfully compiled.");
+
+            // debug
+//            program.add(new Instruction<>(VMConstants.LDS, "Digite: "));
+//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+//            program.add(new Instruction<>(VMConstants.REA, VMConstants.CHAR));
+//            program.add(new Instruction<>(VMConstants.LDS, "Bem vindo, "));
+//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+//            program.add(new Instruction<>(VMConstants.LDS, "."));
+//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+            // debug
+
         } else {
-            log.setText(message);
+            log.setText(messages);
             log.requestFocus();
 
             return null;
@@ -63,15 +61,13 @@ public class Compiler {
         return program;
     }
 
-    public String lexer(String code) {
-        String messages = "";
-
-        //var lp = new Parser(new StringReader(code));
+    public String lexer() {
+        StringBuilder messages = new StringBuilder();
 
         CategorizedToken token = (CategorizedToken) parser.getNextToken();
         while (token.kind != ParserConstants.EOF) {
-            if(token.isUnknownKind()){
-                messages += buildLexicalErrorMessage(token);
+            if (token.isUnknownKind()) {
+                messages.append(buildLexicalErrorMessage(token));
             } else {
                 // DEBUG DO TOKEN
                 //messages += token.toString();
@@ -79,15 +75,13 @@ public class Compiler {
             token = (CategorizedToken) parser.getNextToken();
         }
 
-        return messages;
+        return messages.toString();
     }
 
     public void parser() {
         try {
             parser.Start();
         } catch (ParseException e) {
-            //messages += e.getMessage();
-            //return e.getMessage();
             //e.printStackTrace();
         }
     }
