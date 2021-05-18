@@ -395,7 +395,7 @@ public class App extends JFrame {
     public boolean mAbout() {
         JOptionPane.showMessageDialog(
                 this,
-                "Authors: Carlos E. B. Machado, Herikc Brecher and Bruno F. Francisco.",
+                "Authors: Carlos E. B. Machado and Herikc Brecher.",
                 "About",
                 JOptionPane.INFORMATION_MESSAGE);
 
