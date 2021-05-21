@@ -183,9 +183,15 @@ void Define() :
 void VariableBlock() :
 {}
 {
-    NotVariable() VariableSel1()
-|   Variable() VariableSel2()
-|   Epsilon()
+    try {
+        NotVariable() VariableSel1()
+    |   Variable() VariableSel2()
+    } catch (ParseException e) {
+        token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected variable or constant declaration.\n";
+    }
 }
 
 void VariableSel1() :
@@ -227,7 +233,6 @@ void NotVariable() :
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                            + "Expected: 'not'.\n";
     }
-
     try {
         <VARIABLE>
     } catch (ParseException e) {

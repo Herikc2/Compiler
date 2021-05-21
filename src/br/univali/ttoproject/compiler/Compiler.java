@@ -70,7 +70,7 @@ public class Compiler {
                 messages.append(buildLexicalErrorMessage(token));
             } else {
                 // DEBUG DO TOKEN
-                messages.append(token);
+                //messages.append(token);
             }
             token = (CategorizedToken) parser.getNextToken();
         }
