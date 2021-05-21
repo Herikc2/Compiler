@@ -101,18 +101,18 @@ TOKEN :
 |   <FALSE: "false">
 }
 
+/* LITERALS */
+TOKEN :
+{
+    <HEADER_COMMENT: <HEADER> (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+|   <IDENTIFIER: <ND>|(("_"<NU>|<LETTER>) (<NU>|"_"<NU>)* (<LETTER>|<DIGIT><ND>|<LETTER>"_"|"_"<LETTER>|"_"))>
+}
+
 /* RAW */
 TOKEN :
 {
     <LETTER: ["a"-"z","A"-"Z"]>
 |   <DIGIT: ["0"-"9"]>
-}
-
-/* LITERALS */
-TOKEN :
-{
-    <HEADER_COMMENT: <HEADER> (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
-|   <IDENTIFIER: ("_"|<LETTER>)|(("_"<NU>|<LETTER>)(<NU>|"_"<NU>)* (<LETTER>|<DIGIT>("_"|<LETTER>)|<LETTER>"_"))>
 |   <NU: <LETTER>|<DIGIT><ND>>
 |   <ND: <LETTER>|"_">
 }
