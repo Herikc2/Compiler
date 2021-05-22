@@ -153,6 +153,8 @@ public class Token implements java.io.Serializable {
             case ParserConstants.RBRACE:
             case ParserConstants.LPARENTHESES:
             case ParserConstants.RPARANTHESES:
+            case ParserConstants.LBRACKET:
+            case ParserConstants.RBRACKET:
             case ParserConstants.DOT:
             case ParserConstants.COMMA:
             case ParserConstants.PLUS:

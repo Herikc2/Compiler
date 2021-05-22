@@ -107,19 +107,17 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int FALSE = 56;
   /** RegularExpression Id. */
-  int HEADER_COMMENT = 57;
+  int IDENTIFIER = 57;
   /** RegularExpression Id. */
-  int IDENTIFIER = 58;
+  int LETTER = 58;
   /** RegularExpression Id. */
-  int LETTER = 59;
+  int DIGIT = 59;
   /** RegularExpression Id. */
-  int DIGIT = 60;
+  int NU = 60;
   /** RegularExpression Id. */
-  int NU = 61;
+  int ND = 61;
   /** RegularExpression Id. */
-  int ND = 62;
-  /** RegularExpression Id. */
-  int UNKNOWN = 63;
+  int UNKNOWN = 62;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -185,7 +183,6 @@ public interface ParserConstants {
     "<REAL_CONST>",
     "\"true\"",
     "\"false\"",
-    "<HEADER_COMMENT>",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",

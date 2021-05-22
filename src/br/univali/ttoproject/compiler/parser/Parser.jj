@@ -90,7 +90,7 @@ TOKEN :
 |   <NOT_SYMBOL: "!">
 }
 
-/* CONSTS */
+/* CONSTS AND IDENTIFIER */
 TOKEN :
 {
     <CHAR_CONST: "\"" (~["\"","\\","\n","\r"] | "\\"(["n","t","b","r","\\","'","\""]))* "\""
@@ -99,12 +99,6 @@ TOKEN :
 |   <REAL_CONST: <DIGIT> (<DIGIT>)? (<DIGIT>)? (<DIGIT>)? (<DIGIT>)?  "." <DIGIT> (<DIGIT>)?>
 |   <TRUE: "true">
 |   <FALSE: "false">
-}
-
-/* LITERALS */
-TOKEN :
-{
-    <HEADER_COMMENT: <HEADER> (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
 |   <IDENTIFIER: <ND>|(("_"<NU>|<LETTER>) (<NU>|"_"<NU>)* (<LETTER>|<DIGIT><ND>|<LETTER>"_"|"_"<LETTER>|"_"))>
 }
 
@@ -162,7 +156,15 @@ void Program() :
 void HeaderSel() :
 {}
 {
-    <HEADER_COMMENT>
+    <HEADER>
+    try {
+        <CHAR_CONST>
+    } catch (ParseException e) {
+        token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '}'.\n";
+    }
 |   Epsilon()
 }
 
@@ -176,8 +178,12 @@ void IdentifierSel() :
 void Define() :
 {}
 {
-    <DEFINE> <LBRACE> VariableBlock() <RBRACE>
-|   Epsilon()
+    try {
+        <DEFINE> <LBRACE> VariableBlock() <RBRACE>
+    |   Epsilon()
+    } catch (ParseException e) {
+
+    }
 }
 
 void VariableBlock() :
@@ -214,7 +220,8 @@ void Execute() :
     try {
         <EXECUTE>
     } catch (ParseException e) {
-        token = getNextToken();
+        if (errorMessages.isEmpty())
+            token = getNextToken();
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                            + "Expected: 'execute'.\n";
@@ -255,15 +262,24 @@ void NotVariableDecl() :
 {}
 {
     Type()
-     try {
-         <IS>
-     } catch (ParseException e) {
+    try {
+        <IS>
+    } catch (ParseException e) {
          token = getNextToken();
          if (token.kind != EOF)
              errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                             + "Expected: 'is'.\n";
      }
-     IdentifierListValue()
+    IdentifierListValue()
+    Value()
+    try {
+        <DOT>
+    } catch (ParseException e) {
+         token = getNextToken();
+         if (token.kind != EOF)
+             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                            + "Expected: '.'.\n";
+     }
 }
 
 void IdentifierListValue() :
@@ -277,7 +293,7 @@ void IdentifierListValue() :
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                            + "Expected an identifier.\n";
     }
-    Value() IdentifierListValue1()
+    IdentifierListValue1()
 }
 
 void IdentifierListValue1() :
@@ -424,7 +440,7 @@ void Put() :
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                            + "Expected: '{'.\n";
     }
-    PutList()
+    ValueIdentifierList()
     try {
         <RBRACE>
     } catch (ParseException e) {
@@ -435,11 +451,18 @@ void Put() :
     }
 }
 
-void PutList() :
+void ValueIdentifierList() :
 {}
 {
-    IdentifierList()
-|   Value()
+    <IDENTIFIER> Index() ValueIdentifierList1()
+|   Value() ValueIdentifierList1()
+}
+
+void ValueIdentifierList1() :
+{}
+{
+    <COMMA> ValueIdentifierList()
+|   Epsilon()
 }
 
 void Verify() :
@@ -475,6 +498,14 @@ void FalseTrueSel() :
 void FalseTrueSel1() :
 {}
 {
+    try {
+        <IS>
+    } catch (ParseException e) {
+        token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'is'.\n";
+    }
     FalseBlock()
 |   Epsilon()
 }
@@ -482,6 +513,14 @@ void FalseTrueSel1() :
 void FalseTrueSel2() :
 {}
 {
+    try {
+        <IS>
+    } catch (ParseException e) {
+        token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: 'is'.\n";
+    }
     TrueBlock()
 |   Epsilon()
 }
@@ -631,7 +670,34 @@ void CommandList() :
 void Command() :
 {}
 {
-    CommandSel()
+    Set()
+    try {
+        <DOT>
+    } catch (ParseException e) {
+        token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: ',', '[' or '.'.\n";
+    }
+|   Get()
+    try {
+        <DOT>
+    } catch (ParseException e) {
+        token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: ',', '[' or '.'.\n";
+    }
+|   Put()
+    try {
+        <DOT>
+    } catch (ParseException e) {
+        token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: ',', '[' or '.'.\n";
+    }
+|   Verify()
     try {
         <DOT>
     } catch (ParseException e) {
@@ -640,17 +706,24 @@ void Command() :
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                            + "Expected: '.'.\n";
     }
-}
-
-void CommandSel() :
-{}
-{
-    Set()
-|   Get()
-|   Put()
-|   Verify()
 |   Loop()
+    try {
+        <DOT>
+    } catch (ParseException e) {
+        token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '.'.\n";
+    }
 |   While()
+    try {
+        <DOT>
+    } catch (ParseException e) {
+        token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: '.'.\n";
+    }
 }
 
 void Expression() :
@@ -734,7 +807,23 @@ void Element() :
 void Index() :
 {}
 {
-    <LBRACKET> <NATURAL_CONST> <RBRACKET>
+    <LBRACKET>
+    try {
+        <NATURAL_CONST>
+    } catch (ParseException e) {
+        token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected a natural constant.\n";
+    }
+    try {
+        <RBRACKET>
+    } catch (ParseException e) {
+        token = getNextToken();
+        if (token.kind != EOF)
+            errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
+                           + "Expected: ']'.\n";
+    }
 |   Epsilon()
 }
 
