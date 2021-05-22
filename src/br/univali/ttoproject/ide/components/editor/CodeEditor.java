@@ -25,12 +25,15 @@ public class CodeEditor extends JTextPane {
     private JPopupMenu pmSuggestions;
     private ArrayList<JMenuItem> suggestions;
 
+    // https://www.ibm.com/docs/en/sdk-java-technology/8?topic=applications-default-swing-key-bindings
+
     public CodeEditor() {
         undoStates = new Stack<>();
         redoStates = new Stack<>();
         setEditorKit(new TabSizeEditorKit());
         setTabSize(Settings.TAB_SIZE);
         setFont(Settings.FONT);
+
         addKeyListener(new KeyAdapter() {
             @Override public void keyPressed(KeyEvent e) { handleKeyPressed(e); }
             @Override public void keyReleased(KeyEvent e) { handleKeyReleased(e); }
