@@ -6,6 +6,7 @@ import br.univali.ttoproject.ide.components.settings.Settings;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -124,25 +125,25 @@ public class MenuBar extends JMenuBar {
         menuItem = new JMenuItem("Compile and Run");
         menuItem.addActionListener(e -> methods[MenuOptions.COMPILE_RUN.getID()].get());
         menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/compile_run.png"))));
-        menuItem.setAccelerator(KeyStroke.getKeyStroke("F5"));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, keyCtrl));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Compile");
         menuItem.addActionListener(e -> methods[MenuOptions.COMPILE.getID()].get());
         menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/build.png"))));
-        menuItem.setAccelerator(KeyStroke.getKeyStroke("F6"));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, keyCtrl));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Run");
         menuItem.addActionListener(e -> methods[MenuOptions.RUN.getID()].get());
         menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/run.png"))));
-        menuItem.setAccelerator(KeyStroke.getKeyStroke("F7"));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7, keyCtrl));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Stop");
         menuItem.addActionListener(e -> methods[MenuOptions.STOP.getID()].get());
         menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/stop.png"))));
-        menuItem.setAccelerator(KeyStroke.getKeyStroke("F8"));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F8, keyCtrl));
         menu.add(menuItem);
 
         menu = new JMenu("Help");
