@@ -4,7 +4,6 @@ import br.univali.ttoproject.compiler.parser.CategorizedToken;
 import br.univali.ttoproject.compiler.parser.ParseException;
 import br.univali.ttoproject.compiler.parser.Parser;
 import br.univali.ttoproject.compiler.parser.ParserConstants;
-import br.univali.ttoproject.ide.components.Log;
 import br.univali.ttoproject.vm.Instruction;
 
 import java.io.FileNotFoundException;
@@ -18,6 +17,9 @@ public class Compiler {
 
     private Parser parser;
 
+    private ArrayList<Instruction<Integer, Object>> program;
+    private String messages;
+
     public Compiler() {
         setParser(null);
     }
@@ -27,9 +29,9 @@ public class Compiler {
                 + ". The following character '" + token.image + "' is invalid.\n";
     }
 
-    public ArrayList<Instruction<Integer, Object>> compile(String code, Log log) {
+    public boolean compile(String code) {
         var messages = "";
-        ArrayList<Instruction<Integer, Object>> program = new ArrayList<>();
+        var program = new ArrayList<Instruction<Integer, Object>>();
 
         parser = new Parser(new StringReader(code));
         messages += lexer();
@@ -38,8 +40,7 @@ public class Compiler {
         messages += parser.errorMessages;
 
         if (messages.isEmpty()) {
-            log.setText("Program successfully compiled.");
-
+            this.messages = "Program successfully compiled.";
             // debug
 //            program.add(new Instruction<>(VMConstants.LDS, "Digite: "));
 //            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
@@ -50,15 +51,13 @@ public class Compiler {
 //            program.add(new Instruction<>(VMConstants.LDS, "."));
 //            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
             // debug
-
+            this.program = program;
         } else {
-            log.setText(messages);
-            log.requestFocus();
-
-            return null;
+            this.messages = messages;
+            this.program = null;
+            return false;
         }
-
-        return program;
+        return true;
     }
 
     public String lexer() {
@@ -114,6 +113,14 @@ public class Compiler {
         }
 
         return tokens;
+    }
+
+    public ArrayList<Instruction<Integer, Object>> getProgram() {
+        return program;
+    }
+
+    public String getMessages() {
+        return messages;
     }
 
     public Parser getParser() {

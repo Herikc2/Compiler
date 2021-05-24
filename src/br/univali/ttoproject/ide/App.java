@@ -341,7 +341,13 @@ public class App extends JFrame {
         tabIO.setSelectedIndex(1);
         codeEditor.requestFocus();
         //var strLog = new Compiler().build(new StringReader(codeEditor.getText()));
-        program = new Compiler().compile(codeEditor.getText(), log);
+        var comp = new Compiler();
+        if(comp.compile(codeEditor.getText())){
+            program = comp.getProgram();
+        } else {
+            log.setText(comp.getMessages());
+            log.requestFocus();
+        }
         if (program != null) {
             compiled = true;
         }

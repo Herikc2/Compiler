@@ -53,21 +53,22 @@ public class VirtualMachine implements Runnable {
     }
 
     private void eval(Instruction<Integer, Object> inst) throws Exception {
-        switch (inst.getLeft()) {
+        switch (inst.getOpCode()) {
             case VMConstants.ADD -> add();
             case VMConstants.DIV -> div();
             case VMConstants.MUL -> mul();
             case VMConstants.SUB -> sub();
-            case VMConstants.ALB -> alb((int) inst.getRight());
-            case VMConstants.ALI -> ali((int) inst.getRight());
-            case VMConstants.ALR -> alr((int) inst.getRight());
-            case VMConstants.ALS -> als((int) inst.getRight());
-            case VMConstants.LDB -> ldb((boolean) inst.getRight());
-            case VMConstants.LDI -> ldi((int) inst.getRight());
-            case VMConstants.LDR -> ldr((float) inst.getRight());
-            case VMConstants.LDS -> lds((String) inst.getRight());
-            case VMConstants.LDV -> ldv((int) inst.getRight());
-            case VMConstants.STR -> str((int) inst.getRight());
+            case VMConstants.ALB -> alb((int) inst.getParameter());
+            case VMConstants.ALI -> ali((int) inst.getParameter());
+            case VMConstants.ALR -> alr((int) inst.getParameter());
+            case VMConstants.ALS -> als((int) inst.getParameter());
+            case VMConstants.LDB -> ldb((boolean) inst.getParameter());
+            case VMConstants.LDI -> ldi((int) inst.getParameter());
+            case VMConstants.LDR -> ldr((float) inst.getParameter());
+            case VMConstants.LDS -> lds((String) inst.getParameter());
+            case VMConstants.LDV -> ldv((int) inst.getParameter());
+            case VMConstants.STR -> str((int) inst.getParameter());
+            case VMConstants.STC -> stc((int) inst.getParameter());
             case VMConstants.AND -> and();
             case VMConstants.NOT -> not();
             case VMConstants.OR -> or();
@@ -77,11 +78,11 @@ public class VirtualMachine implements Runnable {
             case VMConstants.EQL -> eql();
             case VMConstants.SME -> sme();
             case VMConstants.SMR -> smr();
-            case VMConstants.JMF -> jmf((int) inst.getRight());
-            case VMConstants.JMP -> jmp((int) inst.getRight());
-            case VMConstants.JMT -> jmt((int) inst.getRight());
+            case VMConstants.JMF -> jmf((int) inst.getParameter());
+            case VMConstants.JMP -> jmp((int) inst.getParameter());
+            case VMConstants.JMT -> jmt((int) inst.getParameter());
             case VMConstants.STP -> stp();
-            case VMConstants.REA -> rea((int) inst.getRight());
+            case VMConstants.REA -> rea((int) inst.getParameter());
             case VMConstants.WRT -> wrt();
             default -> throw new Exception("Operation error.\n");
         }
@@ -201,6 +202,10 @@ public class VirtualMachine implements Runnable {
         stack[param] = stack[top];
         --top;
         ++pointer;
+    }
+
+    private void stc(int param) {
+
     }
 
     private void and() {
