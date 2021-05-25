@@ -348,7 +348,7 @@ public class App extends JFrame {
         codeEditor.requestFocus();
         //var strLog = new Compiler().build(new StringReader(codeEditor.getText()));
         var comp = new Compiler();
-        if(comp.compile(codeEditor.getText())){
+        if (comp.compile(codeEditor.getText())) {
             program = comp.getProgram();
             asmTablePane.setProgram(program);
             logPane.setText(comp.getMessages());
