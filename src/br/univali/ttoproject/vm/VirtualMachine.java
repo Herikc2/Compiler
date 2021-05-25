@@ -20,7 +20,7 @@ public class VirtualMachine implements Runnable {
     private volatile boolean stopped = false;
 
     public VirtualMachine(Console console, ArrayList<Instruction<Integer, Object>> program) {
-        stack = new Object[8];
+        stack = new Object[1024];
         pointer = 1;
         top = 0;
         this.console = console;
@@ -205,7 +205,11 @@ public class VirtualMachine implements Runnable {
     }
 
     private void stc(int param) {
-
+        for (int i = top - param; i < top - 1; ++i) {
+            stack[i] = stack[top];
+        }
+        --top;
+        ++pointer;
     }
 
     private void and() {

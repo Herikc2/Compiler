@@ -125,25 +125,25 @@ public class MenuBar extends JMenuBar {
         menuItem = new JMenuItem("Compile and Run");
         menuItem.addActionListener(e -> methods[MenuOptions.COMPILE_RUN.getID()].get());
         menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/compile_run.png"))));
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, keyCtrl));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, keyShift));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Compile");
         menuItem.addActionListener(e -> methods[MenuOptions.COMPILE.getID()].get());
         menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/build.png"))));
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, keyCtrl));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, keyShift));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Run");
         menuItem.addActionListener(e -> methods[MenuOptions.RUN.getID()].get());
         menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/run.png"))));
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7, keyCtrl));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7, keyShift));
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Stop");
         menuItem.addActionListener(e -> methods[MenuOptions.STOP.getID()].get());
         menuItem.setIcon(new ImageIcon(Objects.requireNonNull(App.class.getResource("/img/stop.png"))));
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F8, keyCtrl));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F8, keyShift));
         menu.add(menuItem);
 
         menu = new JMenu("Help");

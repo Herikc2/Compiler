@@ -26,8 +26,9 @@ public class App extends JFrame {
     private JPanel panelMain;
     private final CodeEditor codeEditor;
     private final JTabbedPane tabIO;
-    private final Console console;
-    private final Log log;
+    private Console console;
+    private final LogPane logPane;
+    private final AsmTablePane asmTablePane;
     private final ToolBar toolBar;
     private final StatusBar statusBar;
     private final JSplitPane splitPane;
@@ -114,13 +115,18 @@ public class App extends JFrame {
         var scpConsole = new JScrollPane(console);
 
         // log
-        log = new Log();
-        var scpLog = new JScrollPane(log);
+        logPane = new LogPane();
+        var scpLog = new JScrollPane(logPane);
+
+        // asm table
+        asmTablePane = new AsmTablePane();
+        var scpAsmTable = new JScrollPane(asmTablePane);
 
         // creating and setting up tab
         tabIO = new JTabbedPane();
-        tabIO.add("Run", scpConsole);
-        tabIO.add("Log", scpLog);
+        tabIO.add("Console", scpConsole);
+        tabIO.add("Log messages", scpLog);
+        tabIO.add("Object Code", scpAsmTable);
 
         // adding tab (console and log)
         splitPane.setRightComponent(tabIO);
@@ -344,12 +350,13 @@ public class App extends JFrame {
         var comp = new Compiler();
         if(comp.compile(codeEditor.getText())){
             program = comp.getProgram();
-        } else {
-            log.setText(comp.getMessages());
-            log.requestFocus();
-        }
-        if (program != null) {
+            asmTablePane.setProgram(program);
+            logPane.setText(comp.getMessages());
             compiled = true;
+        } else {
+            logPane.setText(comp.getMessages());
+            logPane.requestFocus();
+            compiled = false;
         }
 
         return true;
@@ -368,6 +375,7 @@ public class App extends JFrame {
         if (running) return false;
         if (program == null) return false;
 
+        console.reset();
         tabIO.setSelectedIndex(0);
         running = true;
         virtualMachine = new VirtualMachine(console, program);
@@ -439,7 +447,7 @@ public class App extends JFrame {
 
     public void clearOutputs() {
         console.reset();
-        log.setText("");
+        logPane.setText("");
     }
 
     public boolean pathExists(String testPath) {

@@ -1,6 +1,9 @@
 package br.univali.ttoproject.ide.components;
 
+import br.univali.ttoproject.ide.util.Debug;
+
 import javax.swing.*;
+import javax.swing.text.DefaultStyledDocument;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -20,17 +23,31 @@ public class Console extends JTextArea {
         //setFont(Settings.FONT);
         setFocusTraversalKeysEnabled(false);
         addKeyListener(new KeyAdapter() {
-            @Override public void keyTyped(KeyEvent e) { handleKeyTyped(e); }
-            @Override public void keyPressed(KeyEvent e) { handleKeyPressed(e); }
+            @Override
+            public void keyTyped(KeyEvent e) {
+                handleKeyTyped(e);
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                handleKeyPressed(e);
+            }
         });
         addMouseListener(new MouseAdapter() {
-            @Override public void mouseClicked(MouseEvent e) { handleMouseClicked(e); }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                handleMouseClicked(e);
+            }
         });
     }
 
     public void addContent(String content) {
-        append(content);
-        setCaretPosition(getText().length());
+        try {
+            append(content);
+            setCaretPosition(getText().length());
+        } catch (Error e) {
+            Debug.print(e.getMessage());
+        }
     }
 
     public void reset() {
@@ -100,7 +117,7 @@ public class Console extends JTextArea {
         }
     }
 
-    private void handleMouseClicked(MouseEvent event){
+    private void handleMouseClicked(MouseEvent event) {
         if (event.getButton() == MouseEvent.BUTTON3) {
             var popupMenu = new JPopupMenu();
             JMenuItem menuItem;

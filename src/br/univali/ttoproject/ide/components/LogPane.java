@@ -4,9 +4,9 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class Log extends JTextArea {
+public class LogPane extends JTextArea {
 
-    public Log(){
+    public LogPane(){
         setEditable(false);
         addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) { handleMouseClicked(e); }

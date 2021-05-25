@@ -5,6 +5,7 @@ import br.univali.ttoproject.compiler.parser.ParseException;
 import br.univali.ttoproject.compiler.parser.Parser;
 import br.univali.ttoproject.compiler.parser.ParserConstants;
 import br.univali.ttoproject.vm.Instruction;
+import br.univali.ttoproject.vm.VMConstants;
 
 import java.io.FileNotFoundException;
 import java.io.Reader;
@@ -42,14 +43,14 @@ public class Compiler {
         if (messages.isEmpty()) {
             this.messages = "Program successfully compiled.";
             // debug
-//            program.add(new Instruction<>(VMConstants.LDS, "Digite: "));
-//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
-//            program.add(new Instruction<>(VMConstants.REA, VMConstants.CHAR));
-//            program.add(new Instruction<>(VMConstants.LDS, "Bem vindo, "));
-//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
-//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
-//            program.add(new Instruction<>(VMConstants.LDS, "."));
-//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+            program.add(new Instruction<>(VMConstants.LDS, "Digite: "));
+            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+            program.add(new Instruction<>(VMConstants.REA, VMConstants.CHAR));
+            program.add(new Instruction<>(VMConstants.LDS, "Bem vindo, "));
+            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+            program.add(new Instruction<>(VMConstants.LDS, "."));
+            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
             // debug
             this.program = program;
         } else {

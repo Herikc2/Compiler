@@ -25,8 +25,6 @@ public class CodeEditor extends JTextPane {
     private JPopupMenu pmSuggestions;
     private ArrayList<JMenuItem> suggestions;
 
-    // https://www.ibm.com/docs/en/sdk-java-technology/8?topic=applications-default-swing-key-bindings
-
     public CodeEditor() {
         undoStates = new Stack<>();
         redoStates = new Stack<>();
