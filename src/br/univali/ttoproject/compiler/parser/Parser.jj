@@ -12,11 +12,11 @@ package br.univali.ttoproject.compiler.parser;
 import br.univali.ttoproject.vm.Instruction;
 import br.univali.ttoproject.vm.VMConstants;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Parser {
     public String errorMessages = "";
     public ArrayList<Instruction<Integer, Object>> program = new ArrayList<Instruction<Integer, Object>>();
+    private SemanticAnalysis semanticAnalysis = new SemanticAnalysis();
 }
 
 PARSER_END(Parser)
@@ -127,14 +127,7 @@ void Start() :
 {
     Program() <EOF>
     {
-    program.add(new Instruction(VMConstants.LDS, "Digite: "));
-    program.add(new Instruction(VMConstants.WRT, VMConstants.NULL_PARAM));
-    program.add(new Instruction(VMConstants.REA, VMConstants.CHAR));
-    program.add(new Instruction(VMConstants.LDS, "Bem vindo, "));
-    program.add(new Instruction(VMConstants.WRT, VMConstants.NULL_PARAM));
-    program.add(new Instruction(VMConstants.WRT, VMConstants.NULL_PARAM));
-    program.add(new Instruction(VMConstants.LDS, "."));
-    program.add(new Instruction(VMConstants.WRT, VMConstants.NULL_PARAM));
+        program = semanticAnalysis.getProgram();
     }
 }
 
@@ -289,6 +282,7 @@ void NotVariableDecl() :
      }
     IdentifierListValue()
     Value()
+
     try {
         <DOT>
     } catch (ParseException e) {
@@ -374,6 +368,9 @@ void IdentifierList() :
         if (token.kind != EOF)
             errorMessages += "Unexpected token '" + token.image + "' at line " + token.beginLine + ", column " + token.beginColumn + ". "
                            + "Expected an identifier.\n";
+    }
+    {
+
     }
     Index() IdentifierList1()
 }

@@ -5,6 +5,7 @@ public class Instruction<L, R> {
     private final L opCode;
     private final R parameter;
 
+
     public Instruction(L opCode, R parameter) {
         assert opCode != null;
         assert parameter != null;
