@@ -1,4 +1,4 @@
-package br.univali.ttoproject.compiler.parser;
+package br.univali.ttoproject.compiler;
 
 import br.univali.ttoproject.vm.Instruction;
 import br.univali.ttoproject.vm.VMConstants;
@@ -19,11 +19,11 @@ public class SemanticAnalysis {
     private Stack<String> deviationStack;
     private List<String[]> symbolTable;
 
-    private ArrayList<Instruction<Integer, Object>> program = new ArrayList<Instruction<Integer, Object>>();
-
     private String recognizedIdentifier;
 
-    void SemanticAnalysis(){
+    private ArrayList<Instruction<Integer, Object>> program;
+
+    public SemanticAnalysis() {
         this.context = "";
         this.VT = 0;
         this.VP = 0;
@@ -31,124 +31,125 @@ public class SemanticAnalysis {
         this.kind = 0;
         this.pointer = 0;
         this.indexedVariable = false;
-        this.deviationStack = new Stack<String>();
-        this.symbolTable = new ArrayList<String[]>();
+        this.deviationStack = new Stack<>();
+        this.symbolTable = new ArrayList<>();
         this.recognizedIdentifier = "";
+        this.program = new ArrayList<>();
     }
 
-    public void action1(){
-        program.add(new Instruction(VMConstants.STP, VMConstants.NULL_PARAM));
+    public void action1() {
+        program.add(new Instruction<>(VMConstants.STP, VMConstants.NULL_PARAM));
     }
 
-    public void action2(String identifier){
+    public void action2(String identifier) {
         insertSymbolTable(identifier, "0", "-", "-");
     }
 
-    public void action3(){
+    public void action3() {
         this.context = "constant";
         this.VIT = 0;
     }
 
-    public void action4(){
-        somaVP(this.VIT);
+    public void action4() {
+        VPAdd(this.VIT);
         switch (this.kind) {
-            case 1, 5:
-                this.program.add(new Instruction(VMConstants.ALI, this.VP));
-                somaPonteiro(1);
-                break;
-            case 2, 6:
-                this.program.add(new Instruction(VMConstants.ALR, this.VP));
-                somaPonteiro(1);
-                break;
-            case 3, 7:
-                this.program.add(new Instruction(VMConstants.ALS, this.VP));
-                somaPonteiro(1);
-                break;
-            case 4:
-                this.program.add(new Instruction(VMConstants.ALB, this.VP));
-                somaPonteiro(1);
-                break;
+            case 1, 5 -> {
+                this.program.add(new Instruction<>(VMConstants.ALI, this.VP));
+                pointerAdd(1);
+            }
+            case 2, 6 -> {
+                this.program.add(new Instruction<>(VMConstants.ALR, this.VP));
+                pointerAdd(1);
+            }
+            case 3, 7 -> {
+                this.program.add(new Instruction<>(VMConstants.ALS, this.VP));
+                pointerAdd(1);
+            }
+            case 4 -> {
+                this.program.add(new Instruction<>(VMConstants.ALB, this.VP));
+                pointerAdd(1);
+            }
         }
-        if(this.kind >= 1 && this.kind <= 4) {
+        if (this.kind >= 1 && this.kind <= 4) {
             this.VP = 0;
             this.VIT = 0;
         }
     }
 
-    public void action5(String value){
-        switch(this.kind) {
-            case 5:
-                this.program.add(new Instruction(VMConstants.LDI, value));
-                somaPonteiro(1);
-                break;
-            case 6:
-                this.program.add(new Instruction(VMConstants.LDR, value));
-                somaPonteiro(1);
-                break;
-            case 7:
-                this.program.add(new Instruction(VMConstants.LDS, value));
-                somaPonteiro(1);
-                break;
+    public void action5(String value) {
+        switch (this.kind) {
+            case 5 -> {
+                this.program.add(new Instruction<>(VMConstants.LDI, value));
+                pointerAdd(1);
+            }
+            case 6 -> {
+                this.program.add(new Instruction<>(VMConstants.LDR, value));
+                pointerAdd(1);
+            }
+            case 7 -> {
+                this.program.add(new Instruction<>(VMConstants.LDS, value));
+                pointerAdd(1);
+            }
         }
 
-        this.program.add(new Instruction(VMConstants.STC, this.VP));
-        somaPonteiro(1);
+        this.program.add(new Instruction<>(VMConstants.STC, this.VP));
+        pointerAdd(1);
         this.VP = 0;
     }
 
-    public void action6(){
+    public void action6() {
         this.context = "variable";
     }
 
-    public void action7(){
-        if(context == "variable") {
+    public void action7() {
+        if (context.equals("variable")) {
             this.kind = 1;
-        }else{
+        } else {
             this.kind = 5;
         }
     }
 
-    public void action8(){
-        if(context == "variable") {
+    public void action8() {
+        if (context.equals("variable")) {
             this.kind = 2;
-        }else{
+        } else {
             this.kind = 6;
         }
     }
 
-    public void action9(){
-        if(context == "variable") {
+    public void action9() {
+        if (context.equals("variable")) {
             this.kind = 3;
-        }else{
+        } else {
             this.kind = 7;
         }
     }
 
-    public String action10(){
-        if(context == "variable") {
+    public String action10() {
+        if (context.equals("variable")) {
             this.kind = 4;
             return "";
-        }else{
+        } else {
             return "Invalid type for constant.\n";
         }
     }
 
-    public String action11(String identifier){
-        if(existsSymbolTable(identifier)){
+    public String action11(String identifier) {
+        if (existsSymbolTable(identifier)) {
             return "Identifier already declared.\n";
-        }else{
-            somaVT(1);
-            somaVP(1);
+        } else {
+            VTAdd(1);
+            VPAdd(1);
             insertSymbolTable(identifier, "-");
             return "";
         }
     }
 
-    public String action12(String identifier){
-        if(this.context.equals("variable")) {
-            if(existsSymbolTable(identifier)){
+    public String action12(String identifier) {
+        if (this.context.equals("variable")) {
+            if (existsSymbolTable(identifier)) {
                 return "Identifier already declared.\n";
-            }else{
+            } else {
                 this.indexedVariable = false;
                 this.recognizedIdentifier = identifier;
             }
@@ -159,39 +160,39 @@ public class SemanticAnalysis {
         return "";
     }
 
-    public void action13(){
+    public void action13() {
     }
 
-    public boolean existsSymbolTable(String identifier){
-        for (String[] row: symbolTable)
-            for(String item: row)
-                if(item.equals(identifier))
+    public boolean existsSymbolTable(String identifier) {
+        for (String[] row : symbolTable)
+            for (String item : row)
+                if (item.equals(identifier))
                     return true;
 
         return false;
     }
 
-    public void insertSymbolTable(String identifier, String parameter){
-        symbolTable.add(new String[] {identifier, Integer.toString(this.kind), Integer.toString(this.VT), parameter} );
+    public void insertSymbolTable(String identifier, String parameter) {
+        symbolTable.add(new String[]{identifier, Integer.toString(this.kind), Integer.toString(this.VT), parameter});
     }
 
-    public void insertSymbolTable(String identifier, String parameter1, String parameter2, String parameter3){
-        symbolTable.add(new String[] {identifier, parameter1, parameter2, parameter3} );
+    public void insertSymbolTable(String identifier, String parameter1, String parameter2, String parameter3) {
+        symbolTable.add(new String[]{identifier, parameter1, parameter2, parameter3});
     }
 
-    public void somaPonteiro(int value){
+    public void pointerAdd(int value) {
         this.pointer += value;
     }
 
-    public void somaVT(int value){
+    public void VTAdd(int value) {
         this.VT += value;
     }
 
-    public void somaVP(int value){
+    public void VPAdd(int value) {
         this.VP += value;
     }
 
-    public void somaVIT(int value){
+    public void VITAdd(int value) {
         this.VIT += value;
     }
 
