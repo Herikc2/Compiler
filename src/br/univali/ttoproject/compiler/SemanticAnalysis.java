@@ -20,6 +20,9 @@ public class SemanticAnalysis {
     private List<String[]> symbolTable;
 
     private String recognizedIdentifier;
+    private String identifierAction11;
+    private String identifierAction12;
+    private int constantAction14;
 
     private ArrayList<Instruction<Integer, Object>> program;
 
@@ -141,6 +144,7 @@ public class SemanticAnalysis {
             VTAdd(1);
             VPAdd(1);
             insertSymbolTable(identifier, "-");
+            this.identifierAction11 = identifier;
             return "";
         }
     }
@@ -152,6 +156,7 @@ public class SemanticAnalysis {
             } else {
                 this.indexedVariable = false;
                 this.recognizedIdentifier = identifier;
+                this.identifierAction12 = identifier;
             }
         } else {
             this.indexedVariable = false;
@@ -160,7 +165,25 @@ public class SemanticAnalysis {
         return "";
     }
 
-    public void action13() {
+    public String action13() {
+        switch (this.context){
+            case "variable":
+                if(!indexedVariable){
+                    VTAdd(1);
+                    VPAdd(1);
+                    insertSymbolTable(this.identifierAction11,"-");
+                }else{
+                    VITAdd(constantAction14);
+                    int incrementedVT = this.VT + 1;
+                    insertSymbolTable(identifierAction12, Integer.toString(this.kind), Integer.toString(incrementedVT), Integer.toString(constantAction14));
+                    VTAdd(constantAction14);
+                }
+                break;
+            case "assignment":
+                break;
+        }
+
+        return "";
     }
 
     public boolean existsSymbolTable(String identifier) {
