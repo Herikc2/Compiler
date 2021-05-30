@@ -9,7 +9,11 @@ import java.util.Stack;
 
 public class SemanticAnalysis {
 
-    private String context;
+    private final int VARIABLE = 0;
+    private final int ASSIGNMENT = 1;
+    private final int CONSTANT = 2;
+
+    private int context;
     private int VT;
     private int VP;
     private int VIT;
@@ -20,6 +24,7 @@ public class SemanticAnalysis {
     private List<String[]> symbolTable;
 
     private String recognizedIdentifier;
+    private int recognizedConstant;
     private String identifierAction11;
     private String identifierAction12;
     private int constantAction14;
@@ -27,7 +32,6 @@ public class SemanticAnalysis {
     private ArrayList<Instruction<Integer, Object>> program;
 
     public SemanticAnalysis() {
-        this.context = "";
         this.VT = 0;
         this.VP = 0;
         this.VIT = 0;
@@ -49,7 +53,7 @@ public class SemanticAnalysis {
     }
 
     public void action3() {
-        this.context = "constant";
+        this.context = CONSTANT;
         this.VIT = 0;
     }
 
@@ -101,11 +105,11 @@ public class SemanticAnalysis {
     }
 
     public void action6() {
-        this.context = "variable";
+        this.context = VARIABLE;
     }
 
     public void action7() {
-        if (context.equals("variable")) {
+        if (context == VARIABLE) {
             this.kind = 1;
         } else {
             this.kind = 5;
@@ -113,7 +117,7 @@ public class SemanticAnalysis {
     }
 
     public void action8() {
-        if (context.equals("variable")) {
+        if (context == VARIABLE) {
             this.kind = 2;
         } else {
             this.kind = 6;
@@ -121,7 +125,7 @@ public class SemanticAnalysis {
     }
 
     public void action9() {
-        if (context.equals("variable")) {
+        if (context == VARIABLE) {
             this.kind = 3;
         } else {
             this.kind = 7;
@@ -129,7 +133,7 @@ public class SemanticAnalysis {
     }
 
     public String action10() {
-        if (context.equals("variable")) {
+        if (context == VARIABLE) {
             this.kind = 4;
             return "";
         } else {
@@ -150,7 +154,7 @@ public class SemanticAnalysis {
     }
 
     public String action12(String identifier) {
-        if (this.context.equals("variable")) {
+        if (this.context == VARIABLE) {
             if (existsSymbolTable(identifier)) {
                 return "Identifier already declared.\n";
             } else {
@@ -167,7 +171,7 @@ public class SemanticAnalysis {
 
     public String action13() {
         switch (this.context){
-            case "variable":
+            case VARIABLE:
                 if(!indexedVariable){
                     VTAdd(1);
                     VPAdd(1);
@@ -179,11 +183,24 @@ public class SemanticAnalysis {
                     VTAdd(constantAction14);
                 }
                 break;
-            case "assignment":
+            case ASSIGNMENT:
                 break;
         }
 
         return "";
+    }
+
+    public void action14(String identifier){
+        recognizedConstant = Integer.parseInt(identifier);
+        this.indexedVariable = true;
+    }
+
+    public void action15(){
+        this.context = ASSIGNMENT;
+    }
+
+    public void action16(){
+
     }
 
     public boolean existsSymbolTable(String identifier) {
@@ -219,11 +236,11 @@ public class SemanticAnalysis {
         this.VIT += value;
     }
 
-    public String getContext() {
+    public int getContext() {
         return context;
     }
 
-    public void setContext(String context) {
+    public void setContext(int context) {
         this.context = context;
     }
 
