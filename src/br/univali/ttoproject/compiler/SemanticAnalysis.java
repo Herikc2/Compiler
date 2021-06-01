@@ -364,12 +364,12 @@ public class SemanticAnalysis {
     }
 
     public void action48(){
-        program.add(new Instruction<>(VMConstants.LDB, 1));
+        program.add(new Instruction<>(VMConstants.LDB, "TRUE"));
         this.pointer++;
     }
 
     public void action49(){
-        program.add(new Instruction<>(VMConstants.LDB, 0));
+        program.add(new Instruction<>(VMConstants.LDB, "FALSE"));
         this.pointer++;
     }
 
