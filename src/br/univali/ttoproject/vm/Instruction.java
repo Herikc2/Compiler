@@ -3,7 +3,7 @@ package br.univali.ttoproject.vm;
 public class Instruction<L, R> {
 
     private final L opCode;
-    private final R parameter;
+    private R parameter;
 
 
     public Instruction(L opCode, R parameter) {
@@ -20,6 +20,10 @@ public class Instruction<L, R> {
 
     public R getParameter() {
         return parameter;
+    }
+
+    public void setParameter(R value) {
+        this.parameter = value;
     }
 
 }

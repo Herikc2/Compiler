@@ -12,6 +12,7 @@ public class SemanticAnalysis {
     private final int VARIABLE = 0;
     private final int ASSIGNMENT = 1;
     private final int CONSTANT = 2;
+    private final int DATA_INPUT = 3;
 
     private int context;
     private int VT;
@@ -48,8 +49,8 @@ public class SemanticAnalysis {
         program.add(new Instruction<>(VMConstants.STP, VMConstants.NULL_PARAM));
     }
 
-    public void action2(String identifier) {
-        insertSymbolTable(identifier, "0", "-", "-");
+    public void action2(Object identifier) {
+        insertSymbolTable(identifier.toString(), "0", "-", "-");
     }
 
     public void action3() {
@@ -58,23 +59,23 @@ public class SemanticAnalysis {
     }
 
     public void action4() {
-        VPAdd(this.VIT);
+        this.VP += this.VIT;
         switch (this.kind) {
             case 1, 5 -> {
                 this.program.add(new Instruction<>(VMConstants.ALI, this.VP));
-                pointerAdd(1);
+                this.pointer++;
             }
             case 2, 6 -> {
                 this.program.add(new Instruction<>(VMConstants.ALR, this.VP));
-                pointerAdd(1);
+                this.pointer++;
             }
             case 3, 7 -> {
                 this.program.add(new Instruction<>(VMConstants.ALS, this.VP));
-                pointerAdd(1);
+                this.pointer++;
             }
             case 4 -> {
                 this.program.add(new Instruction<>(VMConstants.ALB, this.VP));
-                pointerAdd(1);
+                this.pointer++;
             }
         }
         if (this.kind >= 1 && this.kind <= 4) {
@@ -83,24 +84,24 @@ public class SemanticAnalysis {
         }
     }
 
-    public void action5(String value) {
+    public void action5(Object value) {
         switch (this.kind) {
             case 5 -> {
                 this.program.add(new Instruction<>(VMConstants.LDI, value));
-                pointerAdd(1);
+                this.pointer++;
             }
             case 6 -> {
                 this.program.add(new Instruction<>(VMConstants.LDR, value));
-                pointerAdd(1);
+                this.pointer++;
             }
             case 7 -> {
                 this.program.add(new Instruction<>(VMConstants.LDS, value));
-                pointerAdd(1);
+                this.pointer++;
             }
         }
 
         this.program.add(new Instruction<>(VMConstants.STC, this.VP));
-        pointerAdd(1);
+        this.pointer++;
         this.VP = 0;
     }
 
@@ -141,30 +142,30 @@ public class SemanticAnalysis {
         }
     }
 
-    public String action11(String identifier) {
-        if (existsSymbolTable(identifier)) {
+    public String action11(Object identifier) {
+        if (existsSymbolTable(identifier.toString())) {
             return "Identifier already declared.\n";
         } else {
-            VTAdd(1);
-            VPAdd(1);
-            insertSymbolTable(identifier, "-");
-            this.identifierAction11 = identifier;
+            this.VT++;
+            this.VP++;
+            insertSymbolTable(identifier.toString(), "-");
+            this.identifierAction11 = identifier.toString();
             return "";
         }
     }
 
-    public String action12(String identifier) {
+    public String action12(Object identifier) {
         if (this.context == VARIABLE) {
-            if (existsSymbolTable(identifier)) {
+            if (existsSymbolTable(identifier.toString())) {
                 return "Identifier already declared.\n";
             } else {
                 this.indexedVariable = false;
-                this.recognizedIdentifier = identifier;
-                this.identifierAction12 = identifier;
+                this.recognizedIdentifier = identifier.toString();
+                this.identifierAction12 = identifier.toString();
             }
         } else {
             this.indexedVariable = false;
-            this.recognizedIdentifier = identifier;
+            this.recognizedIdentifier = identifier.toString();
         }
         return "";
     }
@@ -173,25 +174,27 @@ public class SemanticAnalysis {
         switch (this.context){
             case VARIABLE:
                 if(!indexedVariable){
-                    VTAdd(1);
-                    VPAdd(1);
+                    this.VT++;
+                    this.VP++;
                     insertSymbolTable(this.identifierAction11,"-");
                 }else{
-                    VITAdd(constantAction14);
+                    this.VIT += constantAction14;
                     int incrementedVT = this.VT + 1;
                     insertSymbolTable(identifierAction12, Integer.toString(this.kind), Integer.toString(incrementedVT), Integer.toString(constantAction14));
-                    VTAdd(constantAction14);
+                    this.VT += constantAction14;
                 }
                 break;
             case ASSIGNMENT:
+                break;
+            case DATA_INPUT:
                 break;
         }
 
         return "";
     }
 
-    public void action14(String identifier){
-        recognizedConstant = Integer.parseInt(identifier);
+    public void action14(Object identifier){
+        recognizedConstant = Integer.parseInt((String) identifier);
         this.indexedVariable = true;
     }
 
@@ -200,7 +203,238 @@ public class SemanticAnalysis {
     }
 
     public void action16(){
+        // TO DO
+    }
 
+    public void action17(){
+        this.context = DATA_INPUT;
+    }
+
+    public void action18(){
+        program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action19(){
+
+    }
+
+    public void action20(){
+
+    }
+
+    public void action21(Object integerConstant){
+        program.add(new Instruction<>(VMConstants.LDI, integerConstant));
+        this.pointer++;
+    }
+
+    public void action22(Object floatConstant){
+        program.add(new Instruction<>(VMConstants.LDR, floatConstant));
+        this.pointer++;
+    }
+
+    public void action23(Object literalConstant){
+        program.add(new Instruction<>(VMConstants.LDS, literalConstant));
+        this.pointer++;
+    }
+
+    public void action24(){
+        deviationStack.pop();
+        replaceLastInstruction("?", String.valueOf(this.pointer));
+    }
+
+    public void action25(){
+        program.add(new Instruction<>(VMConstants.JMF, "?"));
+        this.pointer++;
+        deviationStack.push(String.valueOf(this.pointer - 1));
+    }
+
+    public void action26(){
+        program.add(new Instruction<>(VMConstants.JMT, "?"));
+        this.pointer++;
+        deviationStack.push(String.valueOf(this.pointer - 1));
+    }
+
+    public void action27(){
+        deviationStack.pop();
+        replaceLastInstruction("?", String.valueOf(this.pointer + 1));
+        program.add(new Instruction<>(VMConstants.JMP, "?"));
+        this.pointer++;
+        deviationStack.push(String.valueOf(this.pointer - 1));
+    }
+
+    public void action28(){
+        deviationStack.push(String.valueOf(this.pointer));
+    }
+
+    public void action29(){
+        String address = deviationStack.pop();
+        program.add(new Instruction<>(VMConstants.JMT, address));
+        this.pointer++;
+    }
+
+    public void action30(){
+        deviationStack.push(String.valueOf(this.pointer));
+    }
+
+    public void action31(){
+        program.add(new Instruction<>(VMConstants.JMF, "?"));
+        this.pointer++;
+        deviationStack.push(String.valueOf(this.pointer - 1));
+    }
+
+    public void action32(){
+        deviationStack.pop();
+        replaceLastInstruction("?", String.valueOf(this.pointer + 1));
+        String address = deviationStack.pop();
+        program.add(new Instruction<>(VMConstants.JMP, address));
+        this.pointer++;
+    }
+
+    public void action33(){
+        program.add(new Instruction<>(VMConstants.EQL, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action34(){
+        program.add(new Instruction<>(VMConstants.DIF, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action35(){
+        program.add(new Instruction<>(VMConstants.SMR, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action36(){
+        program.add(new Instruction<>(VMConstants.BGR, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action37(){
+        program.add(new Instruction<>(VMConstants.SME, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action38(){
+        program.add(new Instruction<>(VMConstants.BGE, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action39(){
+        program.add(new Instruction<>(VMConstants.ADD, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action40(){
+        program.add(new Instruction<>(VMConstants.SUB, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action41(){
+        program.add(new Instruction<>(VMConstants.OR, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action42(){
+        program.add(new Instruction<>(VMConstants.MUL, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action43(){
+        program.add(new Instruction<>(VMConstants.DIV, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action44(){
+        // TO DO
+    }
+
+    public void action45(){
+        // TO DO
+    }
+
+    public void action46(){
+        program.add(new Instruction<>(VMConstants.AND, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public void action47(){
+        // TO DO
+    }
+
+    public void action48(){
+        program.add(new Instruction<>(VMConstants.LDB, 1));
+        this.pointer++;
+    }
+
+    public void action49(){
+        program.add(new Instruction<>(VMConstants.LDB, 0));
+        this.pointer++;
+    }
+
+    public void action50(){
+        program.add(new Instruction<>(VMConstants.NOT, VMConstants.NULL_PARAM));
+        this.pointer++;
+    }
+
+    public int getLastIndexInstruction(String value) {
+        for(int i = program.size(); i  >= 0; i--){
+            Instruction<Integer, Object> temp = program.get(i);
+
+            if(temp.getParameter().toString().equals(value))
+                return i;
+        }
+
+        return (-1);
+    }
+
+    public int getFirstIndexInstruction(String value) {
+        for(int i = 0; i  < program.size(); i++){
+            Instruction<Integer, Object> temp = program.get(i);
+
+            if(temp.getParameter().toString().equals(value))
+                return i;
+        }
+
+        return (-1);
+    }
+
+    public void replaceLastInstruction(String oldValue, String newValue){
+        int index = getLastIndexInstruction(oldValue);
+
+        if(index != (-1))
+            program.get(index).setParameter(newValue);
+    }
+
+    public void replaceFirstInstruction(String oldValue, String newValue){
+        int index = getFirstIndexInstruction(oldValue);
+
+        if(index != (-1))
+            program.get(index).setParameter(newValue);
+    }
+
+    public int[] getIndexSymbolTable(String value){
+
+        for(int i = symbolTable.size() - 1; i >= 0; i--)
+        {
+            String[] temp = symbolTable.get(i);
+            for(int j = temp.length - 1; j >= 0; j--)
+            {
+                String item = temp[j];
+                if(item.equals(value))
+                    return new int[]{i, j};
+            }
+        }
+
+        return new int[]{-1, -1};
+    }
+
+    public void replaceSymbolTable(String oldValue, String newValue){
+        int[] index = getIndexSymbolTable(oldValue);
+
+        if(index[0] != (-1) && index[1] != (-1))
+            symbolTable.get(index[0])[index[1]] = newValue;
     }
 
     public boolean existsSymbolTable(String identifier) {
@@ -218,22 +452,6 @@ public class SemanticAnalysis {
 
     public void insertSymbolTable(String identifier, String parameter1, String parameter2, String parameter3) {
         symbolTable.add(new String[]{identifier, parameter1, parameter2, parameter3});
-    }
-
-    public void pointerAdd(int value) {
-        this.pointer += value;
-    }
-
-    public void VTAdd(int value) {
-        this.VT += value;
-    }
-
-    public void VPAdd(int value) {
-        this.VP += value;
-    }
-
-    public void VITAdd(int value) {
-        this.VIT += value;
     }
 
     public int getContext() {
