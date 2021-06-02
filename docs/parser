@@ -1,0 +1,337 @@
+
+void Start() :
+{}
+{
+    Program() <EOF>
+    {
+        program = semanticAnalysis.getProgram();
+    }
+}
+
+void Program() :
+{}
+{
+    Header() <PROGRAM> <LBRACE> Define() Execute() <RBRACE> ProgramIdentifier()
+}
+
+void Header() :
+{}
+{
+    <HEADER> <CHAR_CONST>
+|   Epsilon()
+}
+
+void ProgramIdentifier() :
+{}
+{
+    <IDENTIFIER>
+|   Epsilon()
+}
+
+void Define() :
+{}
+{
+    <DEFINE> <LBRACE> VariableBlock() <RBRACE>
+|   Epsilon()
+}
+
+void VariableBlock() :
+{}
+{
+    NotVariable() VariableSel1()
+|   Variable() VariableSel2()
+}
+
+void VariableSel1() :
+{}
+{
+    Variable()
+|   Epsilon()
+}
+
+void VariableSel2() :
+{}
+{
+    NotVariable()
+|   Epsilon()
+}
+
+void Execute() :
+{}
+{
+    <EXECUTE> CommandBlock()
+}
+
+void NotVariable() :
+{}
+{
+    <NOT> <VARIABLE> NotVariableDecl() NotVariableSel()
+}
+
+void NotVariableSel() :
+{}
+{
+    NotVariableDecl() NotVariableSel()
+|   Epsilon()
+}
+
+void NotVariableDecl() :
+{}
+{
+    Type() <IS> IdentifierListValue() Value() <DOT>
+}
+
+void IdentifierListValue() :
+{}
+{
+    <IDENTIFIER> IdentifierListValue1()
+}
+
+void IdentifierListValue1() :
+{}
+{
+    <COMMA> IdentifierListValue()
+|   Epsilon()
+}
+
+void Variable() :
+{}
+{
+    <VARIABLE> VariableDecl() VariableSel()
+}
+
+void VariableSel() :
+{}
+{
+    VariableDecl() VariableSel()
+|   Epsilon()
+}
+
+void VariableDecl() :
+{}
+{
+    Type() <IS> IdentifierList() <DOT>
+}
+
+void IdentifierList() :
+{}
+{
+    <IDENTIFIER> Index() IdentifierList1()
+}
+
+void IdentifierList1() :
+{}
+{
+    <COMMA> IdentifierList()
+|   Epsilon()
+}
+
+void Set() :
+{}
+{
+    <SET> Expression() <TO> IdentifierList()
+}
+
+void Get() :
+{}
+{
+    <GET> <LBRACE> IdentifierList() <RBRACE>
+}
+
+void Put() :
+{}
+{
+    <PUT> <LBRACE> ValueIdentifierList() <RBRACE>
+}
+
+void ValueIdentifierList() :
+{}
+{
+    <IDENTIFIER> Index() ValueIdentifierList1()
+|   Value() ValueIdentifierList1()
+}
+
+void ValueIdentifierList1() :
+{}
+{
+    <COMMA> ValueIdentifierList()
+|   Epsilon()
+}
+
+void Verify() :
+{}
+{
+    <VERIFY> Expression() <IS> FalseTrueSel()
+}
+
+void FalseTrueSel() :
+{}
+{
+    TrueBlock() FalseTrueSel1()
+|   FalseBlock() FalseTrueSel2()
+}
+
+void FalseTrueSel1() :
+{}
+{
+    <IS> FalseBlock()
+|   Epsilon()
+}
+
+void FalseTrueSel2() :
+{}
+{
+    <IS> TrueBlock()
+|   Epsilon()
+}
+
+void TrueBlock() :
+{}
+{
+    <TRUE> CommandBlock()
+}
+
+void FalseBlock() :
+{}
+{
+    <FALSE> CommandBlock()
+}
+
+void Loop() :
+{}
+{
+    <LOOP> CommandBlock() <WHILE> Expression() <IS> <TRUE>
+}
+
+void While() :
+{}
+{
+    <WHILE>Expression() <IS> <TRUE> <DO> CommandBlock()
+}
+
+void CommandBlock() :
+{}
+{
+    <LBRACE> Command() CommandList() <RBRACE>
+}
+
+void CommandList() :
+{}
+{
+    Command() CommandList()
+|   Epsilon()
+}
+
+void Command() :
+{}
+{
+    Set() <DOT>
+|   Get() <DOT>
+|   Put() <DOT>
+|   Verify() <DOT>
+|   Loop() <DOT>
+|   While() <DOT>
+}
+
+void Expression() :
+{}
+{
+    ExprArithLogic() ExpressionSel()
+}
+
+void ExpressionSel() :
+{}
+{
+    <EQUAL> ExprArithLogic()
+|   <DIFFERENT> ExprArithLogic()
+|   <SMALLER> ExprArithLogic()
+|   <GREATER> ExprArithLogic()
+|   <SMALLER_EQUAL> ExprArithLogic()
+|   <GREATER_EQUAL> ExprArithLogic()
+|   Epsilon()
+}
+
+void ExprArithLogic() :
+{}
+{
+    Term2() LessPriority()
+}
+
+void LessPriority() :
+{}
+{
+    <PLUS> Term2() LessPriority()
+|   <MINUS> Term2() LessPriority()
+|   <OR> Term2() LessPriority()
+|   Epsilon()
+}
+
+void Term2() :
+{}
+{
+    Term1() MidPriority()
+}
+
+void MidPriority() :
+{}
+{
+    <MULTIPLICATION> Term1() MidPriority()
+|   <DIVISION> Term1() MidPriority()
+|   <INTEGER_DIVISION> Term1() MidPriority()
+|   <REST> Term1() MidPriority()
+|   <AND> Term1() MidPriority()
+|   Epsilon()
+}
+
+void Term1() :
+{}
+{
+    Element() GreatPriority()
+}
+
+void GreatPriority() :
+{}
+{
+    <POWER> Element() GreatPriority()
+|   Epsilon()
+}
+
+void Element() :
+{}
+{
+    <IDENTIFIER> Index()
+|   Value()
+|   <LPARENTHESES> Expression() <RPARANTHESES>
+|   <NOT> <LPARENTHESES> Expression() <RPARANTHESES>
+}
+
+void Index() :
+{}
+{
+    <LBRACKET> <NATURAL_CONST> <RBRACKET>
+|   Epsilon()
+}
+
+void Value() :
+{}
+{
+    <CHAR_CONST>
+|   <NATURAL_CONST>
+|   <REAL_CONST>
+|   <TRUE>
+|   <FALSE>
+}
+
+void Type() :
+{}
+{
+    <CHAR_TYPE>
+|   <NATURAL_TYPE>
+|   <REAL_TYPE>
+|   <BOOLEAN_TYPE>
+}
+
+void Epsilon() : {}
+{
+     {}
+}

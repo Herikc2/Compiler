@@ -134,10 +134,10 @@ void Start() :
 void Program() :
 {}
 {
-    Header() <PROGRAM> <LBRACE> Define() Execute() <RBRACE> ProgramIdentifier()
+    Comment() <PROGRAM> <LBRACE> VarAndConstDecl() ProgramBody() <RBRACE> ProgramIdentifier()
 }
 
-void Header() :
+void Comment() :
 {}
 {
     <HEADER> <CHAR_CONST>
@@ -151,210 +151,168 @@ void ProgramIdentifier() :
 |   Epsilon()
 }
 
-void Define() :
+void VarAndConstDecl() :
 {}
 {
-    <DEFINE> <LBRACE> VariableBlock() <RBRACE>
+    <DEFINE> <LBRACE> ConstsAndVars() <RBRACE>
 |   Epsilon()
 }
 
-void VariableBlock() :
+void ConstsAndVars() :
 {}
 {
-    NotVariable() VariableSel1()
-|   Variable() VariableSel2()
+    ConstDecl() Vars2()
+|   VarDecl() Consts2()
 }
 
-void VariableSel1() :
+void ConstsDecl() :
 {}
 {
-    Variable()
+    <NOT> <VARIABLE> Consts()
+}
+
+void Consts() :
+{}
+{
+    Type() <IS> IdentifierConstList() Value() <DOT> Consts1()
+}
+
+void Consts1() :
+{}
+{
+    Consts()
 |   Epsilon()
 }
 
-void VariableSel2() :
+void Consts2() :
 {}
 {
-    NotVariable()
+    ConstsDecl()
 |   Epsilon()
 }
 
-void Execute() :
+void VarsDecl() :
 {}
 {
-    <EXECUTE> CommandBlock()
+    <VARIABLE> Vars()
 }
 
-void NotVariable() :
+void Vars() :
 {}
 {
-    <NOT> <VARIABLE> NotVariableDecl() NotVariableSel()
+    Type() <IS> IdentifierVarList() <DOT> Vars1()
 }
 
-void NotVariableSel() :
+void Vars1() :
 {}
 {
-    NotVariableDecl() NotVariableSel()
+    Vars()
 |   Epsilon()
 }
 
-void NotVariableDecl() :
+void Vars2() :
 {}
 {
-    Type() <IS> IdentifierListValue() Value() <DOT>
-}
-
-void IdentifierListValue() :
-{}
-{
-    <IDENTIFIER> IdentifierListValue1()
-}
-
-void IdentifierListValue1() :
-{}
-{
-    <COMMA> IdentifierListValue()
+    VarsDecl()
 |   Epsilon()
 }
 
-void Variable() :
+void Type() :
 {}
 {
-    <VARIABLE> VariableDecl() VariableSel()
+    <CHAR_TYPE>
+|   <NATURAL_TYPE>
+|   <REAL_TYPE>
+|   <BOOLEAN_TYPE>
 }
 
-void VariableSel() :
+void IdentifierConstList() :
 {}
 {
-    VariableDecl() VariableSel()
+    <IDENTIFIER> IdentifierConstList1()
+}
+
+void IdentifierConstList1() :
+{}
+{
+    <COMMA> IdentifierConstList()
 |   Epsilon()
 }
 
-void VariableDecl() :
+void IdentifierVarList() :
 {}
 {
-    Type() <IS> IdentifierList() <DOT>
+    <IDENTIFIER> Index() IdentifierVarList1()
 }
 
-void IdentifierList() :
+void IdentifierVarList1() :
 {}
 {
-    <IDENTIFIER> Index() IdentifierList1()
-}
-
-void IdentifierList1() :
-{}
-{
-    <COMMA> IdentifierList()
+    <COMMA> IdentifierVarList()
 |   Epsilon()
 }
 
-void Set() :
+void Index() :
 {}
 {
-    <SET> Expression() <TO> IdentifierList()
-}
-
-void Get() :
-{}
-{
-    <GET> <LBRACE> IdentifierList() <RBRACE>
-}
-
-void Put() :
-{}
-{
-    <PUT> <LBRACE> ValueIdentifierList() <RBRACE>
-}
-
-void ValueIdentifierList() :
-{}
-{
-    <IDENTIFIER> Index() ValueIdentifierList1()
-|   Value() ValueIdentifierList1()
-}
-
-void ValueIdentifierList1() :
-{}
-{
-    <COMMA> ValueIdentifierList()
+    <LBRACKET> <NATURAL_CONST> <RBRACKET>
 |   Epsilon()
 }
 
-void Verify() :
+void Value() :
 {}
 {
-    <VERIFY> Expression() <IS> FalseTrueSel()
+    <CHAR_CONST>
+|   <NATURAL_CONST>
+|   <REAL_CONST>
+|   <TRUE>
+|   <FALSE>
 }
 
-void FalseTrueSel() :
+void ProgramBody() :
 {}
 {
-    TrueBlock() FalseTrueSel1()
-|   FalseBlock() FalseTrueSel2()
-}
-
-void FalseTrueSel1() :
-{}
-{
-    <IS> FalseBlock()
-|   Epsilon()
-}
-
-void FalseTrueSel2() :
-{}
-{
-    <IS> TrueBlock()
-|   Epsilon()
-}
-
-void TrueBlock() :
-{}
-{
-    <TRUE> CommandBlock()
-}
-
-void FalseBlock() :
-{}
-{
-    <FALSE> CommandBlock()
-}
-
-void Loop() :
-{}
-{
-    <LOOP> CommandBlock() <WHILE> Expression() <IS> <TRUE>
-}
-
-void While() :
-{}
-{
-    <WHILE>Expression() <IS> <TRUE> <DO> CommandBlock()
-}
-
-void CommandBlock() :
-{}
-{
-    <LBRACE> Command() CommandList() <RBRACE>
+    <EXECUTE> <LBRACE> CommandList() <RBRACE>
 }
 
 void CommandList() :
 {}
 {
-    Command() CommandList()
+    Command() <DOT> CommandList1()
+}
+
+void CommandList1() :
+{}
+{
+    CommandList()
 |   Epsilon()
 }
 
 void Command() :
 {}
 {
-    Set() <DOT>
-|   Get() <DOT>
-|   Put() <DOT>
-|   Verify() <DOT>
-|   Loop() <DOT>
-|   While() <DOT>
+    Attribuition()
+|   Input()
+|   Output()
+|   Selection()
+|   Loop()
 }
+
+void Attribuition() :
+{}
+{
+    <SET> Expression() <TO> IdentifierVarList()
+}
+
+void Input() :
+{}
+{
+    <GET> <LBRACE> IdentifierList() <RBRACE>
+}
+
+
+
+
 
 void Expression() :
 {}
@@ -428,33 +386,8 @@ void Element() :
 |   <NOT> <LPARENTHESES> Expression() <RPARANTHESES>
 }
 
-void Index() :
-{}
-{
-    <LBRACKET> <NATURAL_CONST> <RBRACKET>
-|   Epsilon()
-}
-
-void Value() :
-{}
-{
-    <CHAR_CONST>
-|   <NATURAL_CONST>
-|   <REAL_CONST>
-|   <TRUE>
-|   <FALSE>
-}
-
-void Type() :
-{}
-{
-    <CHAR_TYPE>
-|   <NATURAL_TYPE>
-|   <REAL_TYPE>
-|   <BOOLEAN_TYPE>
-}
-
 void Epsilon() : {}
 {
      {}
 }
+
