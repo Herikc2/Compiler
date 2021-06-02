@@ -9,10 +9,10 @@ import java.util.Stack;
 
 public class SemanticAnalysis {
 
-    private final int VARIABLE = 0;
-    private final int ASSIGNMENT = 1;
-    private final int CONSTANT = 2;
-    private final int DATA_INPUT = 3;
+    private static final int VARIABLE = 0;
+    private static final int ASSIGNMENT = 1;
+    private static final int CONSTANT = 2;
+    private static final int DATA_INPUT = 3;
 
     private int context;
     private int VT;
@@ -171,13 +171,13 @@ public class SemanticAnalysis {
     }
 
     public String action13() {
-        switch (this.context){
+        switch (this.context) {
             case VARIABLE:
-                if(!indexedVariable){
+                if (!indexedVariable) {
                     this.VT++;
                     this.VP++;
-                    insertSymbolTable(this.identifierAction11,"-");
-                }else{
+                    insertSymbolTable(this.identifierAction11, "-");
+                } else {
                     this.VIT += constantAction14;
                     int incrementedVT = this.VT + 1;
                     insertSymbolTable(identifierAction12, Integer.toString(this.kind), Integer.toString(incrementedVT), Integer.toString(constantAction14));
@@ -185,6 +185,9 @@ public class SemanticAnalysis {
                 }
                 break;
             case ASSIGNMENT:
+                if (existsSymbolTable(identifierAction12) && false) {
+                    // todo parei aqui
+                }
                 break;
             case DATA_INPUT:
                 break;
@@ -193,69 +196,69 @@ public class SemanticAnalysis {
         return "";
     }
 
-    public void action14(Object identifier){
+    public void action14(Object identifier) {
         recognizedConstant = Integer.parseInt((String) identifier);
         this.indexedVariable = true;
     }
 
-    public void action15(){
+    public void action15() {
         this.context = ASSIGNMENT;
     }
 
-    public void action16(){
-        // TO DO
+    public void action16() {
+        // TODO
     }
 
-    public void action17(){
+    public void action17() {
         this.context = DATA_INPUT;
     }
 
-    public void action18(){
+    public void action18() {
         program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action19(){
+    public void action19() {
 
     }
 
-    public void action20(){
+    public void action20() {
 
     }
 
-    public void action21(Object integerConstant){
+    public void action21(Object integerConstant) {
         program.add(new Instruction<>(VMConstants.LDI, integerConstant));
         this.pointer++;
     }
 
-    public void action22(Object floatConstant){
+    public void action22(Object floatConstant) {
         program.add(new Instruction<>(VMConstants.LDR, floatConstant));
         this.pointer++;
     }
 
-    public void action23(Object literalConstant){
+    public void action23(Object literalConstant) {
         program.add(new Instruction<>(VMConstants.LDS, literalConstant));
         this.pointer++;
     }
 
-    public void action24(){
+    public void action24() {
         deviationStack.pop();
         replaceLastInstruction("?", String.valueOf(this.pointer));
     }
 
-    public void action25(){
+    public void action25() {
         program.add(new Instruction<>(VMConstants.JMF, "?"));
         this.pointer++;
         deviationStack.push(String.valueOf(this.pointer - 1));
     }
 
-    public void action26(){
+    public void action26() {
         program.add(new Instruction<>(VMConstants.JMT, "?"));
         this.pointer++;
         deviationStack.push(String.valueOf(this.pointer - 1));
     }
 
-    public void action27(){
+    public void action27() {
         deviationStack.pop();
         replaceLastInstruction("?", String.valueOf(this.pointer + 1));
         program.add(new Instruction<>(VMConstants.JMP, "?"));
@@ -263,27 +266,27 @@ public class SemanticAnalysis {
         deviationStack.push(String.valueOf(this.pointer - 1));
     }
 
-    public void action28(){
+    public void action28() {
         deviationStack.push(String.valueOf(this.pointer));
     }
 
-    public void action29(){
+    public void action29() {
         String address = deviationStack.pop();
         program.add(new Instruction<>(VMConstants.JMT, address));
         this.pointer++;
     }
 
-    public void action30(){
+    public void action30() {
         deviationStack.push(String.valueOf(this.pointer));
     }
 
-    public void action31(){
+    public void action31() {
         program.add(new Instruction<>(VMConstants.JMF, "?"));
         this.pointer++;
         deviationStack.push(String.valueOf(this.pointer - 1));
     }
 
-    public void action32(){
+    public void action32() {
         deviationStack.pop();
         replaceLastInstruction("?", String.valueOf(this.pointer + 1));
         String address = deviationStack.pop();
@@ -291,98 +294,98 @@ public class SemanticAnalysis {
         this.pointer++;
     }
 
-    public void action33(){
+    public void action33() {
         program.add(new Instruction<>(VMConstants.EQL, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action34(){
+    public void action34() {
         program.add(new Instruction<>(VMConstants.DIF, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action35(){
+    public void action35() {
         program.add(new Instruction<>(VMConstants.SMR, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action36(){
+    public void action36() {
         program.add(new Instruction<>(VMConstants.BGR, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action37(){
+    public void action37() {
         program.add(new Instruction<>(VMConstants.SME, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action38(){
+    public void action38() {
         program.add(new Instruction<>(VMConstants.BGE, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action39(){
+    public void action39() {
         program.add(new Instruction<>(VMConstants.ADD, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action40(){
+    public void action40() {
         program.add(new Instruction<>(VMConstants.SUB, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action41(){
+    public void action41() {
         program.add(new Instruction<>(VMConstants.OR, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action42(){
+    public void action42() {
         program.add(new Instruction<>(VMConstants.MUL, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action43(){
+    public void action43() {
         program.add(new Instruction<>(VMConstants.DIV, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action44(){
-        // TO DO
+    public void action44() {
+        // TODO
     }
 
-    public void action45(){
-        // TO DO
+    public void action45() {
+        // TODO
     }
 
-    public void action46(){
+    public void action46() {
         program.add(new Instruction<>(VMConstants.AND, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
-    public void action47(){
-        // TO DO
+    public void action47() {
+        // TODO
     }
 
-    public void action48(){
+    public void action48() {
         program.add(new Instruction<>(VMConstants.LDB, "TRUE"));
         this.pointer++;
     }
 
-    public void action49(){
+    public void action49() {
         program.add(new Instruction<>(VMConstants.LDB, "FALSE"));
         this.pointer++;
     }
 
-    public void action50(){
+    public void action50() {
         program.add(new Instruction<>(VMConstants.NOT, VMConstants.NULL_PARAM));
         this.pointer++;
     }
 
     public int getLastIndexInstruction(String value) {
-        for(int i = program.size(); i  >= 0; i--){
+        for (int i = program.size() - 1; i >= 0; i--) {
             Instruction<Integer, Object> temp = program.get(i);
 
-            if(temp.getParameter().toString().equals(value))
+            if (temp.getParameter().toString().equals(value))
                 return i;
         }
 
@@ -390,39 +393,37 @@ public class SemanticAnalysis {
     }
 
     public int getFirstIndexInstruction(String value) {
-        for(int i = 0; i  < program.size(); i++){
+        for (int i = 0; i < program.size(); i++) {
             Instruction<Integer, Object> temp = program.get(i);
 
-            if(temp.getParameter().toString().equals(value))
+            if (temp.getParameter().toString().equals(value))
                 return i;
         }
 
         return (-1);
     }
 
-    public void replaceLastInstruction(String oldValue, String newValue){
+    public void replaceLastInstruction(String oldValue, String newValue) {
         int index = getLastIndexInstruction(oldValue);
 
-        if(index != (-1))
+        if (index != (-1))
             program.get(index).setParameter(newValue);
     }
 
-    public void replaceFirstInstruction(String oldValue, String newValue){
+    public void replaceFirstInstruction(String oldValue, String newValue) {
         int index = getFirstIndexInstruction(oldValue);
 
-        if(index != (-1))
+        if (index != (-1))
             program.get(index).setParameter(newValue);
     }
 
-    public int[] getIndexSymbolTable(String value){
+    public int[] getIndexSymbolTable(String value) {
 
-        for(int i = symbolTable.size() - 1; i >= 0; i--)
-        {
+        for (int i = symbolTable.size() - 1; i >= 0; i--) {
             String[] temp = symbolTable.get(i);
-            for(int j = temp.length - 1; j >= 0; j--)
-            {
+            for (int j = temp.length - 1; j >= 0; j--) {
                 String item = temp[j];
-                if(item.equals(value))
+                if (item.equals(value))
                     return new int[]{i, j};
             }
         }
@@ -430,10 +431,10 @@ public class SemanticAnalysis {
         return new int[]{-1, -1};
     }
 
-    public void replaceSymbolTable(String oldValue, String newValue){
+    public void replaceSymbolTable(String oldValue, String newValue) {
         int[] index = getIndexSymbolTable(oldValue);
 
-        if(index[0] != (-1) && index[1] != (-1))
+        if (index[0] != (-1) && index[1] != (-1))
             symbolTable.get(index[0])[index[1]] = newValue;
     }
 
