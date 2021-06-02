@@ -134,10 +134,10 @@ void Start() :
 void Program() :
 {}
 {
-    Comment() <PROGRAM> <LBRACE> VarAndConstDecl() ProgramBody() <RBRACE> ProgramIdentifier()
+    Header() <PROGRAM> <LBRACE> Define() Execute() <RBRACE> ProgramIdentifier() /*1*/
 }
 
-void Comment() :
+void Header() :
 {}
 {
     <HEADER> <CHAR_CONST>
@@ -147,115 +147,115 @@ void Comment() :
 void ProgramIdentifier() :
 {}
 {
-    <IDENTIFIER>
+    <IDENTIFIER> /*2*/
 |   Epsilon()
 }
 
-void VarAndConstDecl() :
+void Define() :
 {}
 {
-    <DEFINE> <LBRACE> ConstsAndVars() <RBRACE>
+    <DEFINE> <LBRACE> DefineBlock() <RBRACE>
 |   Epsilon()
 }
 
-void ConstsAndVars() :
+void DefineBlock() :
 {}
 {
-    ConstDecl() Vars2()
-|   VarDecl() Consts2()
+    NotVariable() VariableSel()
+|   Variable() NotVariableSel()
 }
 
-void ConstsDecl() :
+void NotVariable() :
 {}
 {
-    <NOT> <VARIABLE> Consts()
+    <NOT> <VARIABLE> /*3*/ NotVariableList()
 }
 
-void Consts() :
+void NotVariableList() :
 {}
 {
-    Type() <IS> IdentifierConstList() Value() <DOT> Consts1()
+    Type() <IS> NotVariableIdentifierList() /*4*/ Value() /*5*/ <DOT> NotVariableListSel()
 }
 
-void Consts1() :
+void NotVariableListSel() :
 {}
 {
-    Consts()
+    NotVariableList()
 |   Epsilon()
 }
 
-void Consts2() :
+void NotVariableSel() :
 {}
 {
-    ConstsDecl()
+    NotVariable()
 |   Epsilon()
 }
 
-void VarsDecl() :
+void Variable() :
 {}
 {
-    <VARIABLE> Vars()
+    <VARIABLE> /*6*/ VariableList()
 }
 
-void Vars() :
+void VariableList() :
 {}
 {
-    Type() <IS> IdentifierVarList() <DOT> Vars1()
+    Type() <IS> VariableIdentifierList() /*4*/ <DOT> VariableListSel()
 }
 
-void Vars1() :
+void VariableListSel() :
 {}
 {
-    Vars()
+    VariableList()
 |   Epsilon()
 }
 
-void Vars2() :
+void VariableSel() :
 {}
 {
-    VarsDecl()
+    Variable()
 |   Epsilon()
 }
 
 void Type() :
 {}
 {
-    <CHAR_TYPE>
-|   <NATURAL_TYPE>
-|   <REAL_TYPE>
-|   <BOOLEAN_TYPE>
+    <CHAR_TYPE> /*7*/
+|   <NATURAL_TYPE> /*8*/
+|   <REAL_TYPE> /*9*/
+|   <BOOLEAN_TYPE> /*10*/
 }
 
-void IdentifierConstList() :
+void NotVariableIdentifierList() :
 {}
 {
-    <IDENTIFIER> IdentifierConstList1()
+    <IDENTIFIER> /*11*/ NotVariableIdentifierListSel()
 }
 
-void IdentifierConstList1() :
+void NotVariableIdentifierListSel() :
 {}
 {
-    <COMMA> IdentifierConstList()
+    <COMMA> NotVariableIdentifierList()
 |   Epsilon()
 }
 
-void IdentifierVarList() :
+void VariableIdentifierList() :
 {}
 {
-    <IDENTIFIER> Index() IdentifierVarList1()
+    <IDENTIFIER> /*12*/ Index() /*13*/ VariableIdentifierListSel()
 }
 
-void IdentifierVarList1() :
+void VariableIdentifierListSel() :
 {}
 {
-    <COMMA> IdentifierVarList()
+    <COMMA> VariableIdentifierList()
 |   Epsilon()
 }
 
 void Index() :
 {}
 {
-    <LBRACKET> <NATURAL_CONST> <RBRACKET>
+    <LBRACKET> <NATURAL_CONST> /*14*/ <RBRACKET>
 |   Epsilon()
 }
 
@@ -265,11 +265,9 @@ void Value() :
     <CHAR_CONST>
 |   <NATURAL_CONST>
 |   <REAL_CONST>
-|   <TRUE>
-|   <FALSE>
 }
 
-void ProgramBody() :
+void Execute() :
 {}
 {
     <EXECUTE> <LBRACE> CommandList() <RBRACE>
@@ -278,10 +276,10 @@ void ProgramBody() :
 void CommandList() :
 {}
 {
-    Command() <DOT> CommandList1()
+    Command() <DOT> CommandListSel()
 }
 
-void CommandList1() :
+void CommandListSel() :
 {}
 {
     CommandList()
@@ -291,28 +289,86 @@ void CommandList1() :
 void Command() :
 {}
 {
-    Attribuition()
-|   Input()
-|   Output()
-|   Selection()
+    Set()
+|   Get()
+|   Put()
+|   Verify()
 |   Loop()
 }
 
-void Attribuition() :
+void Set() :
 {}
 {
-    <SET> Expression() <TO> IdentifierVarList()
+    <SET> /*15*/ Expression() <TO> VariableIdentifierList() /*16*/
 }
 
-void Input() :
+void Get() :
 {}
 {
-    <GET> <LBRACE> IdentifierList() <RBRACE>
+    <GET> /*17*/ <LBRACE> VariableIdentifierList() <RBRACE>
 }
 
+void Put() :
+{}
+{
+    <PUT> <LBRACE> IdentifierListOrConstants() <RBRACE>
+}
 
+void IdentifierListOrConstants() :
+{}
+{
+    Item() /*18*/ IdentifierListOrConstsSel()
+}
 
+void IdentifierListOrConstsSel() :
+{}
+{
+    <COMMA> IdentifierListOrConstants()
+|   Epsilon()
+}
 
+void Item() :
+{}
+{
+    <IDENTIFIER> /*19*/ Index() /*20*/
+|   <NATURAL_CONST> /*21*/
+|   <REAL_CONST> /*22*/
+|   <CHAR_CONST> /*23*/
+}
+
+void Verify() :
+{}
+{
+    <VERIFY> Expression() <IS> Clauses() /*24*/
+}
+
+void Clauses() :
+{}
+{
+    <TRUE> /*25*/ <LBRACE> CommandList() <RBRACE> IsFalse()
+|   <FALSE> /*26*/ <LBRACE> CommandList() <RBRACE> IsTrue()
+}
+
+void IsTrue() :
+{}
+{
+    <IS> <TRUE> /*27*/ <LBRACE> CommandList() <RBRACE>
+|   Epsilon()
+}
+
+void IsFalse() :
+{}
+{
+    <IS> <FALSE> /*27*/ <LBRACE> CommandList() <RBRACE>
+|   Epsilon()
+}
+
+void Loop() :
+{}
+{
+    <LOOP> /*28*/ <LBRACE> CommandList() <RBRACE> <WHILE> Expression() /*29*/ <IS> <TRUE>
+|   <WHILE> /*30*/ Expression() /*31*/ <IS> <TRUE> <DO> <LBRACE> CommandList() <RBRACE> /*32*/
+}
 
 void Expression() :
 {}
@@ -323,12 +379,12 @@ void Expression() :
 void ExpressionSel() :
 {}
 {
-    <EQUAL> ExprArithLogic()
-|   <DIFFERENT> ExprArithLogic()
-|   <SMALLER> ExprArithLogic()
-|   <GREATER> ExprArithLogic()
-|   <SMALLER_EQUAL> ExprArithLogic()
-|   <GREATER_EQUAL> ExprArithLogic()
+    <EQUAL> ExprArithLogic() /*33*/
+|   <DIFFERENT> ExprArithLogic() /*34*/
+|   <SMALLER> ExprArithLogic() /*35*/
+|   <GREATER> ExprArithLogic() /*36*/
+|   <SMALLER_EQUAL> ExprArithLogic() /*37*/
+|   <GREATER_EQUAL> ExprArithLogic() /*38*/
 |   Epsilon()
 }
 
@@ -341,9 +397,9 @@ void ExprArithLogic() :
 void LessPriority() :
 {}
 {
-    <PLUS> Term2() LessPriority()
-|   <MINUS> Term2() LessPriority()
-|   <OR> Term2() LessPriority()
+    <PLUS> Term2() LessPriority() /*39*/
+|   <MINUS> Term2() LessPriority() /*40*/
+|   <OR> Term2() LessPriority() /*41*/
 |   Epsilon()
 }
 
@@ -356,11 +412,11 @@ void Term2() :
 void MidPriority() :
 {}
 {
-    <MULTIPLICATION> Term1() MidPriority()
-|   <DIVISION> Term1() MidPriority()
-|   <INTEGER_DIVISION> Term1() MidPriority()
-|   <REST> Term1() MidPriority()
-|   <AND> Term1() MidPriority()
+    <MULTIPLICATION> Term1() MidPriority() /*42*/
+|   <DIVISION> Term1() MidPriority() /*43*/
+|   <INTEGER_DIVISION> Term1() MidPriority() /*44*/
+|   <REST> Term1() MidPriority() /*45*/
+|   <AND> Term1() MidPriority() /*46*/
 |   Epsilon()
 }
 
@@ -373,17 +429,21 @@ void Term1() :
 void GreatPriority() :
 {}
 {
-    <POWER> Element() GreatPriority()
+    <POWER> Element() GreatPriority() /*48*/
 |   Epsilon()
 }
 
 void Element() :
 {}
 {
-    <IDENTIFIER> Index()
-|   Value()
+    <IDENTIFIER> /*19*/ Index() /*20*/
+|   <NATURAL_CONST> /*21*/
+|   <REAL_CONST> /*22*/
+|   <CHAR_CONST> /*23*/
+|   <TRUE> /*48*/
+|   <FALSE> /*49*/
 |   <LPARENTHESES> Expression() <RPARANTHESES>
-|   <NOT> <LPARENTHESES> Expression() <RPARANTHESES>
+|   <NOT> <LPARENTHESES> Expression() <RPARANTHESES> /*50*/
 }
 
 void Epsilon() : {}
