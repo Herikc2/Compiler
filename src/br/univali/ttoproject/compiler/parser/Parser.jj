@@ -11,7 +11,7 @@ package br.univali.ttoproject.compiler.parser;
 
 import br.univali.ttoproject.compiler.*;
 import br.univali.ttoproject.vm.*;
-import java.util.ArrayList;
+import java.awt.*;import java.util.ArrayList;
 
 public class Parser {
     public String errorMessages = "";
@@ -134,7 +134,7 @@ void Start() :
 void Program() :
 {}
 {
-    Header() <PROGRAM> <LBRACE> Define() Execute() <RBRACE> ProgramIdentifier() /*1*/
+    Header() <PROGRAM> <LBRACE> Define() Execute() <RBRACE> ProgramIdentifier() { semanticAnalysis.action1(); }
 }
 
 void Header() :
@@ -147,7 +147,7 @@ void Header() :
 void ProgramIdentifier() :
 {}
 {
-    <IDENTIFIER> /*2*/
+    <IDENTIFIER> { semanticAnalysis.action2(token.image); }
 |   Epsilon()
 }
 
@@ -168,13 +168,13 @@ void DefineBlock() :
 void NotVariable() :
 {}
 {
-    <NOT> <VARIABLE> /*3*/ NotVariableList()
+    <NOT> <VARIABLE> { semanticAnalysis.action3(); } NotVariableList()
 }
 
 void NotVariableList() :
 {}
 {
-    Type() <IS> NotVariableIdentifierList() /*4*/ Value() /*5*/ <DOT> NotVariableListSel()
+    Type() <IS> NotVariableIdentifierList() { semanticAnalysis.action4(); } Value() { semanticAnalysis.action5(token.image); } <DOT> NotVariableListSel()
 }
 
 void NotVariableListSel() :
@@ -194,13 +194,13 @@ void NotVariableSel() :
 void Variable() :
 {}
 {
-    <VARIABLE> /*6*/ VariableList()
+    <VARIABLE> { semanticAnalysis.action6(); } VariableList()
 }
 
 void VariableList() :
 {}
 {
-    Type() <IS> VariableIdentifierList() /*4*/ <DOT> VariableListSel()
+    Type() <IS> VariableIdentifierList() { semanticAnalysis.action4(); } <DOT> VariableListSel()
 }
 
 void VariableListSel() :
@@ -220,16 +220,20 @@ void VariableSel() :
 void Type() :
 {}
 {
-    <CHAR_TYPE> /*7*/
-|   <NATURAL_TYPE> /*8*/
-|   <REAL_TYPE> /*9*/
-|   <BOOLEAN_TYPE> /*10*/
+    <CHAR_TYPE> { semanticAnalysis.action7(); }
+|   <NATURAL_TYPE> { semanticAnalysis.action8(); }
+|   <REAL_TYPE> { semanticAnalysis.action9(); }
+|   <BOOLEAN_TYPE> { errorMessages += semanticAnalysis.action10(); }
 }
 
 void NotVariableIdentifierList() :
 {}
 {
-    <IDENTIFIER> /*11*/ NotVariableIdentifierListSel()
+    <IDENTIFIER>
+    {
+        errorMessages += semanticAnalysis.action11(token.image);
+    }
+    NotVariableIdentifierListSel()
 }
 
 void NotVariableIdentifierListSel() :
@@ -242,7 +246,7 @@ void NotVariableIdentifierListSel() :
 void VariableIdentifierList() :
 {}
 {
-    <IDENTIFIER> /*12*/ Index() /*13*/ VariableIdentifierListSel()
+    <IDENTIFIER> { errorMessages += semanticAnalysis.action12(token.image); } Index() { errorMessages += semanticAnalysis.action13(); } VariableIdentifierListSel()
 }
 
 void VariableIdentifierListSel() :
@@ -255,7 +259,7 @@ void VariableIdentifierListSel() :
 void Index() :
 {}
 {
-    <LBRACKET> <NATURAL_CONST> /*14*/ <RBRACKET>
+    <LBRACKET> <NATURAL_CONST> { semanticAnalysis.action14(token.image); } <RBRACKET>
 |   Epsilon()
 }
 
@@ -299,13 +303,13 @@ void Command() :
 void Set() :
 {}
 {
-    <SET> /*15*/ Expression() <TO> VariableIdentifierList() /*16*/
+    <SET> { semanticAnalysis.action15(); } Expression() <TO> VariableIdentifierList() { semanticAnalysis.action16(); }
 }
 
 void Get() :
 {}
 {
-    <GET> /*17*/ <LBRACE> VariableIdentifierList() <RBRACE>
+    <GET> { semanticAnalysis.action17(); } <LBRACE> VariableIdentifierList() <RBRACE>
 }
 
 void Put() :
@@ -317,7 +321,7 @@ void Put() :
 void IdentifierListOrConstants() :
 {}
 {
-    Item() /*18*/ IdentifierListOrConstsSel()
+    Item() { semanticAnalysis.action18(); } IdentifierListOrConstsSel()
 }
 
 void IdentifierListOrConstsSel() :
@@ -330,44 +334,44 @@ void IdentifierListOrConstsSel() :
 void Item() :
 {}
 {
-    <IDENTIFIER> /*19*/ Index() /*20*/
-|   <NATURAL_CONST> /*21*/
-|   <REAL_CONST> /*22*/
-|   <CHAR_CONST> /*23*/
+    <IDENTIFIER> { errorMessages += semanticAnalysis.action19(token.image); } Index() { errorMessages += semanticAnalysis.action20(); }
+|   <NATURAL_CONST> { semanticAnalysis.action21(token.image); }
+|   <REAL_CONST> { semanticAnalysis.action22(token.image); }
+|   <CHAR_CONST> { semanticAnalysis.action23(token.image); }
 }
 
 void Verify() :
 {}
 {
-    <VERIFY> Expression() <IS> Clauses() /*24*/
+    <VERIFY> Expression() <IS> Clauses() { semanticAnalysis.action24(); }
 }
 
 void Clauses() :
 {}
 {
-    <TRUE> /*25*/ <LBRACE> CommandList() <RBRACE> IsFalse()
-|   <FALSE> /*26*/ <LBRACE> CommandList() <RBRACE> IsTrue()
+    <TRUE> { semanticAnalysis.action25(); } <LBRACE> CommandList() <RBRACE> IsFalse()
+|   <FALSE> { semanticAnalysis.action26(); } <LBRACE> CommandList() <RBRACE> IsTrue()
 }
 
 void IsTrue() :
 {}
 {
-    <IS> <TRUE> /*27*/ <LBRACE> CommandList() <RBRACE>
+    <IS> <TRUE> { semanticAnalysis.action27(); } <LBRACE> CommandList() <RBRACE>
 |   Epsilon()
 }
 
 void IsFalse() :
 {}
 {
-    <IS> <FALSE> /*27*/ <LBRACE> CommandList() <RBRACE>
+    <IS> <FALSE> { semanticAnalysis.action27(); } <LBRACE> CommandList() <RBRACE>
 |   Epsilon()
 }
 
 void Loop() :
 {}
 {
-    <LOOP> /*28*/ <LBRACE> CommandList() <RBRACE> <WHILE> Expression() /*29*/ <IS> <TRUE>
-|   <WHILE> /*30*/ Expression() /*31*/ <IS> <TRUE> <DO> <LBRACE> CommandList() <RBRACE> /*32*/
+    <LOOP> { semanticAnalysis.action28(); } <LBRACE> CommandList() <RBRACE> <WHILE> Expression() { semanticAnalysis.action29(); } <IS> <TRUE>
+|   <WHILE> { semanticAnalysis.action30(); } Expression() { semanticAnalysis.action31(); } <IS> <TRUE> <DO> <LBRACE> CommandList() <RBRACE> { semanticAnalysis.action32(); }
 }
 
 void Expression() :
@@ -379,12 +383,12 @@ void Expression() :
 void ExpressionSel() :
 {}
 {
-    <EQUAL> ExprArithLogic() /*33*/
-|   <DIFFERENT> ExprArithLogic() /*34*/
-|   <SMALLER> ExprArithLogic() /*35*/
-|   <GREATER> ExprArithLogic() /*36*/
-|   <SMALLER_EQUAL> ExprArithLogic() /*37*/
-|   <GREATER_EQUAL> ExprArithLogic() /*38*/
+    <EQUAL> ExprArithLogic() { semanticAnalysis.action33(); }
+|   <DIFFERENT> ExprArithLogic() { semanticAnalysis.action34(); }
+|   <SMALLER> ExprArithLogic() { semanticAnalysis.action35(); }
+|   <GREATER> ExprArithLogic() { semanticAnalysis.action36(); }
+|   <SMALLER_EQUAL> ExprArithLogic() { semanticAnalysis.action37(); }
+|   <GREATER_EQUAL> ExprArithLogic() { semanticAnalysis.action38(); }
 |   Epsilon()
 }
 
@@ -397,9 +401,9 @@ void ExprArithLogic() :
 void LessPriority() :
 {}
 {
-    <PLUS> Term2() LessPriority() /*39*/
-|   <MINUS> Term2() LessPriority() /*40*/
-|   <OR> Term2() LessPriority() /*41*/
+    <PLUS> Term2() LessPriority() { semanticAnalysis.action39(); }
+|   <MINUS> Term2() LessPriority() { semanticAnalysis.action40(); }
+|   <OR> Term2() LessPriority() { semanticAnalysis.action41(); }
 |   Epsilon()
 }
 
@@ -412,11 +416,11 @@ void Term2() :
 void MidPriority() :
 {}
 {
-    <MULTIPLICATION> Term1() MidPriority() /*42*/
-|   <DIVISION> Term1() MidPriority() /*43*/
-|   <INTEGER_DIVISION> Term1() MidPriority() /*44*/
-|   <REST> Term1() MidPriority() /*45*/
-|   <AND> Term1() MidPriority() /*46*/
+    <MULTIPLICATION> Term1() MidPriority() { semanticAnalysis.action42(); }
+|   <DIVISION> Term1() MidPriority() { semanticAnalysis.action43(); }
+|   <INTEGER_DIVISION> Term1() MidPriority() { semanticAnalysis.action44(); }
+|   <REST> Term1() MidPriority() { semanticAnalysis.action45(); }
+|   <AND> Term1() MidPriority() { semanticAnalysis.action46(); }
 |   Epsilon()
 }
 
@@ -429,21 +433,21 @@ void Term1() :
 void GreatPriority() :
 {}
 {
-    <POWER> Element() GreatPriority() /*48*/
+    <POWER> Element() GreatPriority() { semanticAnalysis.action47(); }
 |   Epsilon()
 }
 
 void Element() :
 {}
 {
-    <IDENTIFIER> /*19*/ Index() /*20*/
-|   <NATURAL_CONST> /*21*/
-|   <REAL_CONST> /*22*/
-|   <CHAR_CONST> /*23*/
-|   <TRUE> /*48*/
-|   <FALSE> /*49*/
+    <IDENTIFIER> { errorMessages += semanticAnalysis.action19(token.image); } Index() { errorMessages += semanticAnalysis.action20(); }
+|   <NATURAL_CONST> { semanticAnalysis.action21(token.image); }
+|   <REAL_CONST> { semanticAnalysis.action22(token.image); }
+|   <CHAR_CONST> { semanticAnalysis.action23(token.image); }
+|   <TRUE> { semanticAnalysis.action48(); }
+|   <FALSE> { semanticAnalysis.action49(); }
 |   <LPARENTHESES> Expression() <RPARANTHESES>
-|   <NOT> <LPARENTHESES> Expression() <RPARANTHESES> /*50*/
+|   <NOT> <LPARENTHESES> Expression() <RPARANTHESES> { semanticAnalysis.action50(); }
 }
 
 void Epsilon() : {}

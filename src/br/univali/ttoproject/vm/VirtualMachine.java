@@ -100,6 +100,7 @@ public class VirtualMachine implements Runnable {
         ++pointer;
     }
 
+    // TODO Verificar se é divisão Natural ou Real
     private void div() throws Exception {
         if (stack[top] instanceof Integer) {
             if ((int) stack[top] == 0) {

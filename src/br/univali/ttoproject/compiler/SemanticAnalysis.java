@@ -211,7 +211,8 @@ public class SemanticAnalysis {
                             return "Indexed variable identifier requires index.";
                     }
                 } else {
-                    return "Variable or constant identifier was not declared.";
+                    //return "Variable or constant " + identifierAction12 + " identifier was not declared. ASSIGNMENT";
+                    return "Condicao " + existsSymbolTable(identifierAction12);
                 }
                 break;
             case DATA_INPUT:
@@ -241,7 +242,7 @@ public class SemanticAnalysis {
                         }
                     }
                 } else {
-                    return "Variable or constant identifier was not declared.";
+                    return "Variable or constant " + identifierAction12 + " identifier was not declared.";
                 }
                 break;
         }
@@ -274,11 +275,11 @@ public class SemanticAnalysis {
         this.pointer++;
     }
 
-    public String action19(String identifier) {
-        int category = Integer.parseInt(getKindSymbolTable(identifier));
-        if (existsSymbolTable(identifier) && (category >= 1 && category <= 7)){
+    public String action19(Object identifier) {
+        int category = Integer.parseInt(getKindSymbolTable(identifier.toString()));
+        if (existsSymbolTable(identifier.toString()) && (category >= 1 && category <= 7)){
             this.indexedVariable = false;
-            this.identifierAction19 = identifier;
+            this.identifierAction19 = identifier.toString();
         } else {
             return "Identifier was not declared.";
         }
@@ -325,7 +326,7 @@ public class SemanticAnalysis {
 
     public void action24() {
         deviationStack.pop();
-        replaceLastInstruction("?", String.valueOf(this.pointer));
+        replaceFirstInstruction("?", String.valueOf(this.pointer));
     }
 
     public void action25() {
@@ -342,7 +343,7 @@ public class SemanticAnalysis {
 
     public void action27() {
         deviationStack.pop();
-        replaceLastInstruction("?", String.valueOf(this.pointer + 1));
+        replaceFirstInstruction("?", String.valueOf(this.pointer + 1));
         program.add(new Instruction<>(VMConstants.JMP, "?"));
         this.pointer++;
         deviationStack.push(String.valueOf(this.pointer - 1));
@@ -370,7 +371,7 @@ public class SemanticAnalysis {
 
     public void action32() {
         deviationStack.pop();
-        replaceLastInstruction("?", String.valueOf(this.pointer + 1));
+        replaceFirstInstruction("?", String.valueOf(this.pointer + 1));
         String address = deviationStack.pop();
         program.add(new Instruction<>(VMConstants.JMP, address));
         this.pointer++;
@@ -427,12 +428,14 @@ public class SemanticAnalysis {
     }
 
     public void action43() {
-        program.add(new Instruction<>(VMConstants.DIV, VMConstants.NULL_PARAM));
+        program.add(new Instruction<>(VMConstants.DIV, VMConstants.REAL));
         this.pointer++;
     }
 
     public void action44() {
         // TODO
+        program.add(new Instruction<>(VMConstants.DIV, VMConstants.NATURAL));
+        this.pointer++;
     }
 
     public void action45() {
@@ -549,9 +552,10 @@ public class SemanticAnalysis {
     }
 
     public boolean existsSymbolTable(String identifier) {
-        for (String[] row : symbolTable)
+        for (String[] row : symbolTable) {
             if (row[0].equals(identifier))
                 return true;
+        }
 
         return false;
     }
