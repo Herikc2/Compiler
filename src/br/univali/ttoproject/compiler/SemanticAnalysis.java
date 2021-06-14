@@ -31,7 +31,6 @@ public class SemanticAnalysis {
     private String identifierAction19;
 
     private int constantAction14;
-    private int recognizedConstant;
 
     private ArrayList<Instruction<Integer, Object>> program;
 
