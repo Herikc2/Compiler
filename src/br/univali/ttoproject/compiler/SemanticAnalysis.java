@@ -21,8 +21,8 @@ public class SemanticAnalysis {
     private int kind;
     private int pointer;
     private boolean indexedVariable;
-    private Stack<String> deviationStack;
-    private List<String[]> symbolTable;
+    private Stack<Object> deviationStack;
+    private List<Object[]> symbolTable;
     private List<Object> attributesAction13;
 
     //private String recognizedIdentifier;
@@ -43,7 +43,7 @@ public class SemanticAnalysis {
         this.pointer = 0;
         this.indexedVariable = false;
         this.deviationStack = new Stack<>();
-        this.symbolTable = new ArrayList<String[]>();
+        this.symbolTable = new ArrayList<Object[]>();
         this.attributesAction13 = new ArrayList<>();
         this.program = new ArrayList<>();
 
@@ -96,15 +96,15 @@ public class SemanticAnalysis {
     public void action5(Object value) {
         switch (this.kind) {
             case 5 -> {
-                this.program.add(new Instruction<>(VMConstants.LDI, value));
+                this.program.add(new Instruction<>(VMConstants.LDI, Integer.parseInt(value.toString())));
                 this.pointer++;
             }
             case 6 -> {
-                this.program.add(new Instruction<>(VMConstants.LDR, value));
+                this.program.add(new Instruction<>(VMConstants.LDR, Float.parseFloat(value.toString())));
                 this.pointer++;
             }
             case 7 -> {
-                this.program.add(new Instruction<>(VMConstants.LDS, value));
+                this.program.add(new Instruction<>(VMConstants.LDS, value.toString()));
                 this.pointer++;
             }
         }
@@ -193,9 +193,9 @@ public class SemanticAnalysis {
                 }
                 break;
             case ASSIGNMENT:
-                if (existsSymbolTable(identifierAction12) && isVariable(Integer.parseInt(getKindSymbolTable(identifierAction12)))) {
-                    String attribute1 = getAttribute1SymbolTable(identifierAction12);
-                    String attribute2 = getAttribute2SymbolTable(identifierAction12);
+                if (existsSymbolTable(identifierAction12) && isVariable(Integer.parseInt(getKindSymbolTable(identifierAction12).toString()))) {
+                    Object attribute1 = getAttribute1SymbolTable(identifierAction12);
+                    Object attribute2 = getAttribute2SymbolTable(identifierAction12);
 
                     if(attribute2.equals("-")) {
                         if(!indexedVariable)
@@ -204,7 +204,7 @@ public class SemanticAnalysis {
                             return "No indexed variable identifier.";
                     } else {
                         if(indexedVariable)
-                            this.attributesAction13.add( (Integer.parseInt(attribute1) + constantAction14 - 1 ) );
+                            this.attributesAction13.add( (Integer.parseInt(attribute1.toString()) + constantAction14 - 1 ) );
                         else
                             return "Indexed variable identifier requires index.";
                     }
@@ -213,13 +213,13 @@ public class SemanticAnalysis {
                 }
                 break;
             case DATA_INPUT:
-                if (existsSymbolTable(identifierAction12) && isVariable(Integer.parseInt(getKindSymbolTable(identifierAction12)))) {
-                    String attribute1 = getAttribute1SymbolTable(identifierAction12);
-                    String attribute2 = getAttribute2SymbolTable(identifierAction12);
+                if (existsSymbolTable(identifierAction12) && isVariable(Integer.parseInt(getKindSymbolTable(identifierAction12).toString()))) {
+                    Object attribute1 = getAttribute1SymbolTable(identifierAction12);
+                    Object attribute2 = getAttribute2SymbolTable(identifierAction12);
 
                     if(attribute2.equals("-")) {
                         if (!indexedVariable) {
-                            String category = getKindSymbolTable(identifierAction12);
+                            Object category = getKindSymbolTable(identifierAction12);
                             program.add(new Instruction<>(VMConstants.REA, category));
                             this.pointer++;
                             program.add(new Instruction<>(VMConstants.STR, attribute1));
@@ -229,10 +229,10 @@ public class SemanticAnalysis {
                         }
                     } else {
                         if(indexedVariable) {
-                            String category = getKindSymbolTable(identifierAction12);
+                            Object category = getKindSymbolTable(identifierAction12);
                             program.add(new Instruction<>(VMConstants.REA, category));
                             this.pointer++;
-                            program.add(new Instruction<>(VMConstants.STR, (Integer.parseInt(attribute1) + constantAction14 - 1) ));
+                            program.add(new Instruction<>(VMConstants.STR, (Integer.parseInt(attribute1.toString()) + constantAction14 - 1) ));
                             this.pointer++;
                         } else {
                             return "Indexed variable identifier requires index.";
@@ -248,7 +248,7 @@ public class SemanticAnalysis {
     }
 
     public void action14(Object identifier) {
-        constantAction14 = Integer.parseInt((String) identifier);
+        constantAction14 = Integer.parseInt(identifier.toString());
         this.indexedVariable = true;
     }
 
@@ -258,7 +258,7 @@ public class SemanticAnalysis {
 
     public void action16() {
         for (Object item: attributesAction13){
-            program.add(new Instruction<>(VMConstants.STR, item));
+            program.add(new Instruction<>(VMConstants.STR, Integer.parseInt(item.toString())));
             this.pointer++;
         }
     }
@@ -273,7 +273,7 @@ public class SemanticAnalysis {
     }
 
     public String action19(Object identifier) {
-        int category = Integer.parseInt(getKindSymbolTable(identifier.toString()));
+        int category = Integer.parseInt(getKindSymbolTable(identifier.toString()).toString());
         if (existsSymbolTable(identifier.toString()) && (category >= 1 && category <= 7)){
             this.indexedVariable = false;
             this.identifierAction19 = identifier.toString();
@@ -284,19 +284,19 @@ public class SemanticAnalysis {
     }
 
     public String action20() {
-        String attribute1 = getAttribute1SymbolTable(identifierAction19);
-        String attribute2 = getAttribute2SymbolTable(identifierAction19);
+        Object attribute1 = getAttribute1SymbolTable(identifierAction19);
+        Object attribute2 = getAttribute2SymbolTable(identifierAction19);
 
         if(!indexedVariable) {
             if(attribute2.equals("-")){
-                program.add(new Instruction<>(VMConstants.LDV, attribute1));
+                program.add(new Instruction<>(VMConstants.LDV, Integer.parseInt(attribute1.toString())));
                 this.pointer++;
             } else {
                 return "Variable identifier requires index.";
             }
         } else {
             if(!attribute2.equals("-")) {
-                program.add(new Instruction<>(VMConstants.LDV, (Integer.parseInt(attribute1) + constantAction14 - 1)));
+                program.add(new Instruction<>(VMConstants.LDV, (Integer.parseInt(attribute1.toString()) + constantAction14 - 1)));
                 this.pointer++;
             } else {
                 return "Variable or constant identifier was not indexed.";
@@ -307,23 +307,23 @@ public class SemanticAnalysis {
     }
 
     public void action21(Object integerConstant) {
-        program.add(new Instruction<>(VMConstants.LDI, integerConstant));
+        program.add(new Instruction<>(VMConstants.LDI, Integer.parseInt(integerConstant.toString())));
         this.pointer++;
     }
 
     public void action22(Object floatConstant) {
-        program.add(new Instruction<>(VMConstants.LDR, floatConstant));
+        program.add(new Instruction<>(VMConstants.LDR, Float.parseFloat(floatConstant.toString())));
         this.pointer++;
     }
 
     public void action23(Object literalConstant) {
-        program.add(new Instruction<>(VMConstants.LDS, literalConstant));
+        program.add(new Instruction<>(VMConstants.LDS, literalConstant.toString().substring(0, literalConstant.toString().length() - 2)));
         this.pointer++;
     }
 
     public void action24() {
         deviationStack.pop();
-        replaceFirstInstruction("?", String.valueOf(this.pointer));
+        replaceFirstInstruction("?", this.pointer);
     }
 
     public void action25() {
@@ -340,7 +340,7 @@ public class SemanticAnalysis {
 
     public void action27() {
         deviationStack.pop();
-        replaceFirstInstruction("?", String.valueOf(this.pointer + 1));
+        replaceFirstInstruction("?", this.pointer + 1);
         program.add(new Instruction<>(VMConstants.JMP, "?"));
         this.pointer++;
         deviationStack.push(String.valueOf(this.pointer - 1));
@@ -351,13 +351,13 @@ public class SemanticAnalysis {
     }
 
     public void action29() {
-        String address = deviationStack.pop();
+        Object address = deviationStack.pop();
         program.add(new Instruction<>(VMConstants.JMT, address));
         this.pointer++;
     }
 
     public void action30() {
-        deviationStack.push(String.valueOf(this.pointer));
+        deviationStack.push(this.pointer);
     }
 
     public void action31() {
@@ -368,8 +368,8 @@ public class SemanticAnalysis {
 
     public void action32() {
         deviationStack.pop();
-        replaceFirstInstruction("?", String.valueOf(this.pointer + 1));
-        String address = deviationStack.pop();
+        replaceFirstInstruction("?", this.pointer + 1);
+        Object address = deviationStack.pop();
         program.add(new Instruction<>(VMConstants.JMP, address));
         this.pointer++;
     }
@@ -449,12 +449,12 @@ public class SemanticAnalysis {
     }
 
     public void action48() {
-        program.add(new Instruction<>(VMConstants.LDB, "TRUE"));
+        program.add(new Instruction<>(VMConstants.LDB, true));
         this.pointer++;
     }
 
     public void action49() {
-        program.add(new Instruction<>(VMConstants.LDB, "FALSE"));
+        program.add(new Instruction<>(VMConstants.LDB, false));
         this.pointer++;
     }
 
@@ -481,11 +481,11 @@ public class SemanticAnalysis {
         return (-1);
     }
 
-    public int getFirstIndexInstruction(String value) {
+    public int getFirstIndexInstruction(Object value) {
         for (int i = 0; i < program.size(); i++) {
             Instruction<Integer, Object> temp = program.get(i);
 
-            if (temp.getParameter().toString().equals(value))
+            if (temp.getParameter().toString().equals(value.toString()))
                 return i;
         }
 
@@ -499,7 +499,7 @@ public class SemanticAnalysis {
             program.get(index).setParameter(newValue);
     }
 
-    public void replaceFirstInstruction(String oldValue, String newValue) {
+    public void replaceFirstInstruction(Object oldValue, Object newValue) {
         int index = getFirstIndexInstruction(oldValue);
 
         if (index != (-1))
@@ -509,9 +509,9 @@ public class SemanticAnalysis {
     public int[] getIndexSymbolTable(String value) {
 
         for (int i = symbolTable.size() - 1; i >= 0; i--) {
-            String[] temp = symbolTable.get(i);
+            Object[] temp = symbolTable.get(i);
             for (int j = temp.length - 1; j >= 0; j--) {
-                String item = temp[j];
+                Object item = temp[j];
                 if (item.equals(value))
                     return new int[]{i, j};
             }
@@ -527,30 +527,30 @@ public class SemanticAnalysis {
             symbolTable.get(index[0])[index[1]] = newValue;
     }
 
-    public String getAttribute2SymbolTable(String identifier){
-        for (String[] row : symbolTable)
-            if (row[0].equals(identifier))
+    public Object getAttribute2SymbolTable(String identifier){
+        for (Object[] row : symbolTable)
+            if (row[0].toString().equals(identifier))
                 return row[3];
         return "";
     }
 
-    public String getAttribute1SymbolTable(String identifier){
-        for (String[] row : symbolTable)
+    public Object getAttribute1SymbolTable(String identifier){
+        for (Object[] row : symbolTable)
             if (row[0].equals(identifier))
                 return row[2];
         return "";
     }
 
-    public String getKindSymbolTable(String identifier){
-        for (String[] row : symbolTable)
-            if (row[0].equals(identifier))
+    public Object getKindSymbolTable(String identifier){
+        for (Object[] row : symbolTable)
+            if (row[0].toString().equals(identifier))
                 return row[1];
         return "";
     }
 
     public boolean existsSymbolTable(String identifier) {
-        for (String[] row : symbolTable) {
-            if (row[0].equals(identifier))
+        for (Object[] row : symbolTable) {
+            if (row[0].toString().equals(identifier))
                 return true;
         }
 
@@ -558,7 +558,7 @@ public class SemanticAnalysis {
     }
 
     public void insertSymbolTable(String identifier, String parameter) {
-        symbolTable.add(new String[]{identifier, Integer.toString(this.kind), Integer.toString(this.VT), parameter});
+        symbolTable.add(new Object[]{identifier, Integer.toString(this.kind), Integer.toString(this.VT), parameter});
     }
 
     public void insertSymbolTable(String identifier, String parameter1, String parameter2, String parameter3) {
@@ -621,19 +621,19 @@ public class SemanticAnalysis {
         this.indexedVariable = indexedVariable;
     }
 
-    public Stack<String> getDeviationStack() {
+    public Stack<Object> getDeviationStack() {
         return deviationStack;
     }
 
-    public void setDeviationStack(Stack<String> deviationStack) {
+    public void setDeviationStack(Stack<Object> deviationStack) {
         this.deviationStack = deviationStack;
     }
 
-    public List<String[]> getSymbolTable() {
+    public List<Object[]> getSymbolTable() {
         return symbolTable;
     }
 
-    public void setSymbolTable(List<String[]> symbolTable) {
+    public void setSymbolTable(List<Object[]> symbolTable) {
         this.symbolTable = symbolTable;
     }
 
