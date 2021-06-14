@@ -25,7 +25,7 @@ public class SemanticAnalysis {
     private List<String[]> symbolTable;
     private List<Object> attributesAction13;
 
-    private String recognizedIdentifier;
+    //private String recognizedIdentifier;
     private String identifierAction11;
     private String identifierAction12;
     private String identifierAction19;
@@ -47,7 +47,6 @@ public class SemanticAnalysis {
         this.attributesAction13 = new ArrayList<>();
         this.program = new ArrayList<>();
 
-        this.recognizedIdentifier = "";
         this.identifierAction11 = "";
         this.identifierAction12 = "";
         this.identifierAction19 = "";
@@ -170,12 +169,11 @@ public class SemanticAnalysis {
                 return "Identifier already declared.\n";
             } else {
                 this.indexedVariable = false;
-                this.recognizedIdentifier = identifier.toString();
                 this.identifierAction12 = identifier.toString();
             }
         } else {
             this.indexedVariable = false;
-            this.recognizedIdentifier = identifier.toString();
+            this.identifierAction12 = identifier.toString();
         }
         return "";
     }
@@ -186,7 +184,7 @@ public class SemanticAnalysis {
                 if (!indexedVariable) {
                     this.VT++;
                     this.VP++;
-                    insertSymbolTable(this.identifierAction11, "-");
+                    insertSymbolTable(this.identifierAction12, "-");
                 } else {
                     this.VIT += constantAction14;
                     int incrementedVT = this.VT + 1;
@@ -638,14 +636,6 @@ public class SemanticAnalysis {
 
     public void setSymbolTable(List<String[]> symbolTable) {
         this.symbolTable = symbolTable;
-    }
-
-    public String getRecognizedIdentifier() {
-        return recognizedIdentifier;
-    }
-
-    public void setRecognizedIdentifier(String recognizedIdentifier) {
-        this.recognizedIdentifier = recognizedIdentifier;
     }
 
     public ArrayList<Instruction<Integer, Object>> getProgram() {
