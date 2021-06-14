@@ -201,7 +201,7 @@ public class SemanticAnalysis {
                         if(!indexedVariable)
                             this.attributesAction13.add(attribute1);
                         else
-                            return "Unindexed variable identifier.";
+                            return "No indexed variable identifier.";
                     } else {
                         if(indexedVariable)
                             this.attributesAction13.add( (Integer.parseInt(attribute1) + constantAction14 - 1 ) );
@@ -209,8 +209,7 @@ public class SemanticAnalysis {
                             return "Indexed variable identifier requires index.";
                     }
                 } else {
-                    //return "Variable or constant " + identifierAction12 + " identifier was not declared. ASSIGNMENT";
-                    return "Condicao " + existsSymbolTable(identifierAction12);
+                    return "Variable or constant '" + identifierAction12 + "' identifier was not declared.";
                 }
                 break;
             case DATA_INPUT:
@@ -226,7 +225,7 @@ public class SemanticAnalysis {
                             program.add(new Instruction<>(VMConstants.STR, attribute1));
                             this.pointer++;
                         } else {
-                            return "Unindexed variable identifier.";
+                            return "No indexed variable identifier.";
                         }
                     } else {
                         if(indexedVariable) {
@@ -240,7 +239,7 @@ public class SemanticAnalysis {
                         }
                     }
                 } else {
-                    return "Variable or constant " + identifierAction12 + " identifier was not declared.";
+                    return "Variable or constant '" + identifierAction12 + "' identifier was not declared.";
                 }
                 break;
         }

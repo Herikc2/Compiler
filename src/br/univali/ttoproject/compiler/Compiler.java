@@ -30,33 +30,25 @@ public class Compiler {
     }
 
     public boolean compile(String input) {
-        var messages = "";
-
         parser = new Parser(new StringReader(input));
-        messages += lexer();
-        parser.ReInit(new StringReader(input));
-        parser();
-        messages += parser.errorMessages;
 
-        if (messages.isEmpty()) {
-            this.messages = "Program successfully compiled.";
-            // debug
-//            program.add(new Instruction<>(VMConstants.LDS, "Digite: "));
-//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
-//            program.add(new Instruction<>(VMConstants.REA, VMConstants.CHAR));
-//            program.add(new Instruction<>(VMConstants.LDS, "Bem vindo, "));
-//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
-//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
-//            program.add(new Instruction<>(VMConstants.LDS, "."));
-//            program.add(new Instruction<>(VMConstants.WRT, VMConstants.NULL_PARAM));
-            // debug
-            this.program = parser.program;
-        } else {
-            this.messages = messages;
+        try {
+            parser.Start();
+
+            if (parser.getErrorMessages().isEmpty()) {
+                this.messages = "Program successfully compiled.";
+                this.program = parser.getSemanticAnalysis().getProgram();
+                return true;
+            } else {
+                this.messages = parser.getErrorMessages();
+                this.program = null;
+                return false;
+            }
+        } catch (ParseException e) {
+            this.messages += e.getMessage();
             this.program = null;
             return false;
         }
-        return true;
     }
 
     public String lexer() {

@@ -14,9 +14,16 @@ import br.univali.ttoproject.vm.*;
 import java.awt.*;import java.util.ArrayList;
 
 public class Parser {
-    public String errorMessages = "";
-    public ArrayList<Instruction<Integer, Object>> program = new ArrayList<>();
+    private String errorMessages = "";
     private SemanticAnalysis semanticAnalysis = new SemanticAnalysis();
+
+    public String getErrorMessages() {
+        return errorMessages;
+    }
+
+    public SemanticAnalysis getSemanticAnalysis() {
+        return semanticAnalysis;
+    }
 }
 
 PARSER_END(Parser)
@@ -126,9 +133,6 @@ void Start() :
 {}
 {
     Program() <EOF>
-    {
-        program = semanticAnalysis.getProgram();
-    }
 }
 
 void Program() :
@@ -220,20 +224,16 @@ void VariableSel() :
 void Type() :
 {}
 {
-    <CHAR_TYPE> { semanticAnalysis.action7(); }
-|   <NATURAL_TYPE> { semanticAnalysis.action8(); }
-|   <REAL_TYPE> { semanticAnalysis.action9(); }
+    <NATURAL_TYPE> { semanticAnalysis.action7(); }
+|   <REAL_TYPE> { semanticAnalysis.action8(); }
+|   <CHAR_TYPE> { semanticAnalysis.action9(); }
 |   <BOOLEAN_TYPE> { errorMessages += semanticAnalysis.action10(); }
 }
 
 void NotVariableIdentifierList() :
 {}
 {
-    <IDENTIFIER>
-    {
-        errorMessages += semanticAnalysis.action11(token.image);
-    }
-    NotVariableIdentifierListSel()
+    <IDENTIFIER> { errorMessages += semanticAnalysis.action11(token.image); } NotVariableIdentifierListSel()
 }
 
 void NotVariableIdentifierListSel() :
@@ -266,9 +266,9 @@ void Index() :
 void Value() :
 {}
 {
-    <CHAR_CONST>
-|   <NATURAL_CONST>
+    <NATURAL_CONST>
 |   <REAL_CONST>
+|   <CHAR_CONST>
 }
 
 void Execute() :

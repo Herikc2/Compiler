@@ -8,14 +8,20 @@ import br.univali.ttoproject.vm.*;
 import java.awt.*;import java.util.ArrayList;
 
 public class Parser implements ParserConstants {
-    public String errorMessages = "";
-    public ArrayList<Instruction<Integer, Object>> program = new ArrayList<>();
+    private String errorMessages = "";
     private SemanticAnalysis semanticAnalysis = new SemanticAnalysis();
+
+    public String getErrorMessages() {
+        return errorMessages;
+    }
+
+    public SemanticAnalysis getSemanticAnalysis() {
+        return semanticAnalysis;
+    }
 
   final public void Start() throws ParseException {
     Program();
     jj_consume_token(0);
-program = semanticAnalysis.getProgram();
 }
 
   final public void Program() throws ParseException {
@@ -178,18 +184,18 @@ semanticAnalysis.action4();
 
   final public void Type() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case CHAR_TYPE:{
-      jj_consume_token(CHAR_TYPE);
-semanticAnalysis.action7();
-      break;
-      }
     case NATURAL_TYPE:{
       jj_consume_token(NATURAL_TYPE);
-semanticAnalysis.action8();
+semanticAnalysis.action7();
       break;
       }
     case REAL_TYPE:{
       jj_consume_token(REAL_TYPE);
+semanticAnalysis.action8();
+      break;
+      }
+    case CHAR_TYPE:{
+      jj_consume_token(CHAR_TYPE);
 semanticAnalysis.action9();
       break;
       }
@@ -262,16 +268,16 @@ semanticAnalysis.action14(token.image);
 
   final public void Value() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case CHAR_CONST:{
-      jj_consume_token(CHAR_CONST);
-      break;
-      }
     case NATURAL_CONST:{
       jj_consume_token(NATURAL_CONST);
       break;
       }
     case REAL_CONST:{
       jj_consume_token(REAL_CONST);
+      break;
+      }
+    case CHAR_CONST:{
+      jj_consume_token(CHAR_CONST);
       break;
       }
     default:
