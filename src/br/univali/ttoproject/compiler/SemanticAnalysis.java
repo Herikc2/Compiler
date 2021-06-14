@@ -31,7 +31,6 @@ public class SemanticAnalysis {
     private String identifierAction19;
 
     private int constantAction14;
-    private int recognizedConstant;
 
     private ArrayList<Instruction<Integer, Object>> program;
 
@@ -317,7 +316,8 @@ public class SemanticAnalysis {
     }
 
     public void action23(Object literalConstant) {
-        program.add(new Instruction<>(VMConstants.LDS, literalConstant));
+        String strLiteralConstant = literalConstant.toString();
+        program.add(new Instruction<>(VMConstants.LDS, strLiteralConstant.substring(1, strLiteralConstant.length() - 1)));
         this.pointer++;
     }
 
