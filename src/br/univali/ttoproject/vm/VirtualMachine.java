@@ -89,12 +89,10 @@ public class VirtualMachine implements Runnable {
     }
 
     private void add() {
-        if (stack[top] instanceof Integer) {
+        if (stack[top] instanceof Integer && stack[top - 1] instanceof Integer) {
             stack[top - 1] = (int) stack[top - 1] + (int) stack[top];
-        } else if (stack[top] instanceof Float) {
+        } else if (stack[top] instanceof Float && stack[top - 1] instanceof Float) {
             stack[top - 1] = (float) stack[top - 1] + (float) stack[top];
-        } else {
-            stack[top - 1] = (String) stack[top - 1] + stack[top];
         }
         --top;
         ++pointer;
@@ -146,7 +144,7 @@ public class VirtualMachine implements Runnable {
     }
 
     private void ali(int param) {
-        for (int i = top + 1; i < top + param; ++i) {
+        for (int i = top + 1; i < top + param + 1; ++i) {
             stack[i] = 0;
         }
         top = top + param;
@@ -333,7 +331,7 @@ public class VirtualMachine implements Runnable {
     }
 
     private void wrt() {
-        write((String) stack[top]);
+        write(stack[top].toString());
         --top;
         pointer++;
     }

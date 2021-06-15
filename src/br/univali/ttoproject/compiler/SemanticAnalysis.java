@@ -95,11 +95,11 @@ public class SemanticAnalysis {
     public void action5(Object value) {
         switch (this.kind) {
             case 5 -> {
-                this.program.add(new Instruction<>(VMConstants.LDI, Integer.parseInt(value.toString())));
+                this.program.add(new Instruction<>(VMConstants.LDI, Integer.valueOf(Integer.parseInt(value.toString()))));
                 this.pointer++;
             }
             case 6 -> {
-                this.program.add(new Instruction<>(VMConstants.LDR, Float.parseFloat(value.toString())));
+                this.program.add(new Instruction<>(VMConstants.LDR, Float.valueOf(value.toString())));
                 this.pointer++;
             }
             case 7 -> {
@@ -257,7 +257,7 @@ public class SemanticAnalysis {
 
     public void action16() {
         for (Object item: attributesAction13){
-            program.add(new Instruction<>(VMConstants.STR, Integer.parseInt(item.toString())));
+            program.add(new Instruction<>(VMConstants.STR, Integer.valueOf(item.toString())));
             this.pointer++;
         }
     }
@@ -288,14 +288,14 @@ public class SemanticAnalysis {
 
         if(!indexedVariable) {
             if(attribute2.equals("-")){
-                program.add(new Instruction<>(VMConstants.LDV, Integer.parseInt(attribute1.toString())));
+                program.add(new Instruction<>(VMConstants.LDV, Integer.valueOf(attribute1.toString())));
                 this.pointer++;
             } else {
                 return "Variable identifier requires index.";
             }
         } else {
             if(!attribute2.equals("-")) {
-                program.add(new Instruction<>(VMConstants.LDV, (Integer.parseInt(attribute1.toString()) + constantAction14 - 1)));
+                program.add(new Instruction<>(VMConstants.LDV, (Integer.valueOf(attribute1.toString()) + constantAction14 - 1)));
                 this.pointer++;
             } else {
                 return "Variable or constant identifier was not indexed.";
@@ -306,12 +306,12 @@ public class SemanticAnalysis {
     }
 
     public void action21(Object integerConstant) {
-        program.add(new Instruction<>(VMConstants.LDI, Integer.parseInt(integerConstant.toString())));
+        program.add(new Instruction<>(VMConstants.LDI, Integer.valueOf(integerConstant.toString())));
         this.pointer++;
     }
 
     public void action22(Object floatConstant) {
-        program.add(new Instruction<>(VMConstants.LDR, Float.parseFloat(floatConstant.toString())));
+        program.add(new Instruction<>(VMConstants.LDR, Float.valueOf(floatConstant.toString())));
         this.pointer++;
     }
 
