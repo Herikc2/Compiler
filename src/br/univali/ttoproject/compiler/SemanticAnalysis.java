@@ -260,6 +260,7 @@ public class SemanticAnalysis {
             program.add(new Instruction<>(VMConstants.STR, Integer.valueOf(item.toString())));
             this.pointer++;
         }
+        attributesAction13.clear();
     }
 
     public void action17() {
@@ -316,13 +317,13 @@ public class SemanticAnalysis {
     }
 
     public void action23(Object literalConstant) {
-        program.add(new Instruction<>(VMConstants.LDS, literalConstant.toString().substring(0, literalConstant.toString().length() - 2)));
+        program.add(new Instruction<>(VMConstants.LDS, literalConstant.toString().substring(1, literalConstant.toString().length() - 1)));
         this.pointer++;
     }
 
     public void action24() {
         deviationStack.pop();
-        replaceFirstInstruction("?", this.pointer);
+        replaceLastInstruction("?", this.pointer);
     }
 
     public void action25() {
@@ -339,7 +340,7 @@ public class SemanticAnalysis {
 
     public void action27() {
         deviationStack.pop();
-        replaceFirstInstruction("?", this.pointer + 1);
+        replaceLastInstruction("?", this.pointer + 1);
         program.add(new Instruction<>(VMConstants.JMP, "?"));
         this.pointer++;
         deviationStack.push(String.valueOf(this.pointer - 1));
@@ -367,7 +368,7 @@ public class SemanticAnalysis {
 
     public void action32() {
         deviationStack.pop();
-        replaceFirstInstruction("?", this.pointer + 1);
+        replaceLastInstruction("?", this.pointer + 1);
         Object address = deviationStack.pop();
         program.add(new Instruction<>(VMConstants.JMP, address));
         this.pointer++;
@@ -469,11 +470,11 @@ public class SemanticAnalysis {
             return false;
     }
 
-    public int getLastIndexInstruction(String value) {
+    public int getLastIndexInstruction(Object value) {
         for (int i = program.size() - 1; i >= 0; i--) {
             Instruction<Integer, Object> temp = program.get(i);
 
-            if (temp.getParameter().toString().equals(value))
+            if (temp.getParameter().toString().equals(value.toString()))
                 return i;
         }
 
@@ -491,7 +492,7 @@ public class SemanticAnalysis {
         return (-1);
     }
 
-    public void replaceLastInstruction(String oldValue, String newValue) {
+    public void replaceLastInstruction(Object oldValue, Object newValue) {
         int index = getLastIndexInstruction(oldValue);
 
         if (index != (-1))
