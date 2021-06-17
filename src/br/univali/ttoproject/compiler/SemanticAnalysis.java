@@ -25,7 +25,6 @@ public class SemanticAnalysis {
     private List<Object[]> symbolTable;
     private List<Object> attributesAction13;
 
-    //private String recognizedIdentifier;
     private String identifierAction11;
     private String identifierAction12;
     private String identifierAction19;
@@ -42,7 +41,7 @@ public class SemanticAnalysis {
         this.pointer = 0;
         this.indexedVariable = false;
         this.deviationStack = new Stack<>();
-        this.symbolTable = new ArrayList<Object[]>();
+        this.symbolTable = new ArrayList<>();
         this.attributesAction13 = new ArrayList<>();
         this.program = new ArrayList<>();
 
@@ -95,7 +94,7 @@ public class SemanticAnalysis {
     public void action5(Object value) {
         switch (this.kind) {
             case 5 -> {
-                this.program.add(new Instruction<>(VMConstants.LDI, Integer.valueOf(Integer.parseInt(value.toString()))));
+                this.program.add(new Instruction<>(VMConstants.LDI, Integer.valueOf(value.toString())));
                 this.pointer++;
             }
             case 6 -> {
@@ -219,9 +218,9 @@ public class SemanticAnalysis {
                     if(attribute2.equals("-")) {
                         if (!indexedVariable) {
                             Object category = getKindSymbolTable(identifierAction12);
-                            program.add(new Instruction<>(VMConstants.REA, category));
+                            program.add(new Instruction<>(VMConstants.REA, Integer.parseInt(category.toString())));
                             this.pointer++;
-                            program.add(new Instruction<>(VMConstants.STR, attribute1));
+                            program.add(new Instruction<>(VMConstants.STR, Integer.parseInt(attribute1.toString())));
                             this.pointer++;
                         } else {
                             return "No indexed variable identifier.";
@@ -229,7 +228,7 @@ public class SemanticAnalysis {
                     } else {
                         if(indexedVariable) {
                             Object category = getKindSymbolTable(identifierAction12);
-                            program.add(new Instruction<>(VMConstants.REA, category));
+                            program.add(new Instruction<>(VMConstants.REA, Integer.parseInt(category.toString())));
                             this.pointer++;
                             program.add(new Instruction<>(VMConstants.STR, (Integer.parseInt(attribute1.toString()) + constantAction14 - 1) ));
                             this.pointer++;
@@ -296,7 +295,7 @@ public class SemanticAnalysis {
             }
         } else {
             if(!attribute2.equals("-")) {
-                program.add(new Instruction<>(VMConstants.LDV, (Integer.valueOf(attribute1.toString()) + constantAction14 - 1)));
+                program.add(new Instruction<>(VMConstants.LDV, Integer.valueOf(Integer.parseInt(attribute1.toString()) + constantAction14 - 1)));
                 this.pointer++;
             } else {
                 return "Variable or constant identifier was not indexed.";
@@ -329,13 +328,13 @@ public class SemanticAnalysis {
     public void action25() {
         program.add(new Instruction<>(VMConstants.JMF, "?"));
         this.pointer++;
-        deviationStack.push(String.valueOf(this.pointer - 1));
+        deviationStack.push(this.pointer - 1);
     }
 
     public void action26() {
         program.add(new Instruction<>(VMConstants.JMT, "?"));
         this.pointer++;
-        deviationStack.push(String.valueOf(this.pointer - 1));
+        deviationStack.push(this.pointer - 1);
     }
 
     public void action27() {
@@ -343,11 +342,11 @@ public class SemanticAnalysis {
         replaceLastInstruction("?", this.pointer + 1);
         program.add(new Instruction<>(VMConstants.JMP, "?"));
         this.pointer++;
-        deviationStack.push(String.valueOf(this.pointer - 1));
+        deviationStack.push(this.pointer - 1);
     }
 
     public void action28() {
-        deviationStack.push(String.valueOf(this.pointer));
+        deviationStack.push(this.pointer);
     }
 
     public void action29() {
@@ -464,10 +463,7 @@ public class SemanticAnalysis {
     }
 
     public boolean isVariable(int kind){
-        if(kind >= 1 && kind <= 4)
-            return true;
-        else
-            return false;
+        return kind >= 1 && kind <= 4;
     }
 
     public int getLastIndexInstruction(Object value) {

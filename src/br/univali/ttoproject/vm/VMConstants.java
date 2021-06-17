@@ -52,4 +52,14 @@ public class VMConstants {
     public static final int REAL    = 1;
     public static final int CHAR    = 2;
     public static final int BOOLEAN = 3;
+
+    // semantic
+    public static final int PROGRAM_IDENT = 0;
+    public static final int VAR_NATURAL   = 1;
+    public static final int VAR_REAL      = 2;
+    public static final int VAR_CHAR      = 3;
+    public static final int VAR_BOOLEAN   = 4;
+    public static final int CONST_NATURAL = 5;
+    public static final int CONST_REAL    = 6;
+    public static final int CONST_CHAR    = 7;
 }

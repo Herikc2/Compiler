@@ -21,7 +21,7 @@ public class VirtualMachine implements Runnable {
 
     public VirtualMachine(Console console, ArrayList<Instruction<Integer, Object>> program) {
         stack = new Object[1024];
-        pointer = 1;
+        pointer = 0;
         top = 0;
         this.console = console;
         this.program = program;
@@ -31,9 +31,9 @@ public class VirtualMachine implements Runnable {
     @Override
     public void run() {
         thread = new Thread(() -> {
-            for (var inst : program) {
+            while (true) {
                 try {
-                    eval(inst);
+                    eval(program.get(pointer));
                 } catch (Exception e) {
                     if (!e.getMessage().isEmpty())
                         console.addContent(e.getMessage());
@@ -89,10 +89,10 @@ public class VirtualMachine implements Runnable {
     }
 
     private void add() {
-        if (stack[top] instanceof Integer && stack[top - 1] instanceof Integer) {
-            stack[top - 1] = (int) stack[top - 1] + (int) stack[top];
-        } else if (stack[top] instanceof Float && stack[top - 1] instanceof Float) {
+        if (stack[top] instanceof Float || stack[top - 1] instanceof Float) {
             stack[top - 1] = (float) stack[top - 1] + (float) stack[top];
+        } else {
+            stack[top - 1] = (int) stack[top - 1] + (int) stack[top];
         }
         --top;
         ++pointer;
@@ -100,43 +100,36 @@ public class VirtualMachine implements Runnable {
 
     // TODO Verificar se é divisão Natural ou Real
     private void div() throws Exception {
-        if (stack[top] instanceof Integer) {
-            if ((int) stack[top] == 0) {
-                throw new Exception("Runtime error: division by zero.");
-            }
-            stack[top - 1] = (int) stack[top - 1] / (int) stack[top];
-        } else if (stack[top] instanceof Float) {
-            if ((float) stack[top] == 0f) {
-                throw new Exception("Runtime error: division by zero.");
-            }
-            stack[top - 1] = (float) stack[top - 1] / (float) stack[top];
+        if ((float) stack[top] == 0f || (int) stack[top] == 0) {
+            throw new Exception("Runtime error: division by zero.");
         }
+        stack[top - 1] = (float) stack[top - 1] / (float) stack[top];
         --top;
         ++pointer;
     }
 
     private void mul() {
-        if (stack[top] instanceof Integer) {
-            stack[top - 1] = (int) stack[top - 1] * (int) stack[top];
-        } else if (stack[top] instanceof Float) {
+        if (stack[top] instanceof Float || stack[top - 1] instanceof Float) {
             stack[top - 1] = (float) stack[top - 1] * (float) stack[top];
+        } else {
+            stack[top - 1] = (int) stack[top - 1] * (int) stack[top];
         }
         --top;
         ++pointer;
     }
 
     private void sub() {
-        if (stack[top] instanceof Integer) {
-            stack[top - 1] = (int) stack[top - 1] - (int) stack[top];
-        } else if (stack[top] instanceof Float) {
+        if (stack[top] instanceof Float || stack[top - 1] instanceof Float) {
             stack[top - 1] = (float) stack[top - 1] - (float) stack[top];
+        } else {
+            stack[top - 1] = (int) stack[top - 1] - (int) stack[top];
         }
         --top;
         ++pointer;
     }
 
     private void alb(int param) {
-        for (int i = top + 1; i < top + param; ++i) {
+        for (int i = top + 1; i <= top + param; ++i) {
             stack[i] = false;
         }
         top = top + param;
@@ -144,7 +137,7 @@ public class VirtualMachine implements Runnable {
     }
 
     private void ali(int param) {
-        for (int i = top + 1; i < top + param + 1; ++i) {
+        for (int i = top + 1; i <= top + param; ++i) {
             stack[i] = 0;
         }
         top = top + param;
@@ -152,7 +145,7 @@ public class VirtualMachine implements Runnable {
     }
 
     private void alr(int param) {
-        for (int i = top + 1; i < top + param; ++i) {
+        for (int i = top + 1; i <= top + param; ++i) {
             stack[i] = 0f;
         }
         top = top + param;
@@ -160,7 +153,7 @@ public class VirtualMachine implements Runnable {
     }
 
     private void als(int param) {
-        for (int i = top + 1; i < top + param; ++i) {
+        for (int i = top + 1; i <= top + param; ++i) {
             stack[i] = "";
         }
         top = top + param;
@@ -204,7 +197,7 @@ public class VirtualMachine implements Runnable {
     }
 
     private void stc(int param) {
-        for (int i = top - param; i < top - 1; ++i) {
+        for (int i = top - param; i < top; ++i) {
             stack[i] = stack[top];
         }
         --top;
@@ -320,10 +313,10 @@ public class VirtualMachine implements Runnable {
         ++pointer;
         try {
             switch (param) {
-                case VMConstants.NATURAL -> stack[top] = Integer.parseInt(consoleInput);
-                case VMConstants.REAL -> stack[top] = Float.parseFloat(consoleInput);
-                case VMConstants.CHAR -> stack[top] = consoleInput;
-                case VMConstants.BOOLEAN -> stack[top] = Boolean.parseBoolean(consoleInput);
+                case VMConstants.VAR_NATURAL, VMConstants.CONST_NATURAL -> stack[top] = Integer.parseInt(consoleInput);
+                case VMConstants.VAR_REAL, VMConstants.CONST_REAL -> stack[top] = Float.parseFloat(consoleInput);
+                case VMConstants.VAR_CHAR, VMConstants.CONST_CHAR -> stack[top] = consoleInput;
+                case VMConstants.VAR_BOOLEAN -> stack[top] = Boolean.parseBoolean(consoleInput);
             }
         } catch (Exception e) {
             throw new Exception("Runtime error.");
