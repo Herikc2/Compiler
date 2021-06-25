@@ -90,7 +90,7 @@ public class VirtualMachine implements Runnable {
 
     private void add() {
         if (stack[top] instanceof Float || stack[top - 1] instanceof Float) {
-            stack[top - 1] = (float) stack[top - 1] + (float) stack[top];
+            stack[top - 1] = Float.valueOf(stack[top - 1].toString()) + Float.valueOf(stack[top].toString());
         } else {
             stack[top - 1] = (int) stack[top - 1] + (int) stack[top];
         }
@@ -100,17 +100,17 @@ public class VirtualMachine implements Runnable {
 
     // TODO Verificar se é divisão Natural ou Real
     private void div() throws Exception {
-        if ((float) stack[top] == 0f || (int) stack[top] == 0) {
+        if (Float.valueOf(stack[top].toString()) == 0f || Integer.valueOf(stack[top].toString()) == 0) {
             throw new Exception("Runtime error: division by zero.");
         }
-        stack[top - 1] = (float) stack[top - 1] / (float) stack[top];
+        stack[top - 1] = Float.valueOf(stack[top - 1].toString()) / Float.valueOf(stack[top].toString());
         --top;
         ++pointer;
     }
 
     private void mul() {
         if (stack[top] instanceof Float || stack[top - 1] instanceof Float) {
-            stack[top - 1] = (float) stack[top - 1] * (float) stack[top];
+            stack[top - 1] = Float.valueOf(stack[top - 1].toString()) * Float.valueOf(stack[top].toString());
         } else {
             stack[top - 1] = (int) stack[top - 1] * (int) stack[top];
         }
@@ -120,7 +120,7 @@ public class VirtualMachine implements Runnable {
 
     private void sub() {
         if (stack[top] instanceof Float || stack[top - 1] instanceof Float) {
-            stack[top - 1] = (float) stack[top - 1] - (float) stack[top];
+            stack[top - 1] = Float.valueOf(stack[top - 1].toString()) - Float.valueOf(stack[top].toString());
         } else {
             stack[top - 1] = (int) stack[top - 1] - (int) stack[top];
         }
@@ -223,9 +223,9 @@ public class VirtualMachine implements Runnable {
 
     private void bge() {
         if (stack[top] instanceof Integer) {
-            stack[top - 1] = (int) stack[top - 1] >= (int) stack[top];
+            stack[top - 1] = Integer.valueOf(stack[top - 1].toString()) >= (int) stack[top];
         } else if (stack[top] instanceof Float) {
-            stack[top - 1] = (float) stack[top - 1] >= (float) stack[top];
+            stack[top - 1] = Float.valueOf(stack[top - 1].toString()) >= (float) stack[top];
         }
         --top;
         ++pointer;
@@ -233,9 +233,9 @@ public class VirtualMachine implements Runnable {
 
     private void bgr() {
         if (stack[top] instanceof Integer) {
-            stack[top - 1] = (int) stack[top - 1] > (int) stack[top];
+            stack[top - 1] = Integer.valueOf(stack[top - 1].toString()) > (int) stack[top];
         } else if (stack[top] instanceof Float) {
-            stack[top - 1] = (float) stack[top - 1] > (float) stack[top];
+            stack[top - 1] = Float.valueOf(stack[top - 1].toString()) > (float) stack[top];
         }
         --top;
         ++pointer;
@@ -243,9 +243,9 @@ public class VirtualMachine implements Runnable {
 
     private void dif() {
         if (stack[top] instanceof Integer) {
-            stack[top - 1] = (int) stack[top - 1] != (int) stack[top];
+            stack[top - 1] = Integer.valueOf(stack[top - 1].toString()) != (int) stack[top];
         } else if (stack[top] instanceof Float) {
-            stack[top - 1] = (float) stack[top - 1] != (float) stack[top];
+            stack[top - 1] = Float.valueOf(stack[top - 1].toString()) != (float) stack[top];
         }
         --top;
         ++pointer;
@@ -253,9 +253,9 @@ public class VirtualMachine implements Runnable {
 
     private void eql() {
         if (stack[top] instanceof Integer) {
-            stack[top - 1] = (int) stack[top - 1] == (int) stack[top];
+            stack[top - 1] = Integer.valueOf(stack[top - 1].toString()) == (int) stack[top];
         } else if (stack[top] instanceof Float) {
-            stack[top - 1] = (float) stack[top - 1] == (float) stack[top];
+            stack[top - 1] = Float.valueOf(stack[top - 1].toString()) == (float) stack[top];
         }
         --top;
         ++pointer;
@@ -263,9 +263,9 @@ public class VirtualMachine implements Runnable {
 
     private void sme() {
         if (stack[top] instanceof Integer) {
-            stack[top - 1] = (int) stack[top - 1] <= (int) stack[top];
+            stack[top - 1] = Integer.valueOf(stack[top - 1].toString()) <= (int) stack[top];
         } else if (stack[top] instanceof Float) {
-            stack[top - 1] = (float) stack[top - 1] <= (float) stack[top];
+            stack[top - 1] = Float.valueOf(stack[top - 1].toString()) <= (float) stack[top];
         }
         --top;
         ++pointer;
@@ -273,9 +273,9 @@ public class VirtualMachine implements Runnable {
 
     private void smr() {
         if (stack[top] instanceof Integer) {
-            stack[top - 1] = (int) stack[top - 1] < (int) stack[top];
+            stack[top - 1] = Integer.valueOf(stack[top - 1].toString()) < (int) stack[top];
         } else if (stack[top] instanceof Float) {
-            stack[top - 1] = (float) stack[top - 1] < (float) stack[top];
+            stack[top - 1] = Float.valueOf(stack[top - 1].toString()) < (float) stack[top];
         }
         --top;
         ++pointer;

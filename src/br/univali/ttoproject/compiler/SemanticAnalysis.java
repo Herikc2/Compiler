@@ -102,7 +102,7 @@ public class SemanticAnalysis {
                 this.pointer++;
             }
             case 7 -> {
-                this.program.add(new Instruction<>(VMConstants.LDS, value.toString()));
+                this.program.add(new Instruction<>(VMConstants.LDS, value.toString().substring(1, value.toString().length() - 1)));
                 this.pointer++;
             }
         }
